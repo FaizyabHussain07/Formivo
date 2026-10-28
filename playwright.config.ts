@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const port = Number(process.env.PORT ?? 3100);
+// Ignore 0/NaN: a zero PORT would make `next start` bind a random port that the baseURL
+// below could never match.
+const port = Number(process.env.PORT) || 3100;
 const baseURL = `http://localhost:${port}`;
 
 export default defineConfig({
