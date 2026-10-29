@@ -1,68 +1,101 @@
 # Formivo
 
-Formivo is a developer-first form backend and submission-management SaaS: form endpoints, secure
-submission storage, a dashboard for reviewing submissions, and form-level read-only client access.
+Formivo is a developer-first form backend: a **public submission endpoint per form**, secure
+submission storage, a dashboard for triaging leads, and read-only client access. The public
+endpoint requires **only the form ID** — no API key, secret or token.
 
 The product requirements live in [`FORMIVO_PRD_v3.md`](FORMIVO_PRD_v3.md), with detailed specs in
-[`product-documentations/`](product-documentations/). The project is built in phases;
-this repository currently contains **Phase 1 (foundation)** and **Phase 2 (database & security
-foundation)**. Auth flows, the dashboard, submissions, client access, email, and billing are
-**not implemented yet** — their routes render an explicit "not available yet" notice and collect
-no data.
+[`product-documentations/`](product-documentations/). The application is implemented end to end:
+authentication, workspaces, forms, public submissions, lead management, analytics, invitations and
+client portal, billing entitlements, Resend email and Lemon Squeezy webhooks.
 
 ## Stack
 
 - Next.js 16 (App Router, Turbopack, Cache Components) · React 19 · TypeScript (strict)
-- Tailwind CSS 4 with semantic light/dark design tokens in `src/app/globals.css`
-- Inter (UI) and Geist Mono (code) via `next/font`
-- Zod for environment validation · Lucide icons
-- Vitest + Testing Library (unit) · Playwright (E2E)
-- ESLint (flat config, `eslint-config-next`) · Prettier (+ Tailwind class sorting)
-
-## Requirements
-
-- Node.js 24 (see `.nvmrc`; minimum 20.9) and npm
+- Tailwind CSS 4 with semantic light/dark tokens in `src/app/globals.css`
+- Supabase (PostgreSQL, Auth, RLS) via `@supabase/ssr`
+- Zod validation · Lucide icons
+- Vitest + Testing Library (unit/database) · Playwright (E2E)
+- ESLint (flat config) · Prettier (+ Tailwind class sorting)
 
 ## Getting started
 
 ```bash
-nvm use            # or install Node 24
+nvm use            # Node 24 (minimum 20.9)
 npm ci
-cp .env.example .env.local   # optional — the public shell needs no variables
+cp .env.example .env.local   # fill in the values you need
 npm run dev
 ```
 
 Open http://localhost:3000. Health check: `GET /api/health`.
 
+Supabase Auth redirect allow-list must include `<app>/auth/callback` (and localhost variants).
+For invitation emails, verify the sender domain in Resend. For billing, point the Lemon Squeezy
+webhook at `<app>/api/webhooks/lemonsqueezy` and set the signing secret.
+
+## Public submission endpoint
+
+```http
+POST /api/f/{formId}
+Content-Type: application/json | application/x-www-form-urlencoded | multipart/form-data
+```
+
+No `Authorization` header. HTML form action, browser `fetch`, cURL, PHP or any HTTP client work.
+Example:
+
+```html
+<form action="https://your-app.com/api/f/YOUR_FORM_ID" method="POST">
+  <input type="text" name="name" required />
+  <input type="email" name="email" required />
+  <textarea name="message"></textarea>
+  <button type="submit">Send</button>
+</form>
+```
+
+Controls on the public path:
+
+- form lifecycle (`active` / `paused`), monthly plan quota enforced atomically in the database
+- 256 KB body, field count/name/value/nesting limits, JSON/form/multipart parsing (no files)
+- content-type and JSON validation with structured error codes
+- database-backed fixed-window rate limits per form, per IP and per form+IP (shared across
+  instances), `429` + `Retry-After`
+- optional per-form browser origin allow-list (CORS + `Origin` rejection); documented as a browser
+  control, not authentication
+- optional `Idempotency-Key` (header or `_idempotency_key` field) so retries never duplicate leads
+- honeypot fields (`_gotcha` / `_honey`) stored nowhere
+- safe HTML success page, optional `_redirect`, or JSON `201`/`200`
+- public callers can only create submissions — never read them
+
+Stored submissions require an authenticated dashboard session and are scoped to the signed-in
+workspace; Supabase RLS enforces the same boundary at the database level.
+
 ## Scripts
 
-| Command             | What it does                                          |
-| ------------------- | ----------------------------------------------------- |
-| `npm run dev`       | Start the dev server                                  |
-| `npm run build`     | Production build                                      |
-| `npm run start`     | Serve the production build                            |
-| `npm run lint`      | ESLint, zero warnings allowed                         |
-| `npm run format`    | Format with Prettier (`format:check` to verify only)  |
-| `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`     |
-| `npm run test`      | Unit tests (Vitest), including migration + RLS suites |
-| `npm run test:e2e`  | E2E tests (Playwright; runs against `npm run start`)  |
-| `npm run check`     | lint + format check + typecheck + unit tests + build  |
-
-E2E tests need a production build and a browser: `npm run build && npx playwright install chromium && npm run test:e2e`.
+| Command             | What it does                                         |
+| ------------------- | ---------------------------------------------------- |
+| `npm run dev`       | Start the dev server                                 |
+| `npm run build`     | Production build                                     |
+| `npm run start`     | Serve the production build                           |
+| `npm run lint`      | ESLint, zero warnings allowed                        |
+| `npm run format`    | Format with Prettier (`format:check` to verify only) |
+| `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`    |
+| `npm run test`      | Unit, API-shape and database/RLS tests (Vitest)      |
+| `npm run test:e2e`  | E2E tests (Playwright; runs against `npm run start`) |
+| `npm run check`     | lint + format check + typecheck + unit tests + build |
 
 ## Environment variables
 
-All variables are documented in [`.env.example`](.env.example) and validated with Zod in
-`src/lib/env/`. Every variable is optional in Phase 1:
+Documented in [`.env.example`](.env.example) and validated with Zod in `src/lib/env/`. Variables are
+optional for the public shell; provider-backed features report an explicit "not configured" state.
 
-- `src/lib/env/public.ts` — client-safe `NEXT_PUBLIC_*` values.
-- `src/lib/env/server.ts` — server-only values, guarded by `server-only` so secrets cannot be
-  bundled into client code. Validated once at startup via `src/instrumentation.ts`.
-- `src/lib/env/integrations.ts` — reports whether each provider (Supabase, Resend, Lemon Squeezy)
-  has its variables set, and throws `IntegrationNotConfiguredError` when an unconfigured provider is
-  used. "Configured" means the variables are present, not that the provider has been verified.
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `INVITATION_TOKEN_PEPPER` (min 32 chars; hashes invitation tokens)
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (invitation email)
+- `LEMONSQUEEZY_*` (checkout, portal and webhook)
+- `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_ENVIRONMENT`, `CRON_SECRET`
 
-Validation errors name the offending variable but never print its value.
+Secrets are server-only and validated through `server-only` modules. Validation messages name the
+variable, never its value.
 
 ## Project structure
 
@@ -70,48 +103,43 @@ Validation errors name the offending variable but never print its value.
 src/
   app/
     (marketing)/   public site: /, /docs, /pricing, /contact, /privacy, /terms
-    (auth)/        /login, /signup, /forgot-password (placeholders)
-    (developer)/   developer app shell: /dashboard, /forms, /submissions, ...
-    client/        client app shell: /client, /client/settings
-    api/health/    liveness endpoint
-  components/
-    ui/            accessible primitives (Button, Field, Input, Dialog, Alert, Table, ...)
-    layout/        site header/footer, app shell, navigation
-  config/          site metadata and navigation
+    (auth)/        signup, login, forgot/reset password + server actions
+    (developer)/   dashboard, forms, submissions, analytics, clients, billing, settings
+    client/        read-only client portal for shared forms
+    invite/[token] invitation acceptance
+    api/f/[formId] public submission endpoint (HTML, JSON, CORS)
+    api/webhooks/  Lemon Squeezy webhook
+    auth/callback  Supabase code exchange + account bootstrap
+  components/      UI primitives, layout, auth/forms/clients/billing/settings components
   lib/
-    supabase/      typed clients (session client, service-role admin client), Database types
-    auth/          role lookups (server-side, trusted table)
-    authorization/ ownership/access checks (server-side, explicit)
-    env/           env validation, utilities
-supabase/
-  migrations/      schema + RLS + transaction-safe functions (applied to the real project)
-  seed.sql         clearly fake local-dev data (never run on a real project)
-docs/              database.md — schema, RLS model, environment assumptions
-tests/
-  db/              migration + RLS/authorization suites against embedded Postgres
-  setup.ts         Vitest setup
-e2e/               Playwright specs
+    auth/          session + developer/client context (server-only)
+    billing/       plans, entitlements, Lemon Squeezy checkout + webhook verification
+    forms/         form CRUD, origins policy
+    submissions/   public intake pipeline, validation, queries, analytics
+    invitations/   hashed, single-use invitations and access revocation
+    email/         Resend delivery + invitation template
+    security/      token generation and HMAC hashing
+    supabase/      session client, service-role admin client, Database types
+supabase/migrations/   schema, RLS, transaction-safe RPCs
+tests/                 unit/API-shape tests, database + RLS suites
+e2e/                   Playwright specs
 ```
 
-## Database (Phase 2)
+## Database
 
-Supabase project `formivo` (ref `qpugqjjjxwusccsfbpon`, eu-central-1) has the schema from
-`supabase/migrations/` applied and tracked. See **[`docs/database.md`](docs/database.md)** for the
-table/RLS overview, transaction-safe functions, environment assumptions, and how to apply
-migrations to a fresh project.
+Supabase project `formivo` (ref `qpugqjjjxwusccsfbpon`, eu-central-1). Schema, RLS model and
+transaction-safe functions are documented in [`docs/database.md`](docs/database.md). Migrations are
+applied and tracked; `npm test` applies every migration to an embedded Postgres and runs the
+cross-user/cross-role authorization matrix plus endpoint-model invariants.
 
-Verification runs in two layers on `npm test`:
+## Verification
 
-- `tests/db/migrations.test.ts` — applies every migration to an embedded Postgres with a
-  Supabase-shaped `auth` schema and asserts tables, RLS flags, foreign keys and indexes.
-- `tests/db/rls.test.ts` — the PRD §22.2 cross-user/cross-role authorization matrix.
+```bash
+npm run check        # lint, format, types, tests, production build
+npm run build && npx playwright install chromium && npm run test:e2e
+```
 
-## Conventions
-
-- Components use semantic tokens (`bg-surface`, `text-foreground-secondary`, `bg-accent`, ...)
-  rather than raw colors. The light palette is the default; wrapping a subtree in
-  `data-theme="dark"` switches it to the dark palette. The developer and client app shells use dark.
-- Status is never conveyed by color alone; forms wire labels, helper text, and errors through `Field`.
-- Security headers (`nosniff`, `DENY` framing, referrer and permissions policies) are set in
-  `next.config.ts`; `X-Powered-By` is disabled.
-- CI (`.github/workflows/ci.yml`) runs lint, format check, typecheck, unit tests, build, and E2E.
+The endpoint was also exercised against the live Supabase project: 201 create, 200 idempotent
+replay with the same lead, 409 idempotency conflict, 404 unknown form, 409 paused form, 413/415
+size/content-type rejection, 403 disallowed origin, 429 rate limiting, and a single stored lead with
+correct monthly usage.

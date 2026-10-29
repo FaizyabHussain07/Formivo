@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { revokeClientAccessAction, revokeInvitationAction } from "@/app/(developer)/clients/actions";
+import {
+  revokeClientAccessAction,
+  revokeInvitationAction,
+} from "@/app/(developer)/clients/actions";
 import { InviteClientForm } from "@/components/clients/invite-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,7 +80,10 @@ export default async function Page() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/forms/${grant.formId}/clients`} className="text-accent hover:underline">
+                    <Link
+                      href={`/forms/${grant.formId}/clients`}
+                      className="text-accent hover:underline"
+                    >
                       {grant.formName}
                     </Link>
                   </TableCell>

@@ -16,9 +16,9 @@ const features = [
   },
   {
     icon: Lock,
-    title: "Secrets never stored in plaintext",
+    title: "Public endpoint, private data",
     description:
-      "Form secrets are shown once and stored only as hashes. Rotate instantly if one leaks.",
+      "No API keys or secrets in your HTML. Submissions stay private behind dashboard auth, authorization and row level security.",
   },
   {
     icon: Users,
@@ -34,15 +34,12 @@ const features = [
   },
 ];
 
-const snippet = `// Your server route — the secret never reaches the browser
-await fetch("https://your-app.com/api/f/FORM_ID/submissions", {
+const snippet = `// Any site, any language — no API key
+await fetch("https://your-app.com/api/f/FORM_ID", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: \`Bearer \${process.env.FORMIVO_SECRET}\`,
-  },
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    data: { name, email, message },
+    name, email, message,
     metadata: { page: "/contact" },
   }),
 });`;
@@ -54,7 +51,7 @@ const steps = [
   },
   {
     title: "Connect your form",
-    description: "Forward submissions from your server with the secret in a header.",
+    description: "Point an HTML form or a fetch call at your public endpoint. No secret needed.",
   },
   {
     title: "Review and share",

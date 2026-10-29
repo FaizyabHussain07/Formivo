@@ -4,8 +4,12 @@ import { z } from "zod";
 
 import { assertCanCreateForm } from "@/lib/billing/entitlements";
 import { AppError } from "@/lib/errors";
-import { generateFormSecret, hashFormSecret, lastFour } from "@/lib/security/tokens";
 import { requireAdminClient } from "@/lib/supabase/admin";
+import type { Json } from "@/lib/supabase/database.types";
+
+import { normalizeOrigin, parseAllowedOrigins } from "./origins";
+
+export { isOriginAllowed, normalizeOrigin, parseAllowedOrigins } from "./origins";
 
 export const formInputSchema = z.object({
   name: z
@@ -32,8 +36,7 @@ export type FormRecord = {
   description: string | null;
   status: string;
   notificationEmail: string | null;
-  secretLastFour: string | null;
-  hasSecret: boolean;
+  allowedOrigins: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -45,8 +48,7 @@ type FormRow = {
   description: string | null;
   status: string;
   notification_email: string | null;
-  secret_last_four: string | null;
-  secret_hash: string | null;
+  settings: Json;
   created_at: string;
   updated_at: string;
 };
@@ -59,21 +61,20 @@ function toFormRecord(row: FormRow): FormRecord {
     description: row.description,
     status: row.status,
     notificationEmail: row.notification_email,
-    secretLastFour: row.secret_last_four,
-    hasSecret: Boolean(row.secret_hash),
+    allowedOrigins: parseAllowedOrigins(row.settings),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
 
 const FORM_COLUMNS =
-  "id, workspace_id, name, description, status, notification_email, secret_last_four, secret_hash, created_at, updated_at";
+  "id, workspace_id, name, description, status, notification_email, settings, created_at, updated_at";
 
 export async function createForm(input: {
   workspaceId: string;
   userId: string;
   values: unknown;
-}): Promise<{ formId: string; secret: string }> {
+}): Promise<{ formId: string }> {
   const parsed = formInputSchema.safeParse(input.values);
   if (!parsed.success) {
     throw new AppError(
@@ -87,7 +88,6 @@ export async function createForm(input: {
 
   await assertCanCreateForm(input.workspaceId);
 
-  const secret = generateFormSecret();
   const admin = requireAdminClient();
   const { data, error } = await admin
     .from("forms")
@@ -96,8 +96,6 @@ export async function createForm(input: {
       name: parsed.data.name,
       description: parsed.data.description,
       notification_email: parsed.data.notificationEmail,
-      secret_hash: hashFormSecret(secret),
-      secret_last_four: lastFour(secret),
     })
     .select("id")
     .single();
@@ -113,7 +111,7 @@ export async function createForm(input: {
     metadata: { name: parsed.data.name },
   });
 
-  return { formId: data.id, secret };
+  return { formId: data.id };
 }
 
 export async function getOwnedForm(formId: string, workspaceId: string): Promise<FormRecord> {
@@ -199,6 +197,52 @@ export async function updateForm(input: {
   });
 }
 
+/** Saves the optional browser-origin allow-list (empty array = any origin). */
+export async function updateFormAllowedOrigins(input: {
+  formId: string;
+  workspaceId: string;
+  userId: string;
+  origins: string[];
+}): Promise<string[]> {
+  const form = await getOwnedForm(input.formId, input.workspaceId);
+
+  const normalized: string[] = [];
+  for (const value of input.origins) {
+    const origin = normalizeOrigin(value);
+    if (!origin) {
+      throw new AppError("VALIDATION_ERROR", `“${value}” is not a valid https origin.`, {
+        allowedOrigins: `Use an origin such as https://example.com (http is only allowed for localhost).`,
+      });
+    }
+    if (!normalized.includes(origin)) normalized.push(origin);
+  }
+  if (normalized.length > 20) {
+    throw new AppError("VALIDATION_ERROR", "Add at most 20 allowed origins.");
+  }
+
+  const settings =
+    form.allowedOrigins.length > 0 || normalized.length > 0 ? { allowed_origins: normalized } : {};
+
+  const admin = requireAdminClient();
+  const { error } = await admin
+    .from("forms")
+    .update({ settings: settings as Json })
+    .eq("id", input.formId)
+    .eq("workspace_id", input.workspaceId);
+  if (error) throw new AppError("INTERNAL_ERROR", error.message);
+
+  await admin.from("audit_logs").insert({
+    actor_user_id: input.userId,
+    workspace_id: input.workspaceId,
+    action: "form.origins_updated",
+    target_type: "form",
+    target_id: input.formId,
+    metadata: { count: normalized.length },
+  });
+
+  return normalized;
+}
+
 export async function setFormStatus(input: {
   formId: string;
   workspaceId: string;
@@ -222,34 +266,6 @@ export async function setFormStatus(input: {
     target_type: "form",
     target_id: input.formId,
   });
-}
-
-/** Rotates the submission secret. The previous secret stops working immediately. */
-export async function rotateFormSecret(input: {
-  formId: string;
-  workspaceId: string;
-  userId: string;
-}): Promise<string> {
-  await getOwnedForm(input.formId, input.workspaceId);
-  const secret = generateFormSecret();
-
-  const admin = requireAdminClient();
-  const { error } = await admin
-    .from("forms")
-    .update({ secret_hash: hashFormSecret(secret), secret_last_four: lastFour(secret) })
-    .eq("id", input.formId)
-    .eq("workspace_id", input.workspaceId);
-  if (error) throw new AppError("INTERNAL_ERROR", error.message);
-
-  await admin.from("audit_logs").insert({
-    actor_user_id: input.userId,
-    workspace_id: input.workspaceId,
-    action: "form.secret_rotated",
-    target_type: "form",
-    target_id: input.formId,
-  });
-
-  return secret;
 }
 
 export type FormWithCounts = FormRecord & { submissionCount: number; newCount: number };
@@ -283,6 +299,7 @@ export async function listFormsWithCounts(workspaceId: string): Promise<FormWith
   }));
 }
 
+/** The single public endpoint for a form. No secret or key is involved. */
 export function formSubmissionEndpoint(appUrl: string, formId: string): string {
-  return `${appUrl}/api/f/${formId}/submissions`;
+  return `${appUrl.replace(/\/+$/, "")}/api/f/${formId}`;
 }

@@ -37,7 +37,10 @@ export default async function Page() {
       />
 
       {forms.length === 0 ? (
-        <section aria-labelledby="onboarding-heading" className="rounded-lg border border-border bg-surface p-6">
+        <section
+          aria-labelledby="onboarding-heading"
+          className="rounded-lg border border-border bg-surface p-6"
+        >
           <h2 id="onboarding-heading" className="text-lg font-semibold text-foreground">
             Get your first submission in under five minutes
           </h2>
@@ -46,7 +49,7 @@ export default async function Page() {
               <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-subtle text-xs font-semibold text-accent">
                 1
               </span>
-              Create a form and get an endpoint plus a one-time secret.
+              Create a form and copy its public endpoint.
             </li>
             <li className="flex gap-3">
               <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-subtle text-xs font-semibold text-accent">
@@ -83,7 +86,10 @@ export default async function Page() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section aria-labelledby="usage-heading" className="rounded-lg border border-border bg-surface p-5">
+        <section
+          aria-labelledby="usage-heading"
+          className="rounded-lg border border-border bg-surface p-5"
+        >
           <h2 id="usage-heading" className="text-base font-semibold text-foreground">
             Monthly usage
           </h2>
@@ -96,7 +102,10 @@ export default async function Page() {
           </div>
         </section>
 
-        <section aria-labelledby="access-heading" className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5">
+        <section
+          aria-labelledby="access-heading"
+          className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5"
+        >
           <div className="flex items-center justify-between gap-3">
             <h2 id="access-heading" className="text-base font-semibold text-foreground">
               Client viewers
@@ -136,7 +145,9 @@ export default async function Page() {
             icon={Inbox}
             title="No submissions yet"
             description="Send a test submission from a form's Integration tab to see the full flow, or connect your website form."
-            action={forms.length > 0 ? <ButtonLink href="/forms">Open your forms</ButtonLink> : null}
+            action={
+              forms.length > 0 ? <ButtonLink href="/forms">Open your forms</ButtonLink> : null
+            }
           />
         ) : (
           <SubmissionTable

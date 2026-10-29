@@ -31,13 +31,7 @@ export function FormSettings({
 
       <Field label="Form name" error={state.fieldErrors?.name} required>
         {(control) => (
-          <Input
-            {...control}
-            name="name"
-            defaultValue={name}
-            maxLength={120}
-            required
-          />
+          <Input {...control} name="name" defaultValue={name} maxLength={120} required />
         )}
       </Field>
 

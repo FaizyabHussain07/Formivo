@@ -18,7 +18,11 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
     <form action={formAction} className="flex flex-col gap-5" noValidate>
       <input type="hidden" name="next" value={next} />
       {state.error ? <Alert tone="error" title={state.error} /> : null}
-      {state.notice ? <Alert tone="success" title="Check your email">{state.notice}</Alert> : null}
+      {state.notice ? (
+        <Alert tone="success" title="Check your email">
+          {state.notice}
+        </Alert>
+      ) : null}
 
       <Field
         label="Your name"

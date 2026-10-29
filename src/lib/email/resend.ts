@@ -4,8 +4,7 @@ import { getIntegrationStatus } from "@/lib/env/integrations";
 import { getServerEnv } from "@/lib/env/server";
 
 export type SendEmailResult =
-  | { sent: true; id: string | null }
-  | { sent: false; reason: "not_configured" | "provider_error" };
+  { sent: true; id: string | null } | { sent: false; reason: "not_configured" | "provider_error" };
 
 /** Sends transactional email through Resend's REST API (no SDK dependency). */
 export async function sendEmail(input: {

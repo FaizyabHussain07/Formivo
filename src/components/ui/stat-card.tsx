@@ -28,15 +28,7 @@ export function StatCard({
   );
 }
 
-export function UsageBar({
-  used,
-  limit,
-  label,
-}: {
-  used: number;
-  limit: number;
-  label: string;
-}) {
+export function UsageBar({ used, limit, label }: { used: number; limit: number; label: string }) {
   const ratio = limit <= 0 ? 0 : Math.min(100, Math.round((used / limit) * 100));
   const nearLimit = ratio >= 80;
   return (

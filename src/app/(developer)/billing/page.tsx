@@ -35,10 +35,7 @@ async function BillingContent({ searchParams }: { searchParams: SearchParams }) 
 
   return (
     <div className="flex flex-col gap-8">
-      <PageHeader
-        title="Billing"
-        description="Plans, usage and subscription for this workspace."
-      />
+      <PageHeader title="Billing" description="Plans, usage and subscription for this workspace." />
 
       {!billing.configured ? (
         <Alert tone="warning" title="Billing is not connected on this deployment">

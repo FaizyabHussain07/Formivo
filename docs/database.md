@@ -3,6 +3,10 @@
 Schema, security model, and environment assumptions for the Supabase/PostgreSQL
 backend (PRD §9, §19; specs in `product-documentations/04-data-model.md`).
 
+The public submission endpoint is identified by the form UUID alone and requires no
+secret. Form IDs are random, non-sequential UUIDs; they are public identifiers, not
+credentials. Stored submissions remain private through dashboard authentication and RLS.
+
 ## Project
 
 |              |                                                                        |
@@ -42,6 +46,8 @@ explicit "Supabase not configured" state instead of failing (see
 | `usage_periods`           | Concurrency-safe submission counters per window  | owner read only; increments via RPC                          |
 | `webhook_events`          | Webhook replay protection                        | no policies — service-role only                              |
 | `audit_logs`              | Security-relevant actions                        | no policies — service-role only                              |
+| `submission_idempotency`  | Replay protection for public submissions         | enabled, no policies — service-role only                     |
+| `rate_limit_buckets`      | Distributed fixed-window rate limiting           | enabled, no policies — service-role only                     |
 
 Key constraints (all verified against the live project):
 
@@ -60,6 +66,7 @@ Key constraints (all verified against the live project):
 | `initialize_developer_account`                                 | signup (Phase 3)                | profile + developer role + workspace + default subscription, atomic and idempotent                                                                                   |
 | `accept_client_invitation`                                     | invitation acceptance (Phase 5) | locks the invitation, validates status/expiry/email, enforces one-active-client and viewer limits, grants role + permission, marks accepted — all in one transaction |
 | `record_submission`                                            | public submission API (Phase 4) | derives workspace from the form, checks paused/limit, increments usage and inserts the submission atomically                                                         |
+| `consume_rate_limit`                                           | public submission API           | atomic shared counter; raises `RATE_LIMITED` when the window cap is exceeded                                                                                         |
 | `has_role`, `is_workspace_owner`, `owns_form`, `can_view_form` | RLS policies                    | `SECURITY DEFINER` helpers shared by every policy                                                                                                                    |
 
 All privileged functions are `SECURITY DEFINER` with `search_path = ''`, and

@@ -5,11 +5,7 @@ import { refresh, revalidatePath } from "next/cache";
 import { requireDeveloper } from "@/lib/auth/viewer";
 import { getPublicEnv } from "@/lib/env/public";
 import { AppError, errorMessage } from "@/lib/errors";
-import {
-  createInvitation,
-  revokeClientAccess,
-  revokeInvitation,
-} from "@/lib/invitations/service";
+import { createInvitation, revokeClientAccess, revokeInvitation } from "@/lib/invitations/service";
 
 export type InviteState = {
   error?: string;

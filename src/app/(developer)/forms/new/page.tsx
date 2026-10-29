@@ -27,8 +27,8 @@ export default async function Page() {
       <CreateForm />
 
       <Alert tone="info" title="Embedded form builder — coming soon">
-        An in-dashboard form builder is not part of this release. Use the endpoint and secret above
-        with your own form; Formivo works with any HTML form or server-side integration.
+        An in-dashboard form builder is not part of this release. After creating a form, copy its
+        public endpoint into your own form; Formivo works with any HTML form or HTTP client.
       </Alert>
     </div>
   );

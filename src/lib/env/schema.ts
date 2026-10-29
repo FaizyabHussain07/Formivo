@@ -53,7 +53,6 @@ export const serverEnvSchema = publicEnvSchema.extend({
   LEMONSQUEEZY_PRO_VARIANT_ID: optionalString,
   LEMONSQUEEZY_AGENCY_VARIANT_ID: optionalString,
   CRON_SECRET: optionalSecret,
-  FORM_SECRET_PEPPER: optionalSecret,
   INVITATION_TOKEN_PEPPER: optionalSecret,
 });
 

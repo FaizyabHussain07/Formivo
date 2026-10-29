@@ -228,7 +228,11 @@ export async function getSubmissionForForm(
   if (error) throw new AppError("INTERNAL_ERROR", error.message);
   if (!data) throw new AppError("LEAD_NOT_FOUND");
 
-  const { data: form } = await admin.from("forms").select("id, name").eq("id", formId).maybeSingle();
+  const { data: form } = await admin
+    .from("forms")
+    .select("id, name")
+    .eq("id", formId)
+    .maybeSingle();
   return mapRow(data as RawSubmission, new Map(form ? [[form.id, form.name]] : []));
 }
 
@@ -273,8 +277,6 @@ export async function getWorkspaceSubmissionStats(workspaceId: string): Promise<
     total: totalResult.count ?? 0,
     newCount: newResult.count ?? 0,
     thisMonth: monthResult.count ?? 0,
-    latest: (latestResult.data ?? []).map((row) =>
-      mapRow(row as RawSubmission, formNames),
-    ),
+    latest: (latestResult.data ?? []).map((row) => mapRow(row as RawSubmission, formNames)),
   };
 }

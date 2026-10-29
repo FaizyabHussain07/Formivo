@@ -66,10 +66,9 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
 
   if (error) {
     return {
-      error:
-        error.message.toLowerCase().includes("registered")
-          ? "An account with this email already exists. Sign in instead."
-          : error.message,
+      error: error.message.toLowerCase().includes("registered")
+        ? "An account with this email already exists. Sign in instead."
+        : error.message,
       values: { email, displayName },
     };
   }

@@ -5,7 +5,6 @@ export type AppErrorCode =
   | "VALIDATION_ERROR"
   | "FORM_NOT_FOUND"
   | "FORM_INACTIVE"
-  | "INVALID_FORM_SECRET"
   | "LEAD_NOT_FOUND"
   | "WORKSPACE_NOT_FOUND"
   | "INVITATION_NOT_FOUND"
@@ -31,7 +30,6 @@ const STATUS: Record<AppErrorCode, number> = {
   VALIDATION_ERROR: 422,
   FORM_NOT_FOUND: 404,
   FORM_INACTIVE: 409,
-  INVALID_FORM_SECRET: 401,
   LEAD_NOT_FOUND: 404,
   WORKSPACE_NOT_FOUND: 404,
   INVITATION_NOT_FOUND: 404,
@@ -79,8 +77,6 @@ function defaultMessage(code: AppErrorCode): string {
       return "The requested form could not be found.";
     case "FORM_INACTIVE":
       return "This form is paused and is not accepting submissions.";
-    case "INVALID_FORM_SECRET":
-      return "The form secret is invalid.";
     case "LEAD_NOT_FOUND":
       return "The requested lead could not be found.";
     case "WORKSPACE_NOT_FOUND":

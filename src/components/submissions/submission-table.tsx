@@ -1,7 +1,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+} from "@/components/ui/table";
 import { formatRelative, submissionSummary, truncate } from "@/lib/format";
 import type { SubmissionRow } from "@/lib/submissions/queries";
 

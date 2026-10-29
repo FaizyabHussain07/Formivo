@@ -67,7 +67,9 @@ export default async function Page({ params }: { params: Promise<{ token: string
                   </div>
                   <div className="flex flex-col gap-0.5">
                     <dt className="text-xs text-foreground-muted">Expires</dt>
-                    <dd className="text-foreground-secondary">{formatDate(invitation.expiresAt)}</dd>
+                    <dd className="text-foreground-secondary">
+                      {formatDate(invitation.expiresAt)}
+                    </dd>
                   </div>
                 </dl>
 

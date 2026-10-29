@@ -6,7 +6,12 @@ import { SubmissionTable, Pagination } from "@/components/submissions/submission
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input, Select } from "@/components/ui/input";
 import { requireDeveloper } from "@/lib/auth/viewer";
-import { LEAD_STATUSES, LEAD_STATUS_LABELS, isLeadStatus, listWorkspaceSubmissions } from "@/lib/submissions/queries";
+import {
+  LEAD_STATUSES,
+  LEAD_STATUS_LABELS,
+  isLeadStatus,
+  listWorkspaceSubmissions,
+} from "@/lib/submissions/queries";
 
 export const metadata: Metadata = { title: "Leads" };
 

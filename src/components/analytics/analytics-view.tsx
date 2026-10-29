@@ -2,7 +2,14 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatCard } from "@/components/ui/stat-card";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+} from "@/components/ui/table";
 import type { AnalyticsResult } from "@/lib/analytics";
 import { formatDate } from "@/lib/format";
 import { LEAD_STATUS_LABELS, LEAD_STATUSES } from "@/lib/submissions/queries";
@@ -38,13 +45,32 @@ export function AnalyticsView({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Submissions" value={analytics.total.toLocaleString("en-US")} hint={`Last ${analytics.rangeDays} days`} />
-        <StatCard label="New" value={analytics.byStatus.new.toLocaleString("en-US")} hint="Waiting for review" />
-        <StatCard label="Qualified" value={analytics.byStatus.qualified.toLocaleString("en-US")} hint="Marked qualified" />
-        <StatCard label="Converted" value={converted.toLocaleString("en-US")} hint="Closed as a customer" />
+        <StatCard
+          label="Submissions"
+          value={analytics.total.toLocaleString("en-US")}
+          hint={`Last ${analytics.rangeDays} days`}
+        />
+        <StatCard
+          label="New"
+          value={analytics.byStatus.new.toLocaleString("en-US")}
+          hint="Waiting for review"
+        />
+        <StatCard
+          label="Qualified"
+          value={analytics.byStatus.qualified.toLocaleString("en-US")}
+          hint="Marked qualified"
+        />
+        <StatCard
+          label="Converted"
+          value={converted.toLocaleString("en-US")}
+          hint="Closed as a customer"
+        />
       </div>
 
-      <section aria-labelledby="volume-heading" className="rounded-lg border border-border bg-surface p-5">
+      <section
+        aria-labelledby="volume-heading"
+        className="rounded-lg border border-border bg-surface p-5"
+      >
         <div className="flex flex-col gap-1">
           <h2 id="volume-heading" className="text-base font-semibold text-foreground">
             Submissions per day
@@ -71,7 +97,9 @@ export function AnalyticsView({
               >
                 <div
                   className="w-full rounded-t-sm bg-accent/70 transition-colors group-hover:bg-accent"
-                  style={{ height: `${Math.max(day.count === 0 ? 1 : 4, (day.count / maxDaily) * 100)}%` }}
+                  style={{
+                    height: `${Math.max(day.count === 0 ? 1 : 4, (day.count / maxDaily) * 100)}%`,
+                  }}
                 />
               </div>
             ))}
@@ -84,7 +112,10 @@ export function AnalyticsView({
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section aria-labelledby="status-heading" className="rounded-lg border border-border bg-surface p-5">
+        <section
+          aria-labelledby="status-heading"
+          className="rounded-lg border border-border bg-surface p-5"
+        >
           <h2 id="status-heading" className="text-base font-semibold text-foreground">
             Lead status
           </h2>
@@ -102,7 +133,8 @@ export function AnalyticsView({
                         {LEAD_STATUS_LABELS[status]}
                       </dt>
                       <dd className="text-sm font-medium text-foreground">
-                        {count} <span className="text-xs font-normal text-foreground-muted">({pct}%)</span>
+                        {count}{" "}
+                        <span className="text-xs font-normal text-foreground-muted">({pct}%)</span>
                       </dd>
                     </div>
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
@@ -115,13 +147,19 @@ export function AnalyticsView({
           )}
         </section>
 
-        <section aria-labelledby="forms-heading" className="rounded-lg border border-border bg-surface p-5">
+        <section
+          aria-labelledby="forms-heading"
+          className="rounded-lg border border-border bg-surface p-5"
+        >
           <h2 id="forms-heading" className="text-base font-semibold text-foreground">
             Forms
           </h2>
           {analytics.byForm.length === 0 ? (
             <div className="mt-4">
-              <EmptyState title="No forms yet" description="Create a form to start collecting leads." />
+              <EmptyState
+                title="No forms yet"
+                description="Create a form to start collecting leads."
+              />
             </div>
           ) : (
             <div className="mt-4">
@@ -136,7 +174,10 @@ export function AnalyticsView({
                   {analytics.byForm.map((form) => (
                     <TableRow key={form.formId}>
                       <TableCell>
-                        <Link href={`${basePath}/${form.formId}`} className="text-accent hover:underline">
+                        <Link
+                          href={`${basePath}/${form.formId}`}
+                          className="text-accent hover:underline"
+                        >
                           {form.name}
                         </Link>
                       </TableCell>

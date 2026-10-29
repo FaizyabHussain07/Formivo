@@ -27,7 +27,7 @@ const faqs = [
   {
     question: "What is a client viewer?",
     answer:
-      "A client account you invite to read one form's leads and analytics. Viewers cannot edit leads, rotate secrets, manage billing or see your other forms.",
+      "A client account you invite to read one form's leads and analytics. Viewers cannot edit leads, change form settings, manage billing or see your other forms.",
   },
   {
     question: "Can I cancel or downgrade?",

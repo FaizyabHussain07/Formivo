@@ -54,12 +54,9 @@ describe("parseServerEnv", () => {
     expect(env.SUPABASE_SERVICE_ROLE_KEY).toBeUndefined();
   });
 
-  it.each(["CRON_SECRET", "FORM_SECRET_PEPPER", "INVITATION_TOKEN_PEPPER"])(
-    "rejects a short %s",
-    (key) => {
-      expect(() => parseServerEnv({ [key]: "short" })).toThrow(new RegExp(key));
-    },
-  );
+  it.each(["CRON_SECRET", "INVITATION_TOKEN_PEPPER"])("rejects a short %s", (key) => {
+    expect(() => parseServerEnv({ [key]: "short" })).toThrow(new RegExp(key));
+  });
 
   it("never includes secret values in error messages", () => {
     const secret = "super-secret-value";

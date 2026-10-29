@@ -148,10 +148,7 @@ export async function listWorkspaceInvitations(workspaceId: string): Promise<Inv
   const { data, error } = await admin
     .from("client_invitations")
     .select("id, form_id, invited_email, status, expires_at, created_at, accepted_at")
-    .in(
-      "form_id",
-      [...names.keys()],
-    )
+    .in("form_id", [...names.keys()])
     .order("created_at", { ascending: false });
   if (error) throw new AppError("INTERNAL_ERROR", error.message);
 
@@ -160,7 +157,8 @@ export async function listWorkspaceInvitations(workspaceId: string): Promise<Inv
     formId: row.form_id,
     formName: names.get(row.form_id) ?? "Unknown form",
     email: row.invited_email,
-    status: row.status === "pending" && new Date(row.expires_at) <= new Date() ? "expired" : row.status,
+    status:
+      row.status === "pending" && new Date(row.expires_at) <= new Date() ? "expired" : row.status,
     expiresAt: row.expires_at,
     createdAt: row.created_at,
     acceptedAt: row.accepted_at,
@@ -182,10 +180,7 @@ export async function listWorkspaceClientAccess(
   const { data, error } = await admin
     .from("form_client_permissions")
     .select("id, form_id, client_user_id, granted_at")
-    .in(
-      "form_id",
-      [...names.keys()],
-    )
+    .in("form_id", [...names.keys()])
     .is("revoked_at", null)
     .order("granted_at", { ascending: false });
   if (error) throw new AppError("INTERNAL_ERROR", error.message);

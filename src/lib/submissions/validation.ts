@@ -5,6 +5,15 @@ const MAX_FIELDS = 100;
 const MAX_FIELD_NAME = 100;
 const MAX_STRING_VALUE = 10_000;
 
+/** Reserved helper fields accepted from HTML and JSON integrations. */
+export const RESERVED_FIELDS = new Set([
+  "_redirect",
+  "_idempotency_key",
+  "_gotcha",
+  "_honey",
+  "_subject",
+]);
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -54,28 +63,34 @@ export type NormalizedSubmission = {
 };
 
 /**
- * Validates the customer-defined payload. V1 has no per-form field schema; it
- * accepts any JSON object within size, depth, field and value limits.
+ * Accepts both documented shapes:
+ *   { "data": { ... }, "metadata": { ... } }   (explicit)
+ *   { "name": "Ada", "email": "..." }          (flat JSON / HTML fields)
+ *
+ * V1 has no per-form field schema; it accepts any JSON object within size,
+ * depth, field and value limits. Reserved helper fields are stripped.
  */
 export function parseSubmissionPayload(raw: unknown): NormalizedSubmission {
   if (!isPlainObject(raw)) {
     throw new AppError("VALIDATION_ERROR", "The request body must be a JSON object.");
   }
 
-  const rawData = raw.data;
-  if (!isPlainObject(rawData)) {
-    throw new AppError("VALIDATION_ERROR", 'The "data" field is required and must be an object.', {
-      data: "Required object.",
-    });
-  }
+  const hasDataObject = isPlainObject(raw.data);
+  const source: Record<string, unknown> = hasDataObject
+    ? (raw.data as Record<string, unknown>)
+    : raw;
 
-  if (Object.keys(rawData).length === 0) {
+  const dataEntries = Object.entries(source).filter(
+    ([key]) => !RESERVED_FIELDS.has(key) && key !== "metadata" && key !== "data",
+  );
+
+  if (dataEntries.length === 0) {
     throw new AppError("VALIDATION_ERROR", "Submit at least one field.", {
       data: "At least one field is required.",
     });
   }
 
-  const data = toJsonValue(rawData, 0);
+  const data = toJsonValue(Object.fromEntries(dataEntries), 0);
   if (!isPlainObject(data)) {
     throw new AppError("VALIDATION_ERROR", 'The "data" field must be an object.');
   }
@@ -93,4 +108,36 @@ export function parseSubmissionPayload(raw: unknown): NormalizedSubmission {
   }
 
   return { data: data as Record<string, Json>, metadata };
+}
+
+/** Converts HTML form fields into the same object shape the JSON path accepts. */
+export function formEntriesToPayload(entries: Iterable<[string, string]>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of entries) {
+    if (key in result) {
+      const current = result[key];
+      result[key] = Array.isArray(current) ? [...current, value] : [current, value];
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+export function readHelperField(raw: unknown, key: string): string | null {
+  if (!isPlainObject(raw)) return null;
+  const value = raw[key];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+/** Validates a user-supplied redirect target for HTML integrations. */
+export function safeRedirectTarget(value: string | null): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
 }

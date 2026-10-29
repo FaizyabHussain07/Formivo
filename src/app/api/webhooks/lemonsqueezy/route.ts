@@ -9,9 +9,7 @@ export async function POST(request: Request) {
     const rawBody = await request.text();
     const signature = request.headers.get("x-signature");
     const headerEventId = request.headers.get("x-event-id");
-    const eventId =
-      headerEventId?.trim() ||
-      createHash("sha256").update(rawBody).digest("hex");
+    const eventId = headerEventId?.trim() || createHash("sha256").update(rawBody).digest("hex");
 
     const result = await processLemonsqueezyWebhook({ rawBody, signature, eventId });
 

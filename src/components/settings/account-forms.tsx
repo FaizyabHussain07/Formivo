@@ -7,10 +7,7 @@ import {
   updateProfileAction,
   type AccountState,
 } from "@/app/account-actions";
-import {
-  updateWorkspaceAction,
-  type WorkspaceState,
-} from "@/app/(developer)/settings/actions";
+import { updateWorkspaceAction, type WorkspaceState } from "@/app/(developer)/settings/actions";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";

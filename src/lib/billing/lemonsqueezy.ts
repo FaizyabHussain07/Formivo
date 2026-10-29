@@ -90,7 +90,10 @@ export async function createCheckoutUrl(input: {
   };
   const url = body.data?.attributes?.url;
   if (!url || !url.startsWith("https://")) {
-    throw new AppError("INTERNAL_ERROR", "The checkout URL was missing from the provider response.");
+    throw new AppError(
+      "INTERNAL_ERROR",
+      "The checkout URL was missing from the provider response.",
+    );
   }
   return url;
 }
@@ -121,10 +124,7 @@ export function verifyWebhookSignature(
   secret: string,
 ): boolean {
   if (!signature) return false;
-  const expected = Buffer.from(
-    createHmac("sha256", secret).update(rawBody).digest("hex"),
-    "utf8",
-  );
+  const expected = Buffer.from(createHmac("sha256", secret).update(rawBody).digest("hex"), "utf8");
   const actual = Buffer.from(signature, "utf8");
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }

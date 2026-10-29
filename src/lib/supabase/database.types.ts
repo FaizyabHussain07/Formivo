@@ -84,8 +84,6 @@ export type Database = {
           description: string | null;
           status: string;
           notification_email: string | null;
-          secret_hash: string | null;
-          secret_last_four: string | null;
           settings: Json;
           created_at: string;
           updated_at: string;
@@ -97,8 +95,6 @@ export type Database = {
           description?: string | null;
           status?: string;
           notification_email?: string | null;
-          secret_hash?: string | null;
-          secret_last_four?: string | null;
           settings?: Json;
           created_at?: string;
           updated_at?: string;
@@ -108,8 +104,6 @@ export type Database = {
           description?: string | null;
           status?: string;
           notification_email?: string | null;
-          secret_hash?: string | null;
-          secret_last_four?: string | null;
           settings?: Json;
           updated_at?: string;
         };

@@ -38,7 +38,9 @@ export async function getWorkspaceEntitlements(
   const [subscriptionResult, formsResult, usageResult] = await Promise.all([
     admin
       .from("subscriptions")
-      .select("plan_key, status, cancel_at_period_end, current_period_end, provider_subscription_id")
+      .select(
+        "plan_key, status, cancel_at_period_end, current_period_end, provider_subscription_id",
+      )
       .eq("workspace_id", workspaceId)
       .maybeSingle(),
     admin.from("forms").select("id, status").eq("workspace_id", workspaceId),

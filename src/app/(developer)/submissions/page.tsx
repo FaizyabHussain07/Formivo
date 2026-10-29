@@ -53,10 +53,7 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
         title="Submissions"
         description={`${result.total.toLocaleString("en-US")} leads across your workspace.`}
         actions={
-          <Link
-            href="/forms/new"
-            className="text-sm font-medium text-accent hover:underline"
-          >
+          <Link href="/forms/new" className="text-sm font-medium text-accent hover:underline">
             New form
           </Link>
         }
@@ -111,7 +108,9 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
       {result.items.length === 0 ? (
         <EmptyState
           icon={Inbox}
-          title={search || status !== "all" || formId ? "No matching submissions" : "No submissions yet"}
+          title={
+            search || status !== "all" || formId ? "No matching submissions" : "No submissions yet"
+          }
           description={
             search || status !== "all" || formId
               ? "Try clearing filters or searching for something else."

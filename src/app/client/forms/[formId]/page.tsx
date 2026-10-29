@@ -51,9 +51,7 @@ export default async function Page({ params }: { params: Promise<{ formId: strin
         ) : (
           <SubmissionTable
             items={recent.items}
-            hrefFor={(submission) =>
-              `/client/forms/${form.formId}/leads/${submission.id}`
-            }
+            hrefFor={(submission) => `/client/forms/${form.formId}/leads/${submission.id}`}
           />
         )}
       </section>

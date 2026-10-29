@@ -53,9 +53,9 @@ export default async function Page({ params }: { params: Promise<{ formId: strin
           hint="In the five most recent"
         />
         <StatCard
-          label="Secret"
-          value={form.hasSecret ? `••••${form.secretLastFour ?? "••••"}` : "Not set"}
-          hint={form.hasSecret ? "Rotate from Integration" : "Generate one to accept submissions"}
+          label="Form ID"
+          value={<span className="font-mono text-sm">{form.id.slice(0, 8)}…</span>}
+          hint="Identifies the public endpoint"
         />
       </div>
 

@@ -5,11 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils/cn";
 
-export function FormTabs({
-  tabs,
-}: {
-  tabs: { href: string; label: string; exact?: boolean }[];
-}) {
+export function FormTabs({ tabs }: { tabs: { href: string; label: string; exact?: boolean }[] }) {
   const pathname = usePathname();
 
   return (

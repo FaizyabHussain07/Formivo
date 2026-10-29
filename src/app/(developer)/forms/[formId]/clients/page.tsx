@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { revokeClientAccessAction, revokeInvitationAction } from "@/app/(developer)/clients/actions";
+import {
+  revokeClientAccessAction,
+  revokeInvitationAction,
+} from "@/app/(developer)/clients/actions";
 import { InviteClientForm } from "@/components/clients/invite-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,10 +50,7 @@ export default async function Page({ params }: { params: Promise<{ formId: strin
           Share “{form.name}” with a client
         </h2>
         <div className="rounded-lg border border-border bg-surface p-5">
-          <InviteClientForm
-            forms={[{ id: form.id, name: form.name }]}
-            fixedFormId={form.id}
-          />
+          <InviteClientForm forms={[{ id: form.id, name: form.name }]} fixedFormId={form.id} />
         </div>
       </section>
 

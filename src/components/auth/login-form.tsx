@@ -18,13 +18,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   not_configured: "Authentication is not configured on this deployment.",
 };
 
-export function LoginForm({
-  next,
-  errorCode,
-}: {
-  next: string;
-  errorCode?: string;
-}) {
+export function LoginForm({ next, errorCode }: { next: string; errorCode?: string }) {
   const [state, formAction, pending] = useActionState(signInAction, initialState);
   const linkError = errorCode ? ERROR_MESSAGES[errorCode] : undefined;
 

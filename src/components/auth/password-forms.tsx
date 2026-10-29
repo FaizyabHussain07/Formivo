@@ -21,7 +21,11 @@ export function ForgotPasswordForm() {
   return (
     <form action={formAction} className="flex flex-col gap-5" noValidate>
       {state.error ? <Alert tone="error" title={state.error} /> : null}
-      {state.notice ? <Alert tone="success" title="Check your inbox">{state.notice}</Alert> : null}
+      {state.notice ? (
+        <Alert tone="success" title="Check your inbox">
+          {state.notice}
+        </Alert>
+      ) : null}
 
       <Field label="Email" required>
         {(control) => (

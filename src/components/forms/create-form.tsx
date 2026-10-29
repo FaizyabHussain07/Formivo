@@ -9,22 +9,22 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
 
-import { SecretReveal } from "./secret-reveal";
-
 const initialState: FormActionState = {};
 
 export function CreateForm() {
   const [state, formAction, pending] = useActionState(createFormAction, initialState);
 
-  if (state.secret && state.formId) {
+  if (state.formId) {
     return (
       <div className="flex flex-col gap-5">
         <Alert tone="success" title="Form created">
-          Your endpoint is live. Save the secret below, then connect your existing form.
+          Your public endpoint is ready. It needs no secret or API key — connect any HTML form or
+          send a JSON request from your own website.
         </Alert>
-        <SecretReveal secret={state.secret} />
         <div className="flex flex-wrap gap-2">
-          <ButtonLink href={`/forms/${state.formId}/integration`}>Open integration guide</ButtonLink>
+          <ButtonLink href={`/forms/${state.formId}/integration`}>
+            Open integration guide
+          </ButtonLink>
           <ButtonLink href={`/forms/${state.formId}`} variant="secondary">
             Go to form
           </ButtonLink>
@@ -78,7 +78,7 @@ export function CreateForm() {
 
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" loading={pending} loadingText="Creating form…">
-          Create form and generate secret
+          Create form
         </Button>
         <Link href="/forms" className="text-sm text-foreground-secondary hover:text-foreground">
           Cancel

@@ -7,8 +7,8 @@ import { AppError, errorMessage } from "@/lib/errors";
 import {
   createForm,
   getOwnedForm,
-  rotateFormSecret,
   setFormStatus,
+  updateFormAllowedOrigins,
   updateForm,
 } from "@/lib/forms/service";
 import { ingestSubmission } from "@/lib/submissions/service";
@@ -17,7 +17,6 @@ export type FormActionState = {
   error?: string;
   fieldErrors?: Record<string, string>;
   success?: string;
-  secret?: string;
   formId?: string;
 };
 
@@ -43,7 +42,7 @@ export async function createFormAction(
     });
     revalidatePath("/forms");
     revalidatePath("/dashboard");
-    return { formId: result.formId, secret: result.secret };
+    return { formId: result.formId };
   } catch (error) {
     return {
       error: errorMessage(error),
@@ -79,22 +78,38 @@ export async function updateFormAction(
   }
 }
 
-export async function rotateSecretAction(
+export async function updateOriginsAction(
   _prev: FormActionState,
   formData: FormData,
 ): Promise<FormActionState> {
   const developer = await requireDeveloper();
   const formId = read(formData, "formId");
+  const raw = read(formData, "allowedOrigins");
+  const origins = raw
+    .split(/[\n,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+
   try {
-    const secret = await rotateFormSecret({
+    const saved = await updateFormAllowedOrigins({
       formId,
       workspaceId: developer.workspace.id,
       userId: developer.user.id,
+      origins,
     });
     revalidatePath(`/forms/${formId}/integration`);
-    return { secret };
+    refresh();
+    return {
+      success:
+        saved.length === 0
+          ? "Origin restrictions removed. The endpoint accepts browser submissions from any site."
+          : `Saved ${saved.length} allowed origin${saved.length === 1 ? "" : "s"}.`,
+    };
   } catch (error) {
-    return { error: errorMessage(error) };
+    return {
+      error: errorMessage(error),
+      fieldErrors: error instanceof AppError ? error.fields : undefined,
+    };
   }
 }
 
@@ -129,7 +144,7 @@ export async function sendTestSubmissionAction(
     const name = read(formData, "name") || "Test submission";
     const result = await ingestSubmission({
       formId,
-      skipSecret: true,
+      internal: true,
       payload: {
         data: {
           name,

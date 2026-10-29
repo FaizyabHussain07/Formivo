@@ -3,7 +3,8 @@ import "server-only";
 import { getWorkspaceEntitlements } from "@/lib/billing/entitlements";
 import { currentUsageWindow } from "@/lib/billing/plans";
 import { AppError, mapDatabaseError } from "@/lib/errors";
-import { hashRequestBody, verifyFormSecret } from "@/lib/security/tokens";
+import { isOriginAllowed, parseAllowedOrigins } from "@/lib/forms/service";
+import { hashRequestBody } from "@/lib/security/tokens";
 import { requireAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/supabase/database.types";
 
@@ -13,22 +14,38 @@ type FormForSubmission = {
   id: string;
   workspace_id: string;
   status: string;
-  secret_hash: string | null;
+  settings: Json;
 };
 
 async function loadForm(formId: string): Promise<FormForSubmission> {
   const admin = requireAdminClient();
   const { data, error } = await admin
     .from("forms")
-    .select("id, workspace_id, status, secret_hash")
+    .select("id, workspace_id, status, settings")
     .eq("id", formId)
     .maybeSingle();
   if (error) throw new AppError("INTERNAL_ERROR", error.message);
   if (!data) throw new AppError("FORM_NOT_FOUND");
-  return data;
+  return data as FormForSubmission;
 }
 
-async function enforceRateLimit(bucket: string, limit: number): Promise<void> {
+export type FormOriginPolicy = {
+  allowedOrigins: string[];
+  status: string;
+};
+
+/** Origin policy for CORS/preflight, without running the submission pipeline. */
+export async function getFormOriginPolicy(formId: string): Promise<FormOriginPolicy | null> {
+  try {
+    const form = await loadForm(formId);
+    return { allowedOrigins: parseAllowedOrigins(form.settings), status: form.status };
+  } catch (error) {
+    if (error instanceof AppError && error.code === "FORM_NOT_FOUND") return null;
+    throw error;
+  }
+}
+
+async function enforceRateLimit(bucket: string, limit: number, label: string): Promise<void> {
   const admin = requireAdminClient();
   const windowStart = new Date(Math.floor(Date.now() / 60_000) * 60_000).toISOString();
   const { error } = await admin.rpc("consume_rate_limit", {
@@ -37,7 +54,11 @@ async function enforceRateLimit(bucket: string, limit: number): Promise<void> {
     p_limit: limit,
   });
   if (error) {
-    if (error.message.includes("RATE_LIMITED")) throw new AppError("RATE_LIMITED");
+    if (error.message.includes("RATE_LIMITED")) {
+      // Operational signal only — no IPs, payloads or personal data.
+      console.warn(`[formivo] rate limit reached (${label})`);
+      throw new AppError("RATE_LIMITED");
+    }
     throw new AppError("INTERNAL_ERROR", error.message);
   }
 }
@@ -76,7 +97,6 @@ async function claimIdempotency(
 
   if (claimError) {
     if (claimError.code === "23505") {
-      // Lost a race with a concurrent identical request.
       const { data: raced } = await admin
         .from("submission_idempotency")
         .select("request_hash, submission_id")
@@ -96,12 +116,12 @@ async function claimIdempotency(
 
 type IngestInput = {
   formId: string;
-  secret?: string;
   payload: unknown;
   sourceOrigin?: string | null;
+  requestOrigin?: string | null;
   idempotencyKey?: string | null;
   clientIp?: string | null;
-  skipSecret?: boolean;
+  internal?: boolean;
 };
 
 export type IngestResult = {
@@ -112,32 +132,30 @@ export type IngestResult = {
 };
 
 /**
- * The single submission pipeline used by both the public API and the dashboard's
- * "send test submission" action. Authorization for the internal path happens
- * before this call; the public path verifies the form secret here.
+ * The single submission pipeline used by the public endpoint and the dashboard's
+ * test action. The public endpoint requires only the form id: security comes from
+ * form lifecycle checks, rate limits, quotas, payload validation and origin policy.
+ *
+ * There is deliberately no secret, key or token in this flow.
  */
 export async function ingestSubmission(input: IngestInput): Promise<IngestResult> {
   const form = await loadForm(input.formId);
 
   if (form.status !== "active") throw new AppError("FORM_INACTIVE");
 
-  if (!input.skipSecret) {
-    if (!input.secret) throw new AppError("INVALID_FORM_SECRET", "Missing form secret.");
-    if (!form.secret_hash) {
+  if (!input.internal) {
+    if (!isOriginAllowed(input.requestOrigin ?? null, parseAllowedOrigins(form.settings))) {
       throw new AppError(
-        "INVALID_FORM_SECRET",
-        "This form has no active secret. Generate one from the integration page.",
+        "FORBIDDEN",
+        "This website is not allowed to submit to this form. Ask the form owner to allow its origin.",
       );
     }
-    if (!verifyFormSecret(input.secret, form.secret_hash)) {
-      throw new AppError("INVALID_FORM_SECRET");
-    }
-  }
 
-  if (!input.skipSecret) {
-    await enforceRateLimit(`submission:form:${form.id}`, 120);
+    // Distributed fixed-window limits: per form, per IP, and per form+IP.
+    await enforceRateLimit(`submission:form:${form.id}`, 120, "form");
     if (input.clientIp) {
-      await enforceRateLimit(`submission:ip:${input.clientIp}`, 30);
+      await enforceRateLimit(`submission:ip:${input.clientIp}`, 60, "ip");
+      await enforceRateLimit(`submission:form-ip:${form.id}:${input.clientIp}`, 30, "form-ip");
     }
   }
 

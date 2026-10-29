@@ -41,7 +41,7 @@ export default async function Page() {
         <EmptyState
           icon={FileText}
           title="Create your first form"
-          description="Each form gets a secure submission endpoint and secret you can connect to an existing HTML form or backend."
+          description="Each form gets a public submission endpoint you can connect to an existing HTML form or any HTTP client. No API key required."
           action={<ButtonLink href="/forms/new">Create a form</ButtonLink>}
         />
       ) : (
