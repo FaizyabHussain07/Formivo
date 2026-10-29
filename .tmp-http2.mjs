@@ -6,6 +6,8 @@ const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUP
 const { data: form, error } = await admin.from("forms").insert({ workspace_id: cfg.workspaceId, name: "Endpoint-only verification" }).select("id").single();
 if (error) throw error;
 const formId = form.id;
+const { data: beforeUsage } = await admin.from("usage_periods").select("submission_count").eq("workspace_id", cfg.workspaceId).single();
+const startingUsage = beforeUsage?.submission_count ?? 0;
 const base = `http://localhost:3100/api/f/${formId}`;
 const results = {};
 
@@ -62,6 +64,6 @@ if (results.preflightOpen.acao !== "*") { ok = false; console.log("FAIL open COR
 if (results.preflightAllowed.acao !== "https://allowed.example") { ok = false; console.log("FAIL allowed CORS", results.preflightAllowed.acao); }
 if (results.preflightEvil.acao) { ok = false; console.log("FAIL evil CORS", results.preflightEvil.acao); }
 if (results.saved !== 5) { ok = false; console.log("FAIL saved", results.saved, results.savedPayload); }
-if (results.usage !== 5) { ok = false; console.log("FAIL usage", results.usage); }
+if (results.usage !== startingUsage + 5) { ok = false; console.log("FAIL usage", results.usage, "expected", startingUsage + 5); }
 console.log(ok ? "ENDPOINT-ONLY E2E PASS" : "ENDPOINT-ONLY E2E FAIL");
 console.log(JSON.stringify({ statuses: Object.fromEntries(Object.entries(results).filter(([k]) => typeof results[k]?.status === "number").map(([k, v]) => [k, v.status])), saved: results.saved, usage: results.usage, firstLead: results.json.body.slice(0, 90) }, null, 2));
