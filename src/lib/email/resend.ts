@@ -4,7 +4,8 @@ import { getIntegrationStatus } from "@/lib/env/integrations";
 import { getServerEnv } from "@/lib/env/server";
 
 export type SendEmailResult =
-  { sent: true; id: string | null } | { sent: false; reason: "not_configured" | "provider_error" };
+  | { sent: true; id: string | null }
+  | { sent: false; reason: "not_configured" | "rate_limited" | "provider_error" };
 
 /** Sends transactional email through Resend's REST API (no SDK dependency). */
 export async function sendEmail(input: {
@@ -39,7 +40,8 @@ export async function sendEmail(input: {
     if (!response.ok) {
       // Never log the response body: it can echo provider details.
       console.error(`Resend responded with status ${response.status}`);
-      return { sent: false, reason: "provider_error" };
+      // 429 = the provider's daily/monthly sending cap for this account.
+      return { sent: false, reason: response.status === 429 ? "rate_limited" : "provider_error" };
     }
 
     const body = (await response.json().catch(() => null)) as { id?: string } | null;

@@ -36,6 +36,21 @@ function validatePassword(password: string): string | null {
   return null;
 }
 
+/** Provider messages are technical and alarming; show an actionable sentence instead. */
+function friendlyAuthError(message: string): string {
+  const normalized = message.toLowerCase();
+  if (normalized.includes("rate limit") || normalized.includes("too many")) {
+    return "Too many emails were requested in a short time. Wait about a minute, then request another one.";
+  }
+  if (normalized.includes("registered")) {
+    return "An account with this email already exists. Sign in instead.";
+  }
+  if (normalized.includes("password should be")) {
+    return "Use at least 8 characters for your password.";
+  }
+  return message;
+}
+
 export async function signUpAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const displayName = readString(formData, "displayName");
   const email = readString(formData, "email").toLowerCase();
@@ -66,9 +81,7 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
 
   if (error) {
     return {
-      error: error.message.toLowerCase().includes("registered")
-        ? "An account with this email already exists. Sign in instead."
-        : error.message,
+      error: friendlyAuthError(error.message),
       values: { email, displayName },
     };
   }

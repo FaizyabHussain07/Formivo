@@ -1,20 +1,10 @@
-
-> formivo@0.1.0 dev
-> next dev
-
 ▲ Next.js 16.4.3 (Turbopack)
-- Local:         http://localhost:60264
-- Network:       http://192.168.1.117:60264
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.117:3000
 - Environments: .env.local
-✓ Ready in 985ms
-✓ Running next.config.ts took 85ms
-⨯ Another next dev server is already running.
+✓ Ready in 1128ms
+✓ Running next.config.ts took 91ms
+- Cache Components enabled
+- Partial Prefetching enabled
 
-- Local:        http://localhost:3000
-- PID:          5236
-- Dir:          D:\faizyab-husssain-pr\my-all-saas\formivo\formivo
-- Log:          .next\dev\logs\next-development.log
-
-You can access the existing server at http://localhost:3000,
-or run taskkill /PID 5236 /F to stop it and start a new one.
-[?25h
+ GET / 200 in 2.1s (next.js: 1475ms, proxy.ts: 136ms, application-code: 505ms)

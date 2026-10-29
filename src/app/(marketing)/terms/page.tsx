@@ -53,7 +53,7 @@ const sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] 
   {
     heading: "Availability",
     paragraphs: [
-      "We work to keep Formivo available, but the service is provided \"as is\" without a guarantee of uninterrupted uptime. Planned maintenance and incidents will be communicated through your account email where possible.",
+      'We work to keep Formivo available, but the service is provided "as is" without a guarantee of uninterrupted uptime. Planned maintenance and incidents will be communicated through your account email where possible.',
     ],
   },
   {
@@ -92,7 +92,10 @@ export default function Page() {
               {section.heading}
             </h2>
             {section.paragraphs.map((paragraph) => (
-              <p key={paragraph} className="max-w-3xl text-sm leading-relaxed text-foreground-secondary">
+              <p
+                key={paragraph}
+                className="max-w-3xl text-sm leading-relaxed text-foreground-secondary"
+              >
                 {paragraph}
               </p>
             ))}
@@ -117,7 +120,11 @@ export default function Page() {
             {siteConfig.contactEmail}
           </Link>{" "}
           for anything you want to ask — including a copy of your data or account closure. See also
-          our <Link href="/privacy" className="font-medium text-accent hover:underline">privacy policy</Link>.
+          our{" "}
+          <Link href="/privacy" className="font-medium text-accent hover:underline">
+            privacy policy
+          </Link>
+          .
         </p>
       </section>
     </Container>

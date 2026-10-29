@@ -99,7 +99,10 @@ export default function Page() {
               {section.heading}
             </h2>
             {section.paragraphs.map((paragraph) => (
-              <p key={paragraph} className="max-w-3xl text-sm leading-relaxed text-foreground-secondary">
+              <p
+                key={paragraph}
+                className="max-w-3xl text-sm leading-relaxed text-foreground-secondary"
+              >
                 {paragraph}
               </p>
             ))}
@@ -124,7 +127,11 @@ export default function Page() {
           >
             {siteConfig.contactEmail}
           </Link>{" "}
-          or see our <Link href="/terms" className="font-medium text-accent hover:underline">terms of service</Link>.
+          or see our{" "}
+          <Link href="/terms" className="font-medium text-accent hover:underline">
+            terms of service
+          </Link>
+          .
         </p>
       </section>
     </Container>

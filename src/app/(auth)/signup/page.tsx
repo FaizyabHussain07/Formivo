@@ -16,7 +16,13 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   );
 }
 
-function SignupShell({ invitation, children }: { invitation: boolean; children?: React.ReactNode }) {
+function SignupShell({
+  invitation,
+  children,
+}: {
+  invitation: boolean;
+  children?: React.ReactNode;
+}) {
   return (
     <Card className="shadow-[0_12px_32px_-20px_rgb(11_31_28/0.25)]">
       <CardHeader>

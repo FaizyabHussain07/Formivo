@@ -7,9 +7,10 @@ import { siteConfig } from "@/config/site";
  */
 export const SITE_URL = siteConfig.productionUrl;
 
-/** Absolute canonical URL for a public page. `/` is the only route without a segment. */
+/** Absolute canonical URL for a public page. No trailing slashes, so the homepage
+ * canonical, sitemap entry and social URL are all byte-identical strings. */
 export function canonicalUrl(path = "/"): string {
-  if (path === "/" || path === "") return `${SITE_URL}/`;
+  if (path === "/" || path === "") return SITE_URL;
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${SITE_URL}${normalized}`;
 }

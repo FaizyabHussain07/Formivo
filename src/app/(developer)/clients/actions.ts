@@ -41,12 +41,16 @@ export async function inviteClientAction(
     revalidatePath("/clients");
     revalidatePath(`/forms/${formId}/clients`);
     refresh();
+    if (result.emailSent) {
+      return { success: `Invitation sent to ${email}.`, emailSent: true, invitedEmail: email };
+    }
     return {
-      success: result.emailSent
-        ? `Invitation sent to ${email}.`
-        : `Invitation created for ${email}. Email delivery is unavailable, so share the secure link below yourself.`,
-      inviteUrl: result.emailSent ? undefined : result.inviteUrl,
-      emailSent: result.emailSent,
+      success:
+        result.emailFailureReason === "rate_limited"
+          ? `Invitation created for ${email}, but the email provider's sending limit was reached, so the email was not delivered. Share the secure link below instead, or try again after the limit resets.`
+          : `Invitation created for ${email}. Email delivery is unavailable, so share the secure link below yourself.`,
+      inviteUrl: result.inviteUrl,
+      emailSent: false,
       emailFailureReason: result.emailFailureReason,
       invitedEmail: email,
     };

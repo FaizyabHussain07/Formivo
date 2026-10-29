@@ -1,5 +1,5 @@
 import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
-import { canonicalUrl } from "@/lib/seo";
+import { SITE_URL, canonicalUrl } from "@/lib/seo";
 
 /**
  * JSON-LD for structured data. Values are escaped so user-controlled strings can never
@@ -23,7 +23,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: "Formivo",
     url: canonicalUrl("/"),
-    logo: `${canonicalUrl("/")}formivo-logo.png`,
+    logo: `${SITE_URL}/formivo-logo.png`,
     email: "team@formivo.faizyab.me",
     description:
       "A developer-first form backend: one public endpoint per form, a dashboard for submissions, and read-only client access.",

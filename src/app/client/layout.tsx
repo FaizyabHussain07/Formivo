@@ -11,9 +11,7 @@ export const instant = false;
 async function ClientIdentity() {
   const client = await getClientContext();
   if (!client) return null;
-  return (
-    <UserPanel name={client.user.displayName} email={client.user.email} context="Formivo" />
-  );
+  return <UserPanel name={client.user.displayName} email={client.user.email} context="Formivo" />;
 }
 
 export default function ClientLayout({ children }: LayoutProps<"/client">) {

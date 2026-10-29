@@ -20,12 +20,7 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
     monthlyLeads: 300,
     viewers: 3,
     description: "For trying Formivo on a real project.",
-    features: [
-      "3 active forms",
-      "300 submissions / month",
-      "3 client viewers",
-      "Email support",
-    ],
+    features: ["3 active forms", "300 submissions / month", "3 client viewers", "Email support"],
   },
   pro: {
     key: "pro",

@@ -1,187 +1,25 @@
 ▲ Next.js 16.4.3
 - Local:         http://localhost:3101
 - Network:       http://192.168.1.117:3101
-✓ Ready in 481ms
-✓ Running next.config.ts took 112ms
-Error: Route "/": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/signup": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/docs": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/signup": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/signup": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/signup": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/login": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/login": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
-Error: Route "/login": Next.js encountered the unstable value `Date.now()` while prerendering.
-
-This value can change between renders, so it must be either prerendered or computed later.
-
-Ways to fix this:
-  - [dynamic] Render at request time by adding a dynamic data access (e.g. `await connection()`) before this call
-  - [cache] Prerender and cache the value with `"use cache"`
-  - [client] Render the value on the client with `"use client"`
-  - [measure] If the value is for telemetry, use a timing API such as `performance.now()`
-
-Learn more: https://nextjs.org/docs/messages/blocking-prerender-current-time
-    at dd.__loadSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12946)
-    at async dd._useSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:12344)
-    at async dd._emitInitialSession (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\ssr\_0lfcail2vk8c_._.js:97:20075)
+✓ Ready in 479ms
+✓ Running next.config.ts took 100ms
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at iC (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:18:47642)
+    at async iN (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:18:48569)
+    at async iI (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:18:48026)
+    at async r (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:31:23794)
+    at async (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:31:24057) {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at iC (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:18:47642)
+    at async iN (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:18:48569)
+    at async iI (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:18:48026)
+    at async r (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:31:23794)
+    at async (D:\faizyab-husssain-pr\my-all-saas\formivo\formivo\.next\server\chunks\[root-of-the-server]__0elcznlsxdz56._.js:31:24057) {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
