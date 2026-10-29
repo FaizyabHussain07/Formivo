@@ -1,23 +1,38 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { Alert } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SignupForm } from "@/components/auth/signup-form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const metadata: Metadata = { title: "Create an account", robots: { index: false } };
+export const metadata: Metadata = { title: "Create account", robots: { index: false } };
 
-export default function Page() {
+type SearchParams = Promise<{ next?: string }>;
+
+export default function Page({ searchParams }: { searchParams: SearchParams }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          <span className="text-xl">Create an account</span>
+          <span className="text-xl">Create your workspace</span>
         </CardTitle>
+        <CardDescription>
+          Free forever for 3 forms and 100 submissions a month. No card required.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Alert tone="warning" title="Authentication is not available yet">
-          Accounts are not enabled in this build. No credentials are collected on this page.
-        </Alert>
+        <Suspense fallback={<SignupForm />}>
+          <SignupContent searchParams={searchParams} />
+        </Suspense>
       </CardContent>
     </Card>
   );
+}
+
+async function SignupContent({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const next =
+    params.next && params.next.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : "/dashboard";
+  return <SignupForm next={next} />;
 }

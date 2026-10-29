@@ -84,6 +84,8 @@ export type Database = {
           description: string | null;
           status: string;
           notification_email: string | null;
+          secret_hash: string | null;
+          secret_last_four: string | null;
           settings: Json;
           created_at: string;
           updated_at: string;
@@ -95,6 +97,8 @@ export type Database = {
           description?: string | null;
           status?: string;
           notification_email?: string | null;
+          secret_hash?: string | null;
+          secret_last_four?: string | null;
           settings?: Json;
           created_at?: string;
           updated_at?: string;
@@ -104,6 +108,8 @@ export type Database = {
           description?: string | null;
           status?: string;
           notification_email?: string | null;
+          secret_hash?: string | null;
+          secret_last_four?: string | null;
           settings?: Json;
           updated_at?: string;
         };
@@ -114,6 +120,7 @@ export type Database = {
           id: string;
           form_id: string;
           data: Json;
+          metadata: Json;
           status: string;
           source_origin: string | null;
           created_at: string;
@@ -123,6 +130,7 @@ export type Database = {
           id?: string;
           form_id: string;
           data: Json;
+          metadata?: Json;
           status?: string;
           source_origin?: string | null;
           created_at?: string;
@@ -130,6 +138,7 @@ export type Database = {
         };
         Update: {
           data?: Json;
+          metadata?: Json;
           status?: string;
           source_origin?: string | null;
           updated_at?: string;
@@ -325,6 +334,44 @@ export type Database = {
         };
         Relationships: [];
       };
+      submission_idempotency: {
+        Row: {
+          id: string;
+          form_id: string;
+          idempotency_key: string;
+          request_hash: string;
+          submission_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          form_id: string;
+          idempotency_key: string;
+          request_hash: string;
+          submission_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          submission_id?: string | null;
+        };
+        Relationships: [];
+      };
+      rate_limit_buckets: {
+        Row: {
+          bucket: string;
+          window_start: string;
+          request_count: number;
+        };
+        Insert: {
+          bucket: string;
+          window_start: string;
+          request_count?: number;
+        };
+        Update: {
+          request_count?: number;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -358,8 +405,43 @@ export type Database = {
           p_max_submissions: number;
           p_data: Json;
           p_source_origin?: string;
+          p_metadata?: Json;
         };
         Returns: Json;
+      };
+      api_initialize_developer_account: {
+        Args: {
+          p_user_id: string;
+          p_email: string;
+          p_display_name?: string;
+          p_workspace_name?: string;
+        };
+        Returns: Json;
+      };
+      api_accept_client_invitation: {
+        Args: {
+          p_token_hash: string;
+          p_user_id: string;
+          p_user_email: string;
+          p_max_viewers: number;
+        };
+        Returns: Json;
+      };
+      api_record_submission: {
+        Args: {
+          p_form_id: string;
+          p_period_start: string;
+          p_period_end: string;
+          p_max_submissions: number;
+          p_data: Json;
+          p_source_origin?: string;
+          p_metadata?: Json;
+        };
+        Returns: Json;
+      };
+      consume_rate_limit: {
+        Args: { p_bucket: string; p_window_start: string; p_limit: number };
+        Returns: number;
       };
     };
     Enums: Record<string, never>;

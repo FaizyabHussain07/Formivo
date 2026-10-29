@@ -13,6 +13,7 @@ type AppShellProps = {
   contextLabel: string;
   homeHref: string;
   exactHrefs?: string[];
+  footer?: ReactNode;
   children: ReactNode;
 };
 
@@ -23,6 +24,7 @@ export function AppShell({
   contextLabel,
   homeHref,
   exactHrefs = [],
+  footer,
   children,
 }: AppShellProps) {
   return (
@@ -52,6 +54,7 @@ export function AppShell({
             ))}
           </ul>
         </nav>
+        {footer ? <div className="border-t border-border p-3">{footer}</div> : null}
       </aside>
 
       <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 focus:outline-none">

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { Alert } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ForgotPasswordForm } from "@/components/auth/password-forms";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const metadata: Metadata = { title: "Reset your password", robots: { index: false } };
+export const metadata: Metadata = { title: "Reset password", robots: { index: false } };
 
 export default function Page() {
   return (
@@ -12,11 +12,12 @@ export default function Page() {
         <CardTitle>
           <span className="text-xl">Reset your password</span>
         </CardTitle>
+        <CardDescription>
+          Enter your account email and we will send you a secure reset link.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Alert tone="warning" title="Authentication is not available yet">
-          Accounts are not enabled in this build. No credentials are collected on this page.
-        </Alert>
+        <ForgotPasswordForm />
       </CardContent>
     </Card>
   );

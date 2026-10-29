@@ -1,23 +1,37 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { Alert } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoginForm } from "@/components/auth/login-form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const metadata: Metadata = { title: "Log in", robots: { index: false } };
+export const metadata: Metadata = { title: "Sign in", robots: { index: false } };
 
-export default function Page() {
+type SearchParams = Promise<{ next?: string; error?: string }>;
+
+export default function Page({ searchParams }: { searchParams: SearchParams }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          <span className="text-xl">Log in</span>
+          <span className="text-xl">Sign in to Formivo</span>
         </CardTitle>
+        <CardDescription>Manage your forms, leads and client access.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Alert tone="warning" title="Authentication is not available yet">
-          Accounts are not enabled in this build. No credentials are collected on this page.
-        </Alert>
+        <Suspense fallback={<p className="text-sm text-foreground-muted">Loading…</p>}>
+          <LoginContent searchParams={searchParams} />
+        </Suspense>
       </CardContent>
     </Card>
   );
+}
+
+async function LoginContent({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const next =
+    params.next && params.next.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : "/dashboard";
+
+  return <LoginForm next={next} errorCode={params.error} />;
 }
