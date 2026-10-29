@@ -1,18 +1,20 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
-import { marketingNav } from "@/config/navigation";
-import { ButtonLink } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { getSessionUser } from "@/lib/auth/viewer";
+import { Container } from "@/components/ui/container";
+import { marketingNav } from "@/config/navigation";
 
+import { HeaderActions, SessionAwareHeaderActions } from "./header-actions";
 import { Logo } from "./logo";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
 
-export async function SiteHeader() {
-  const user = await getSessionUser();
-
+/**
+ * Marketing/auth navigation. The session check lives inside a Suspense boundary so
+ * static pages (including 404) can still be prerendered and streamed.
+ */
+export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface/85 backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between gap-4">
@@ -31,23 +33,9 @@ export async function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />
-          {user ? (
-            <ButtonLink href="/dashboard" size="sm">
-              Dashboard
-            </ButtonLink>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="hidden rounded-lg px-3 py-2 text-[13.5px] font-medium text-foreground-secondary transition-colors hover:text-foreground sm:inline-block"
-              >
-                Log in
-              </Link>
-              <ButtonLink href="/signup" size="sm">
-                Get started
-              </ButtonLink>
-            </>
-          )}
+          <Suspense fallback={<HeaderActions signedIn={false} />}>
+            <SessionAwareHeaderActions />
+          </Suspense>
           <div className="lg:hidden">
             <MobileNav
               items={marketingNav}
@@ -58,14 +46,18 @@ export async function SiteHeader() {
                     <span className="text-xs text-foreground-muted">Appearance</span>
                     <ThemeToggle className="size-8 border-transparent bg-transparent" />
                   </div>
-                  {user ? null : (
-                    <Link
-                      href="/login"
-                      className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
-                    >
-                      Log in
-                    </Link>
-                  )}
+                  <Link
+                    href="/login"
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-accent hover:bg-surface-muted"
+                  >
+                    Create an account
+                  </Link>
                 </div>
               }
             />
