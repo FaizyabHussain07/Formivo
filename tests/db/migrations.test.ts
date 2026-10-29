@@ -84,8 +84,10 @@ describe("migrations", () => {
     );
     expect(indexes.some((i) => i.indexdef.includes("token_hash"))).toBe(true);
     expect(
-      indexes.some((i) =>
-        i.indexdef.includes("invited_email") && i.indexdef.includes("WHERE (status = 'pending'::text)"),
+      indexes.some(
+        (i) =>
+          i.indexdef.includes("invited_email") &&
+          i.indexdef.includes("WHERE (status = 'pending'::text)"),
       ),
     ).toBe(true);
   });
@@ -97,9 +99,7 @@ describe("migrations", () => {
        where schemaname = 'public' and tablename = 'usage_periods'`,
     );
     expect(
-      indexes.some(
-        (i) => i.indexdef.includes("UNIQUE") && i.indexdef.includes("workspace_id"),
-      ),
+      indexes.some((i) => i.indexdef.includes("UNIQUE") && i.indexdef.includes("workspace_id")),
     ).toBe(true);
   });
 
@@ -125,7 +125,11 @@ describe("migrations", () => {
        where routine_schema = 'app_private' and grantee in ('anon', 'authenticated')`,
     );
     // Helpers are allowed; privileged entry points must not be.
-    const privileged = ["initialize_developer_account", "accept_client_invitation", "record_submission"];
+    const privileged = [
+      "initialize_developer_account",
+      "accept_client_invitation",
+      "record_submission",
+    ];
     expect(privileges.filter((p) => privileged.includes(p.routine_name))).toEqual([]);
     expect(privileges.some((p) => p.routine_name === "owns_form")).toBe(true);
   });

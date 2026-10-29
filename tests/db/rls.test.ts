@@ -32,8 +32,11 @@ const users = {
   usedUser: { id: "", email: "used@example.test" },
 };
 
-const forms: Record<string, string> = {};
-const workspaces: Record<string, string> = {};
+type FormKey = "a1" | "a2" | "a3" | "a4" | "a5" | "b1";
+type WorkspaceKey = "devA" | "devB";
+
+const forms: Record<FormKey, string> = { a1: "", a2: "", a3: "", a4: "", a5: "", b1: "" };
+const workspaces: Record<WorkspaceKey, string> = { devA: "", devB: "" };
 const tokens = {
   x: "token-x-".padEnd(40, "a"),
   y: "token-y-".padEnd(40, "b"),
@@ -213,11 +216,7 @@ describe("cross-user isolation (developer vs developer)", () => {
 
   it("developer A cannot see developer B's workspace or invitation", async () => {
     const workspaces = await asUser(db, users.devA.id, async () =>
-      selectAll(
-        db,
-        `select id from public.workspaces where owner_user_id = $1`,
-        [users.devB.id],
-      ),
+      selectAll(db, `select id from public.workspaces where owner_user_id = $1`, [users.devB.id]),
     );
     expect(workspaces).toEqual([]);
 
@@ -338,9 +337,7 @@ describe("cross-role isolation (client vs developer vs client)", () => {
     // The client CAN see this submission, but has no UPDATE policy, so the
     // statement matches zero rows rather than raising.
     const result = await asUser(db, users.clientX.id, async () =>
-      db.query(`update public.submissions set status = 'archived' where form_id = $1`, [
-        forms.a1,
-      ]),
+      db.query(`update public.submissions set status = 'archived' where form_id = $1`, [forms.a1]),
     );
     expect(result.affectedRows ?? 0).toBe(0);
 
@@ -367,20 +364,16 @@ describe("role integrity", () => {
     );
 
     const roles = await asServiceRole(db, async () =>
-      selectAll<{ role: string }>(
-        db,
-        `select role from public.account_roles where user_id = $1`,
-        [users.clientX.id],
-      ),
+      selectAll<{ role: string }>(db, `select role from public.account_roles where user_id = $1`, [
+        users.clientX.id,
+      ]),
     );
     expect(roles.map((r) => r.role)).toEqual(["client"]);
   });
 
   it("a user cannot edit another user's profile", async () => {
     const result = await asUser(db, users.devA.id, async () =>
-      db.query(`update public.profiles set display_name = 'hacked' where id = $1`, [
-        users.devB.id,
-      ]),
+      db.query(`update public.profiles set display_name = 'hacked' where id = $1`, [users.devB.id]),
     );
     expect(result.affectedRows ?? 0).toBe(0);
   });
@@ -417,9 +410,7 @@ describe("role integrity", () => {
     expect(roles.map((r) => r.role)).toEqual(["client", "developer"]);
 
     const workspaces = await asServiceRole(db, async () =>
-      selectAll(db, `select id from public.workspaces where owner_user_id = $1`, [
-        users.hybrid.id,
-      ]),
+      selectAll(db, `select id from public.workspaces where owner_user_id = $1`, [users.hybrid.id]),
     );
     expect(workspaces).toHaveLength(1);
   });
@@ -530,7 +521,11 @@ describe("revocation", () => {
     expect(visible).not.toContain(forms.a1);
 
     const permission = await asServiceRole(db, async () =>
-      selectAll(db, `select id from public.form_client_permissions where form_id = $1 and client_user_id = $2 and revoked_at is null`, [forms.a1, users.clientX.id]),
+      selectAll(
+        db,
+        `select id from public.form_client_permissions where form_id = $1 and client_user_id = $2 and revoked_at is null`,
+        [forms.a1, users.clientX.id],
+      ),
     );
     expect(permission).toEqual([]);
   });
@@ -541,20 +536,14 @@ describe("usage accounting", () => {
     // Usage is tracked per workspace window: this window already holds the two
     // seeded submissions (forms A1 + A2), so allow 4 total for this case.
     await asServiceRole(db, async () => {
-      await db.query(`select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`, [
-        forms.a2,
-        PERIOD_START,
-        PERIOD_END,
-        4,
-        JSON.stringify({ n: 1 }),
-      ]);
-      await db.query(`select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`, [
-        forms.a2,
-        PERIOD_START,
-        PERIOD_END,
-        4,
-        JSON.stringify({ n: 2 }),
-      ]);
+      await db.query(
+        `select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`,
+        [forms.a2, PERIOD_START, PERIOD_END, 4, JSON.stringify({ n: 1 })],
+      );
+      await db.query(
+        `select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`,
+        [forms.a2, PERIOD_START, PERIOD_END, 4, JSON.stringify({ n: 2 })],
+      );
     });
 
     const usage = await asServiceRole(db, async () =>
@@ -570,13 +559,10 @@ describe("usage accounting", () => {
     // The next accepted submission in this window must be rejected.
     await expectErrorCode(
       asServiceRole(db, () =>
-        db.query(`select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`, [
-          forms.a2,
-          PERIOD_START,
-          PERIOD_END,
-          4,
-          JSON.stringify({ n: 3 }),
-        ]),
+        db.query(
+          `select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`,
+          [forms.a2, PERIOD_START, PERIOD_END, 4, JSON.stringify({ n: 3 })],
+        ),
       ),
       "SUBMISSION_LIMIT_REACHED",
     );
@@ -594,26 +580,26 @@ describe("usage accounting", () => {
 
     await expectErrorCode(
       asServiceRole(db, () =>
-        db.query(`select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`, [
-          forms.b1,
-          PERIOD_START,
-          PERIOD_END,
-          10,
-          JSON.stringify({}),
-        ]),
+        db.query(
+          `select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`,
+          [forms.b1, PERIOD_START, PERIOD_END, 10, JSON.stringify({})],
+        ),
       ),
       "FORM_PAUSED",
     );
 
     await expectErrorCode(
       asServiceRole(db, () =>
-        db.query(`select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`, [
-          "00000000-0000-0000-0000-000000000000",
-          PERIOD_START,
-          PERIOD_END,
-          10,
-          JSON.stringify({}),
-        ]),
+        db.query(
+          `select app_private.record_submission($1, $2::timestamptz, $3::timestamptz, $4, $5::jsonb)`,
+          [
+            "00000000-0000-0000-0000-000000000000",
+            PERIOD_START,
+            PERIOD_END,
+            10,
+            JSON.stringify({}),
+          ],
+        ),
       ),
       "FORM_NOT_FOUND",
     );

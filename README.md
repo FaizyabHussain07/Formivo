@@ -5,9 +5,10 @@ submission storage, a dashboard for reviewing submissions, and form-level read-o
 
 The product requirements live in [`FORMIVO_PRD_v3.md`](FORMIVO_PRD_v3.md), with detailed specs in
 [`product-documentations/`](product-documentations/). The project is built in phases;
-this repository currently contains **Phase 1 — foundation** only. Auth, database, submissions,
-client access, email, and billing are **not implemented yet** — their routes render an explicit
-"not available yet" notice and collect no data.
+this repository currently contains **Phase 1 (foundation)** and **Phase 2 (database & security
+foundation)**. Auth flows, the dashboard, submissions, client access, email, and billing are
+**not implemented yet** — their routes render an explicit "not available yet" notice and collect
+no data.
 
 ## Stack
 
@@ -35,17 +36,17 @@ Open http://localhost:3000. Health check: `GET /api/health`.
 
 ## Scripts
 
-| Command             | What it does                                         |
-| ------------------- | ---------------------------------------------------- |
-| `npm run dev`       | Start the dev server                                 |
-| `npm run build`     | Production build                                     |
-| `npm run start`     | Serve the production build                           |
-| `npm run lint`      | ESLint, zero warnings allowed                        |
-| `npm run format`    | Format with Prettier (`format:check` to verify only) |
-| `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`    |
-| `npm run test`      | Unit tests (Vitest)                                  |
-| `npm run test:e2e`  | E2E tests (Playwright; runs against `npm run start`) |
-| `npm run check`     | lint + format check + typecheck + unit tests + build |
+| Command             | What it does                                          |
+| ------------------- | ----------------------------------------------------- |
+| `npm run dev`       | Start the dev server                                  |
+| `npm run build`     | Production build                                      |
+| `npm run start`     | Serve the production build                            |
+| `npm run lint`      | ESLint, zero warnings allowed                         |
+| `npm run format`    | Format with Prettier (`format:check` to verify only)  |
+| `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`     |
+| `npm run test`      | Unit tests (Vitest), including migration + RLS suites |
+| `npm run test:e2e`  | E2E tests (Playwright; runs against `npm run start`)  |
+| `npm run check`     | lint + format check + typecheck + unit tests + build  |
 
 E2E tests need a production build and a browser: `npm run build && npx playwright install chromium && npm run test:e2e`.
 
@@ -77,10 +78,33 @@ src/
     ui/            accessible primitives (Button, Field, Input, Dialog, Alert, Table, ...)
     layout/        site header/footer, app shell, navigation
   config/          site metadata and navigation
-  lib/             env validation, utilities
+  lib/
+    supabase/      typed clients (session client, service-role admin client), Database types
+    auth/          role lookups (server-side, trusted table)
+    authorization/ ownership/access checks (server-side, explicit)
+    env/           env validation, utilities
+supabase/
+  migrations/      schema + RLS + transaction-safe functions (applied to the real project)
+  seed.sql         clearly fake local-dev data (never run on a real project)
+docs/              database.md — schema, RLS model, environment assumptions
+tests/
+  db/              migration + RLS/authorization suites against embedded Postgres
+  setup.ts         Vitest setup
 e2e/               Playwright specs
-tests/             Vitest setup
 ```
+
+## Database (Phase 2)
+
+Supabase project `formivo` (ref `qpugqjjjxwusccsfbpon`, eu-central-1) has the schema from
+`supabase/migrations/` applied and tracked. See **[`docs/database.md`](docs/database.md)** for the
+table/RLS overview, transaction-safe functions, environment assumptions, and how to apply
+migrations to a fresh project.
+
+Verification runs in two layers on `npm test`:
+
+- `tests/db/migrations.test.ts` — applies every migration to an embedded Postgres with a
+  Supabase-shaped `auth` schema and asserts tables, RLS flags, foreign keys and indexes.
+- `tests/db/rls.test.ts` — the PRD §22.2 cross-user/cross-role authorization matrix.
 
 ## Conventions
 

@@ -18,10 +18,7 @@ export async function getUserRoles(userId: string): Promise<Role[]> {
   if (!userId) return [];
 
   const supabase = requireAdminClient();
-  const { data, error } = await supabase
-    .from("account_roles")
-    .select("role")
-    .eq("user_id", userId);
+  const { data, error } = await supabase.from("account_roles").select("role").eq("user_id", userId);
 
   if (error) throw new Error(`Failed to load roles: ${error.message}`);
 

@@ -22,6 +22,10 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     siteName: siteConfig.name,
     type: "website",
+    images: ["/formivo-logo.png"],
+  },
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
   },
 };
 

@@ -102,11 +102,7 @@ export async function createUser(db: PGlite, email: string): Promise<string> {
  * Runs `fn` with the request JWT set to `userId` and the `authenticated` role
  * active, so RLS policies evaluate exactly as they would for a signed-in user.
  */
-export async function asUser<T>(
-  db: PGlite,
-  userId: string,
-  fn: () => Promise<T>,
-): Promise<T> {
+export async function asUser<T>(db: PGlite, userId: string, fn: () => Promise<T>): Promise<T> {
   await db.query(`select set_config('request.jwt.claims', $1, false)`, [
     JSON.stringify({ sub: userId, role: "authenticated" }),
   ]);
@@ -130,10 +126,7 @@ export async function asServiceRole<T>(db: PGlite, fn: () => Promise<T>): Promis
 }
 
 /** Asserts that an async call rejects with a machine-readable error code. */
-export async function expectErrorCode(
-  call: Promise<unknown>,
-  code: string,
-): Promise<void> {
+export async function expectErrorCode(call: Promise<unknown>, code: string): Promise<void> {
   try {
     await call;
   } catch (error) {
@@ -144,11 +137,7 @@ export async function expectErrorCode(
   throw new Error(`expected error code ${code}, but the call succeeded`);
 }
 
-export async function selectAll<T>(
-  db: PGlite,
-  sql: string,
-  params: unknown[] = [],
-): Promise<T[]> {
+export async function selectAll<T>(db: PGlite, sql: string, params: unknown[] = []): Promise<T[]> {
   const result = await db.query<T>(sql, params);
   return result.rows;
 }
