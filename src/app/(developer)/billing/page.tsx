@@ -37,14 +37,6 @@ async function BillingContent({ searchParams }: { searchParams: SearchParams }) 
     <div className="flex flex-col gap-8">
       <PageHeader title="Billing" description="Plans, usage and subscription for this workspace." />
 
-      {!billing.configured ? (
-        <Alert tone="warning" title="Billing is not connected on this deployment">
-          Checkout needs the Lemon Squeezy environment variables (
-          <code className="font-mono text-xs">LEMONSQUEEZY_*</code>). The free plan works without
-          billing; paid upgrades stay disabled until the provider is configured.
-        </Alert>
-      ) : null}
-
       {sp.checkout === "success" ? (
         <Alert tone="info" title="Checkout completed">
           Lemon Squeezy will confirm the subscription with a webhook. This page updates as soon as
@@ -158,7 +150,7 @@ async function BillingContent({ searchParams }: { searchParams: SearchParams }) 
                     plan={planKey === "pro" ? "pro" : "agency"}
                     label={`Upgrade to ${plan.name}`}
                     disabled={!billing.configured}
-                    disabledLabel="Billing not configured"
+                    disabledLabel="Coming soon"
                   />
                 ) : (
                   <p className="text-xs text-foreground-muted">

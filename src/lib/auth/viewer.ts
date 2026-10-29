@@ -76,6 +76,96 @@ export async function ensureDeveloperAccount(user: User): Promise<void> {
   if (error) throw new Error(`Could not initialize the account: ${error.message}`);
 }
 
+/**
+ * Client accounts are deliberately different from developer accounts: a profile and a
+ * `client` role only — no workspace, no subscription and no billing state. Access is
+ * granted per form through an invitation, never through account creation.
+ */
+export async function ensureClientAccount(user: User): Promise<void> {
+  const admin = requireAdminClient();
+  const metadataName =
+    typeof user.user_metadata?.display_name === "string"
+      ? user.user_metadata.display_name.trim()
+      : "";
+  const displayName = metadataName || user.email?.split("@")[0] || "Client";
+
+  const { error: profileError } = await admin
+    .from("profiles")
+    .upsert({ id: user.id, display_name: displayName }, { onConflict: "id" });
+  if (profileError) throw new Error(`Could not create the client profile: ${profileError.message}`);
+
+  const { data: existingRole, error: roleError } = await admin
+    .from("account_roles")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("role", "client")
+    .maybeSingle();
+  if (roleError) throw new Error(roleError.message);
+
+  if (!existingRole) {
+    const { error: insertError } = await admin
+      .from("account_roles")
+      .insert({ user_id: user.id, role: "client" });
+    if (insertError && insertError.code !== "23505") {
+      throw new Error(`Could not create the client role: ${insertError.message}`);
+    }
+  }
+}
+
+/**
+ * One entry point for every authentication path (email confirmation, password sign-in,
+ * magic-link callback). Existing roles are preserved: a client is never upgraded into a
+ * developer, and a developer never loses their workspace. Brand-new accounts are made a
+ * developer unless they arrived through a client invitation.
+ */
+export async function ensureAccountForSession(user: User, next = ""): Promise<void> {
+  const admin = requireAdminClient();
+  const { data: roles, error: roleError } = await admin
+    .from("account_roles")
+    .select("role")
+    .eq("user_id", user.id);
+  if (roleError) throw new Error(roleError.message);
+
+  const assigned = new Set((roles ?? []).map((row) => row.role));
+  if (assigned.has("developer")) {
+    await ensureDeveloperAccount(user);
+    return;
+  }
+  if (assigned.has("client")) {
+    await ensureClientAccount(user);
+    return;
+  }
+
+  const { data: permissions, error: permissionError } = await admin
+    .from("form_client_permissions")
+    .select("id")
+    .eq("client_user_id", user.id)
+    .is("revoked_at", null)
+    .limit(1);
+  if (permissionError) throw new Error(permissionError.message);
+
+  const invited =
+    Boolean(permissions && permissions.length > 0) ||
+    next.startsWith("/invite/") ||
+    (Boolean(user.email) && (await hasPendingInvitation(user.email ?? "")));
+
+  if (invited) await ensureClientAccount(user);
+  else await ensureDeveloperAccount(user);
+}
+
+async function hasPendingInvitation(email: string): Promise<boolean> {
+  const admin = requireAdminClient();
+  const { data, error } = await admin
+    .from("client_invitations")
+    .select("id")
+    .eq("invited_email", email.toLowerCase())
+    .eq("status", "pending")
+    .gt("expires_at", new Date().toISOString())
+    .limit(1);
+  if (error) return false;
+  return Boolean(data && data.length > 0);
+}
+
 export const getDeveloperContext = cache(async (): Promise<DeveloperContext | null> => {
   const user = await getSessionUser();
   if (!user) return null;
@@ -145,7 +235,14 @@ export const getClientContext = cache(async (): Promise<ClientContext | null> =>
     .is("revoked_at", null)
     .order("granted_at", { ascending: false });
   if (error) throw new Error(error.message);
-  if (!permissions || permissions.length === 0) return null;
+
+  const { data: roleRows, error: roleError } = await admin
+    .from("account_roles")
+    .select("role")
+    .eq("user_id", user.id);
+  if (roleError) throw new Error(roleError.message);
+  const hasClientRole = (roleRows ?? []).some((row) => row.role === "client");
+  if (!hasClientRole && permissions.length === 0) return null;
 
   const formIds = permissions.map((permission) => permission.form_id);
   const { data: forms, error: formsError } = await admin
@@ -161,6 +258,16 @@ export const getClientContext = cache(async (): Promise<ClientContext | null> =>
     .select("display_name")
     .eq("id", user.id)
     .maybeSingle();
+
+  // A signed-in client is a valid context even before they accept their first
+  // invitation; the portal then shows an explicit empty state.
+  if (!permissions || permissions.length === 0) {
+    return {
+      kind: "client",
+      user: { ...sessionUser, displayName: profile?.display_name || sessionUser.displayName },
+      forms: [],
+    };
+  }
 
   return {
     kind: "client",
@@ -187,7 +294,11 @@ export async function requireDeveloper(): Promise<DeveloperContext> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
   const developer = await getDeveloperContext();
-  if (!developer) redirect("/client");
+  if (!developer) {
+    // Clients must never bounce between the dashboard and the portal.
+    const client = await getClientContext();
+    redirect(client ? "/client" : "/login");
+  }
   return developer;
 }
 
@@ -195,7 +306,10 @@ export async function requireClient(): Promise<ClientContext> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
   const client = await getClientContext();
-  if (!client) redirect("/dashboard");
+  if (!client) {
+    const developer = await getDeveloperContext();
+    redirect(developer ? "/dashboard" : "/login");
+  }
   return client;
 }
 

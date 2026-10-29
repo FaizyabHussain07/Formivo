@@ -10,9 +10,12 @@ import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Documentation",
+  title: {
+    absolute: "Formivo Documentation | Connect Your Website Forms",
+  },
   description:
-    "Formivo API reference: public form endpoints, request formats, responses, rate limits, CORS and the security model.",
+    "Learn how to create a Formivo endpoint, connect an HTML or JavaScript form, handle submissions, and manage form data.",
+  alternates: { canonical: "/docs" },
 };
 
 const endpoint = `${siteConfig.productionUrl}/api/f/{formId}`;

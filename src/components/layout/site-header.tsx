@@ -1,18 +1,17 @@
 import Link from "next/link";
-import { Suspense } from "react";
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Container } from "@/components/ui/container";
 import { marketingNav } from "@/config/navigation";
 
-import { HeaderActions, SessionAwareHeaderActions } from "./header-actions";
+import { SessionAwareHeaderActions } from "./header-actions";
 import { Logo } from "./logo";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
 
 /**
- * Marketing/auth navigation. The session check lives inside a Suspense boundary so
- * static pages (including 404) can still be prerendered and streamed.
+ * Marketing/auth navigation. Session state is resolved client-side, so this shell
+ * stays statically prerenderable.
  */
 export function SiteHeader() {
   return (
@@ -33,9 +32,7 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />
-          <Suspense fallback={<HeaderActions signedIn={false} />}>
-            <SessionAwareHeaderActions />
-          </Suspense>
+          <SessionAwareHeaderActions />
           <div className="lg:hidden">
             <MobileNav
               items={marketingNav}

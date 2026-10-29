@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { ButtonLink } from "@/components/ui/button";
-import { getSessionUser } from "@/lib/auth/viewer";
 
 /** Signed-in developers get a Dashboard shortcut instead of two auth links. */
 export function HeaderActions({ signedIn }: { signedIn: boolean }) {
@@ -27,7 +29,27 @@ export function HeaderActions({ signedIn }: { signedIn: boolean }) {
   );
 }
 
-export async function SessionAwareHeaderActions() {
-  const user = await getSessionUser();
-  return <HeaderActions signedIn={Boolean(user)} />;
+/**
+ * Session state is resolved in the browser from a small no-store endpoint, so the
+ * marketing shell stays fully static and prerendering never touches auth state.
+ */
+export function SessionAwareHeaderActions() {
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/session", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.authenticated) setSignedIn(true);
+      })
+      .catch(() => {
+        // Signed-out state is the safe default.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <HeaderActions signedIn={signedIn} />;
 }

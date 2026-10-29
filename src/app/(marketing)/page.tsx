@@ -11,14 +11,30 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import type { Metadata } from "next";
 
 import { CodeTabs } from "@/components/marketing/code-tabs";
 import { Faq } from "@/components/marketing/faq";
+import { faqItems } from "@/components/marketing/faq";
 import { ProductPreview } from "@/components/marketing/product-preview";
+import {
+  JsonLd,
+  faqPageSchema,
+  organizationSchema,
+  softwareApplicationSchema,
+  websiteSchema,
+} from "@/components/marketing/structured-data";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+  title: { absolute: "Formivo | Form Backend and Submission Management for Developers" },
+  description:
+    "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
+  alternates: { canonical: "/" },
+};
 
 const endpoint = `${siteConfig.productionUrl}/api/f/YOUR_FORM_ID`;
 
@@ -123,7 +139,7 @@ const features = [
 ];
 
 const plans = [
-  { name: "Free", price: "$0", blurb: "3 forms · 100 submissions/mo" },
+  { name: "Free", price: "$0", blurb: "3 forms · 300 submissions/mo" },
   { name: "Pro", price: "$19", blurb: "10 forms · 2,000 submissions/mo", featured: true },
   { name: "Agency", price: "$49", blurb: "50 forms · 10,000 submissions/mo" },
 ];
@@ -131,6 +147,10 @@ const plans = [
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={organizationSchema()} />
+      <JsonLd data={websiteSchema()} />
+      <JsonLd data={softwareApplicationSchema()} />
+      <JsonLd data={faqPageSchema(faqItems)} />
       <section className="hero-grid relative overflow-hidden border-b border-border">
         <div
           className="dotted-grid pointer-events-none absolute inset-0 opacity-50"

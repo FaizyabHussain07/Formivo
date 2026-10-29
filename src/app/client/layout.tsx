@@ -12,12 +12,7 @@ async function ClientIdentity() {
   const client = await getClientContext();
   if (!client) return null;
   return (
-    <UserPanel
-      name={client.user.displayName}
-      email={client.user.email}
-      context="Client access"
-      badge="Read only"
-    />
+    <UserPanel name={client.user.displayName} email={client.user.email} context="Formivo" />
   );
 }
 
@@ -26,8 +21,8 @@ export default function ClientLayout({ children }: LayoutProps<"/client">) {
     <AppShell
       nav={clientNav}
       groups={clientNavGroups}
-      navLabel="Client"
-      contextLabel="Client"
+      navLabel="Portal"
+      contextLabel="Portal"
       homeHref="/client"
       exactHrefs={["/client"]}
       footer={

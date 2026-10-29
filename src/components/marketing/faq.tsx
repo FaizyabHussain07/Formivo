@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 
-const faqs = [
+export const faqItems = [
   {
     question: "What is Formivo?",
     answer:
@@ -36,7 +36,7 @@ const faqs = [
 export function Faq() {
   return (
     <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
-      {faqs.map((faq) => (
+      {faqItems.map((faq) => (
         <details
           key={faq.question}
           className="group px-5 py-4 [&_summary::-webkit-details-marker]:hidden"

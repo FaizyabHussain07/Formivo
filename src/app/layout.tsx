@@ -3,7 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 
 import { ThemeScript } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/config/site";
-import { getPublicEnv } from "@/lib/env/public";
+import { SITE_URL } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -11,23 +11,33 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getPublicEnv().NEXT_PUBLIC_APP_URL),
+  // Canonical origin is fixed to the production domain so previews and localhost
+  // never emit competing canonical URLs.
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${siteConfig.name} — Form backend for developers`,
-    template: `%s · ${siteConfig.name}`,
+    default: "Formivo | Form Backend and Submission Management for Developers",
+    template: "%s | Formivo",
   },
-  description: siteConfig.description,
+  description:
+    "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
   applicationName: siteConfig.name,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
     type: "website",
-    images: ["/formivo-logo.png"],
+    locale: "en_US",
+    siteName: siteConfig.name,
+    title: "Formivo | Form Backend and Submission Management for Developers",
+    description:
+      "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
+    url: `${SITE_URL}/`,
   },
-  icons: {
-    icon: [{ url: "/icon.png", type: "image/png" }],
+  twitter: {
+    card: "summary_large_image",
+    title: "Formivo | Form Backend for Developers",
+    description:
+      "Connect your website forms to one public endpoint. Receive submissions, manage leads and share selected forms with clients.",
   },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {

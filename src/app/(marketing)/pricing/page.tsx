@@ -7,9 +7,10 @@ import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils/cn";
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: { absolute: "Formivo Pricing | Plans for Developers and Agencies" },
   description:
-    "Formivo pricing: a free plan for small projects, Pro for freelancers and Agency for teams managing many client forms.",
+    "Compare Formivo plans for form endpoints, submissions, client access, and form management. Choose a plan that fits your workflow.",
+  alternates: { canonical: "/pricing" },
 };
 
 const faqs = [

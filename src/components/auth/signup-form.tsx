@@ -11,7 +11,13 @@ import { Input } from "@/components/ui/input";
 
 const initialState: AuthState = {};
 
-export function SignupForm({ next = "/dashboard" }: { next?: string }) {
+export function SignupForm({
+  next = "/dashboard",
+  invitation = false,
+}: {
+  next?: string;
+  invitation?: boolean;
+}) {
   const [state, formAction, pending] = useActionState(signUpAction, initialState);
 
   return (
@@ -26,7 +32,11 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
 
       <Field
         label="Your name"
-        helperText="Used for your workspace name; you can change it later."
+        helperText={
+          invitation
+            ? "Used to greet you in the shared-form portal."
+            : "Used for your workspace name; you can change it later."
+        }
         required
       >
         {(control) => (
@@ -69,7 +79,7 @@ export function SignupForm({ next = "/dashboard" }: { next?: string }) {
       </Field>
 
       <Button type="submit" loading={pending} loadingText="Creating account…" className="w-full">
-        Create free account
+        {invitation ? "Create client account" : "Create free account"}
       </Button>
 
       <p className="text-xs leading-relaxed text-foreground-muted">

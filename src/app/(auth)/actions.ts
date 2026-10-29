@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { ensureDeveloperAccount } from "@/lib/auth/viewer";
+import { ensureAccountForSession } from "@/lib/auth/viewer";
 import { getPublicEnv } from "@/lib/env/public";
 import { errorMessage } from "@/lib/errors";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -75,7 +75,8 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
 
   if (data.session && data.user) {
     try {
-      await ensureDeveloperAccount(data.user);
+      // Accounts created from an invitation link become clients, not developers.
+      await ensureAccountForSession(data.user, next);
     } catch (setupError) {
       return { error: errorMessage(setupError), values: { email, displayName } };
     }
@@ -83,8 +84,9 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
   }
 
   return {
-    notice:
-      "Account created. Check your inbox to confirm your email address, then sign in — the confirmation link brings you straight back to your dashboard.",
+    notice: next.startsWith("/invite/")
+      ? "Account created. Check your inbox to confirm your email address — the confirmation link takes you straight back to the invitation."
+      : "Account created. Check your inbox to confirm your email address, then sign in — the confirmation link brings you straight back to your dashboard.",
     values: { email, displayName },
   };
 }
@@ -107,7 +109,7 @@ export async function signInAction(_prev: AuthState, formData: FormData): Promis
   }
 
   try {
-    await ensureDeveloperAccount(data.user);
+    await ensureAccountForSession(data.user, next);
   } catch (setupError) {
     return { error: errorMessage(setupError), values: { email } };
   }

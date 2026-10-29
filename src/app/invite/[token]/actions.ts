@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { getSessionUser } from "@/lib/auth/viewer";
+import { ensureAccountForSession, getSessionUser } from "@/lib/auth/viewer";
 import { errorMessage } from "@/lib/errors";
 import { acceptInvitation } from "@/lib/invitations/service";
 
@@ -21,6 +21,9 @@ export async function acceptInvitationAction(
   }
 
   try {
+    // Accepting an invitation never creates a developer workspace: the account becomes
+    // (or stays) a client and only gains read access to this one form.
+    await ensureAccountForSession(user, `/invite/${token}`);
     await acceptInvitation({ token, userId: user.id, userEmail: user.email });
   } catch (error) {
     return { error: errorMessage(error) };

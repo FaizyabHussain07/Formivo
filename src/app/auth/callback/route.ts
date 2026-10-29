@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { ensureDeveloperAccount } from "@/lib/auth/viewer";
+import { ensureAccountForSession } from "@/lib/auth/viewer";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function safeNext(value: string | null): string {
@@ -28,9 +28,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Every confirmed account gets a profile, developer role, workspace and
-    // free subscription. Idempotent, so recovery links are safe too.
-    await ensureDeveloperAccount(data.user);
+    // Idempotent bootstrap: developers keep their workspace, and accounts arriving
+    // through a client invitation stay clients (profile + client role only).
+    await ensureAccountForSession(data.user, next);
   } catch {
     return NextResponse.redirect(new URL("/login?error=account_setup", url.origin));
   }

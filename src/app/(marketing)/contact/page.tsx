@@ -8,8 +8,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Talk to the Formivo team about plans, client projects or security questions.",
+  title: { absolute: "Contact Formivo | Product and Support Questions" },
+  description:
+    "Contact the Formivo team with product questions, support requests, or feedback about form submission management.",
+  alternates: { canonical: "/contact" },
 };
 
 const channels = [
