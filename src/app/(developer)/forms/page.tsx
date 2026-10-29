@@ -15,20 +15,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { requireDeveloper } from "@/lib/auth/viewer";
+import { getPublicEnv } from "@/lib/env/public";
 import { formatDate } from "@/lib/format";
-import { listFormsWithCounts } from "@/lib/forms/service";
+import { formSubmissionEndpoint, listFormsWithCounts } from "@/lib/forms/service";
 
 export const metadata: Metadata = { title: "Forms" };
 
 export default async function Page() {
   const developer = await requireDeveloper();
   const forms = await listFormsWithCounts(developer.workspace.id);
+  const appUrl = getPublicEnv().NEXT_PUBLIC_APP_URL;
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        eyebrow="Workspace"
         title="Forms"
-        description={`${developer.entitlements.activeFormCount} of ${developer.plan.forms} active forms on the ${developer.plan.name} plan.`}
+        description={`${developer.entitlements.activeFormCount} of ${developer.plan.forms} active forms on the ${developer.plan.name} plan. Every form has one public endpoint.`}
         actions={
           <ButtonLink href="/forms/new">
             <Plus aria-hidden="true" />
@@ -59,22 +62,24 @@ export default async function Page() {
             {forms.map((form) => (
               <TableRow key={form.id}>
                 <TableCell>
-                  <div className="flex flex-col gap-0.5">
+                  <div className="flex flex-col gap-1">
                     <Link
                       href={`/forms/${form.id}`}
                       className="font-medium text-foreground hover:text-accent"
                     >
                       {form.name}
                     </Link>
-                    <span className="max-w-md truncate text-xs text-foreground-muted">
-                      {form.description ?? "No description"}
+                    <span className="max-w-md truncate font-mono text-[11px] text-foreground-muted">
+                      {formSubmissionEndpoint(appUrl, form.id).replace(/^https?:\/\//, "")}
                     </span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <FormStatusBadge status={form.status} />
                 </TableCell>
-                <TableCell className="text-right">{form.submissionCount}</TableCell>
+                <TableCell className="text-right font-medium text-foreground">
+                  {form.submissionCount}
+                </TableCell>
                 <TableCell className="text-right">{form.newCount}</TableCell>
                 <TableCell className="text-right whitespace-nowrap">
                   {formatDate(form.createdAt)}

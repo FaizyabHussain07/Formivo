@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { AppPageSkeleton, UserPanel } from "@/components/layout/user-panel";
-import { developerNav } from "@/config/navigation";
+import { developerNav, developerNavGroups } from "@/config/navigation";
 import { getDeveloperContext } from "@/lib/auth/viewer";
 
 export const metadata = { robots: { index: false } };
@@ -25,11 +25,12 @@ export default function DeveloperLayout({ children }: LayoutProps<"/">) {
   return (
     <AppShell
       nav={developerNav}
+      groups={developerNavGroups}
       navLabel="Developer"
       contextLabel="Developer"
       homeHref="/dashboard"
       footer={
-        <Suspense fallback={<div className="h-10 animate-pulse rounded-md bg-surface-muted" />}>
+        <Suspense fallback={<div className="h-24 animate-pulse rounded-lg bg-surface-muted" />}>
           <DeveloperIdentity />
         </Suspense>
       }

@@ -31,14 +31,19 @@ export function NavLink({ item, variant = "top", exact, onNavigate }: NavLinkPro
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "rounded-md text-sm transition-colors",
+        "transition-colors",
         variant === "top" &&
-          "px-3 py-2 text-foreground-secondary hover:text-foreground aria-[current=page]:font-medium aria-[current=page]:text-foreground",
+          "rounded-lg px-3 py-2 text-[13.5px] text-foreground-secondary hover:text-foreground aria-[current=page]:font-medium aria-[current=page]:text-foreground",
         variant === "side" &&
-          "flex items-center gap-3 px-3 py-2 text-foreground-secondary hover:bg-surface-muted hover:text-foreground aria-[current=page]:bg-accent-subtle aria-[current=page]:font-medium aria-[current=page]:text-accent-hover",
+          "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] text-foreground-secondary hover:bg-surface-muted hover:text-foreground aria-[current=page]:bg-accent-subtle aria-[current=page]:font-medium aria-[current=page]:text-accent-hover",
       )}
     >
-      {Icon ? <Icon className="size-4 shrink-0" aria-hidden="true" /> : null}
+      {Icon ? (
+        <Icon
+          className={cn("size-4 shrink-0", active ? "text-accent" : "text-foreground-muted")}
+          aria-hidden="true"
+        />
+      ) : null}
       {item.label}
     </Link>
   );

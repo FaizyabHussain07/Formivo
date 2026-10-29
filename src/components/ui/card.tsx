@@ -5,7 +5,10 @@ import { cn } from "@/lib/utils/cn";
 export function Card({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      className={cn("rounded-lg border border-border bg-surface shadow-xs", className)}
+      className={cn(
+        "rounded-xl border border-border bg-surface shadow-[0_1px_2px_rgb(11_31_28/0.04)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -16,7 +19,12 @@ export function CardHeader({ className, ...props }: ComponentProps<"div">) {
 }
 
 export function CardTitle({ className, ...props }: ComponentProps<"h3">) {
-  return <h3 className={cn("text-base font-semibold text-foreground", className)} {...props} />;
+  return (
+    <h3
+      className={cn("text-[15px] font-semibold tracking-tight text-foreground", className)}
+      {...props}
+    />
+  );
 }
 
 export function CardDescription({ className, ...props }: ComponentProps<"p">) {
@@ -25,4 +33,13 @@ export function CardDescription({ className, ...props }: ComponentProps<"p">) {
 
 export function CardContent({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("p-5", className)} {...props} />;
+}
+
+export function CardFooter({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("flex items-center gap-3 border-t border-border px-5 py-3", className)}
+      {...props}
+    />
+  );
 }

@@ -17,13 +17,24 @@ export function StatCard({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-lg border border-border bg-surface p-5 shadow-xs", className)}>
+    <div
+      className={cn(
+        "rounded-xl border border-border bg-surface p-5 shadow-[0_1px_2px_rgb(11_31_28/0.04)] transition-colors",
+        className,
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <p className="text-xs font-medium tracking-wide text-foreground-muted uppercase">{label}</p>
-        {Icon ? <Icon className="size-4 text-foreground-muted" aria-hidden="true" /> : null}
+        {Icon ? (
+          <span className="flex size-8 items-center justify-center rounded-lg bg-accent-subtle text-accent">
+            <Icon className="size-4" aria-hidden="true" />
+          </span>
+        ) : null}
       </div>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{value}</p>
-      {hint ? <p className="mt-1 text-xs text-foreground-secondary">{hint}</p> : null}
+      <p className="mt-3 text-[28px] leading-none font-semibold tracking-tight text-foreground">
+        {value}
+      </p>
+      {hint ? <p className="mt-2 text-xs text-foreground-secondary">{hint}</p> : null}
     </div>
   );
 }
@@ -35,7 +46,7 @@ export function UsageBar({ used, limit, label }: { used: number; limit: number; 
     <div className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-sm font-medium text-foreground">{label}</span>
-        <span className="text-xs text-foreground-secondary">
+        <span className="font-mono text-xs text-foreground-secondary">
           {used.toLocaleString("en-US")} / {limit.toLocaleString("en-US")}
         </span>
       </div>
@@ -45,10 +56,13 @@ export function UsageBar({ used, limit, label }: { used: number; limit: number; 
         aria-valuemax={limit}
         aria-valuenow={Math.min(used, limit)}
         aria-label={label}
-        className="h-2 w-full overflow-hidden rounded-full bg-surface-muted"
+        className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted"
       >
         <div
-          className={cn("h-full rounded-full", nearLimit ? "bg-warning" : "bg-accent")}
+          className={cn(
+            "h-full rounded-full transition-[width]",
+            nearLimit ? "bg-warning" : "bg-accent",
+          )}
           style={{ width: `${ratio}%` }}
         />
       </div>

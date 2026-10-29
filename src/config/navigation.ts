@@ -6,10 +6,16 @@ export type NavItem = {
   icon?: NavIconName;
 };
 
+export type NavGroup = {
+  label: string;
+  items: NavItem[];
+};
+
 export const marketingNav: NavItem[] = [
-  { href: "/docs", label: "Docs" },
+  { href: "/#features", label: "Features" },
+  { href: "/#how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/contact", label: "Contact" },
+  { href: "/docs", label: "Docs" },
 ];
 
 export const legalNav: NavItem[] = [
@@ -27,7 +33,14 @@ export const developerNav: NavItem[] = [
   { href: "/settings", label: "Settings", icon: "settings" },
 ];
 
+export const developerNavGroups: NavGroup[] = [
+  { label: "Build", items: developerNav.slice(0, 4) },
+  { label: "Manage", items: developerNav.slice(4) },
+];
+
 export const clientNav: NavItem[] = [
   { href: "/client", label: "Shared forms", icon: "forms" },
   { href: "/client/settings", label: "Settings", icon: "settings" },
 ];
+
+export const clientNavGroups: NavGroup[] = [{ label: "Client portal", items: clientNav }];

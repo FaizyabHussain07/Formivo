@@ -45,7 +45,9 @@ export default async function FormLayout({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">{form.name}</h1>
+              <h1 className="text-[26px] leading-tight font-semibold tracking-tight text-foreground">
+                {form.name}
+              </h1>
               <FormStatusBadge status={form.status} />
             </div>
             <p className="max-w-2xl text-sm text-foreground-secondary">

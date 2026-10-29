@@ -10,10 +10,10 @@ type SearchParams = Promise<{ next?: string }>;
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <Card>
+    <Card className="shadow-[0_12px_32px_-20px_rgb(11_31_28/0.25)]">
       <CardHeader>
         <CardTitle>
-          <span className="text-xl">Create your workspace</span>
+          <span className="text-[22px] tracking-tight">Create your workspace</span>
         </CardTitle>
         <CardDescription>
           Free forever for 3 forms and 100 submissions a month. No card required.

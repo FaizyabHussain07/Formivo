@@ -1,4 +1,4 @@
-import { Inbox } from "lucide-react";
+import { Inbox, Search } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -50,25 +50,37 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        eyebrow="Workspace"
         title="Submissions"
         description={`${result.total.toLocaleString("en-US")} leads across your workspace.`}
         actions={
-          <Link href="/forms/new" className="text-sm font-medium text-accent hover:underline">
+          <Link
+            href="/forms/new"
+            className="inline-flex h-10 items-center rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-[0_1px_2px_rgb(11_31_28/0.04)] transition-colors hover:bg-surface-muted"
+          >
             New form
           </Link>
         }
       />
 
-      <form method="get" className="grid gap-2 sm:grid-cols-[1fr_auto_auto_auto]">
-        <div>
+      <form
+        method="get"
+        className="grid gap-2 rounded-xl border border-border bg-surface p-3 shadow-[0_1px_2px_rgb(11_31_28/0.04)] sm:grid-cols-[1fr_auto_auto_auto]"
+      >
+        <div className="relative">
           <label htmlFor="submission-search" className="sr-only">
             Search submissions
           </label>
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-muted"
+            aria-hidden="true"
+          />
           <Input
             id="submission-search"
             name="q"
             defaultValue={search}
             placeholder="Search name, email or message…"
+            className="pl-9"
           />
         </div>
         <div>
@@ -99,7 +111,7 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
         </div>
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-md bg-accent px-4 text-sm font-medium text-accent-foreground hover:bg-accent-hover"
+          className="inline-flex h-10 items-center justify-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground shadow-[0_1px_2px_rgb(15_118_110/0.25)] transition-colors hover:bg-accent-hover"
         >
           Filter
         </button>

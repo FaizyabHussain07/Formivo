@@ -1,22 +1,26 @@
 @import "tailwindcss";
 
 /*
- * Semantic design tokens. Light palette: PRD §7.2 / brand identity §63.
- * Dark palette (brand identity §62) applies inside [data-theme="dark"]; the app shells use it
- * because dark mode is the primary dashboard experience (design system §13).
- * Components reference these tokens, never raw hex values.
+ * Semantic design tokens. Light is the default experience everywhere — marketing,
+ * auth and the dashboard. The dark palette applies through [data-theme="dark"],
+ * which the theme toggle writes on <html> (and a blocking script restores before
+ * paint so there is no flash). Components reference tokens, never raw hex.
  */
 :root {
-  --background: #f8fafc;
+  color-scheme: light;
+
+  --background: #f7f9f8;
   --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --foreground: #0f172a;
-  --foreground-secondary: #475569;
-  --foreground-muted: #64748b;
-  --border: #e2e8f0;
+  --surface-muted: #f1f5f3;
+  --surface-inverse: #0b1f1c;
+  --foreground: #0b1f1c;
+  --foreground-secondary: #485a56;
+  --foreground-muted: #6d7f7a;
+  --border: #e2e9e6;
+  --border-strong: #cfdcd7;
   --accent: #0f766e;
-  --accent-hover: #115e59;
-  --accent-subtle: #ccfbf1;
+  --accent-hover: #0c5f59;
+  --accent-subtle: #e6f4f1;
   --accent-foreground: #ffffff;
   --success: #15803d;
   --warning: #b45309;
@@ -25,23 +29,27 @@
 
   --radius-sm: 6px;
   --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 12px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --background: #0b1220;
-  --surface: #111827;
-  --surface-muted: #172033;
-  --foreground: #f8fafc;
-  --foreground-secondary: #cbd5e1;
-  --foreground-muted: #94a3b8;
-  --border: #263244;
+
+  --background: #071412;
+  --surface: #0c1d1a;
+  --surface-muted: #112722;
+  --surface-inverse: #04100e;
+  --foreground: #ecf5f2;
+  --foreground-secondary: #a8bdb7;
+  --foreground-muted: #82968f;
+  --border: #1c332e;
+  --border-strong: #274740;
   --accent: #2dd4bf;
   --accent-hover: #5eead4;
   --accent-subtle: rgb(45 212 191 / 0.12);
-  --accent-foreground: #0b1220;
+  --accent-foreground: #04120f;
   --success: #4ade80;
   --warning: #fbbf24;
   --error: #f87171;
@@ -52,10 +60,12 @@
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
+  --color-surface-inverse: var(--surface-inverse);
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
   --color-foreground-muted: var(--foreground-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-subtle: var(--accent-subtle);
@@ -69,6 +79,7 @@
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
@@ -76,14 +87,16 @@
 
 @layer base {
   html {
-    color-scheme: light;
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
   }
 
   body {
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 
   *,
@@ -103,7 +116,30 @@
   }
 
   dialog::backdrop {
-    background: rgb(15 23 42 / 0.45);
+    background: rgb(8 26 23 / 0.45);
+  }
+}
+
+/* Decorative surfaces used by the marketing pages. */
+@layer components {
+  .hero-grid {
+    background-image:
+      radial-gradient(circle at 15% 0%, rgb(15 118 110 / 0.1), transparent 45%),
+      radial-gradient(circle at 85% 10%, rgb(15 118 110 / 0.06), transparent 40%);
+  }
+
+  .dotted-grid {
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black, transparent 72%);
+  }
+
+  .surface-ring {
+    box-shadow:
+      0 1px 2px rgb(11 31 28 / 0.04),
+      0 12px 32px -12px rgb(11 31 28 / 0.14);
   }
 }
 

@@ -1,404 +1,398 @@
+import { ArrowRight, Check } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { ButtonLink } from "@/components/ui/button";
 import { CodeBlock } from "@/components/ui/code-block";
 import { Container } from "@/components/ui/container";
-import { PageHeader } from "@/components/ui/page-header";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Documentation",
   description:
-    "Formivo API documentation: connect any HTML form or JavaScript fetch call to a public endpoint — no secret or API key required.",
+    "Formivo API reference: public form endpoints, request formats, responses, rate limits, CORS and the security model.",
 };
 
-const htmlExample = `<form action="https://YOUR_APP_URL/api/f/YOUR_FORM_ID" method="POST">
+const endpoint = `${siteConfig.productionUrl}/api/f/{formId}`;
+
+const toc = [
+  { href: "#quickstart", label: "Quickstart" },
+  { href: "#endpoint", label: "Endpoint" },
+  { href: "#requests", label: "Request formats" },
+  { href: "#responses", label: "Responses" },
+  { href: "#errors", label: "Errors" },
+  { href: "#limits", label: "Rate limits & quotas" },
+  { href: "#cors", label: "CORS & domains" },
+  { href: "#security", label: "Security model" },
+  { href: "#sdks", label: "Other languages" },
+];
+
+const htmlExample = `<form action="${endpoint}" method="POST">
   <label>
     Name
     <input type="text" name="name" required />
   </label>
+
   <label>
     Email
     <input type="email" name="email" required />
   </label>
+
   <label>
     Message
     <textarea name="message"></textarea>
   </label>
+
   <button type="submit">Send</button>
 </form>`;
 
-const fetchExample = `const response = await fetch(
-  "https://YOUR_APP_URL/api/f/YOUR_FORM_ID",
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name,
-      email,
-      message,
-      metadata: { page: "/contact" },
-    }),
-  },
-);
+const jsExample = `// No API key. The endpoint accepts public submissions by design.
+async function submit(values) {
+  const response = await fetch(
+    "${siteConfig.productionUrl}/api/f/YOUR_FORM_ID",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Optional: makes retries safe if the network drops.
+        "Idempotency-Key": crypto.randomUUID(),
+      },
+      body: JSON.stringify(values),
+    },
+  );
 
-if (!response.ok) {
-  const { error } = await response.json();
-  console.error(error.code, error.message);
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error?.message ?? "Submission failed");
+  }
+
+  return result; // { success: true, leadId, message }
 }`;
 
-const curlExample = `curl -X POST "https://YOUR_APP_URL/api/f/YOUR_FORM_ID" \\
+const curlExample = `curl -X POST "${siteConfig.productionUrl}/api/f/YOUR_FORM_ID" \\
   -H "Content-Type: application/json" \\
   -H "Idempotency-Key: order-1042" \\
   -d '{
     "name": "Ada Lovelace",
     "email": "ada@example.com",
-    "message": "Please call me back."
+    "message": "Please call me back.",
+    "metadata": { "page": "/contact" }
   }'`;
 
-const phpExample = `<?php
-$ch = curl_init("https://YOUR_APP_URL/api/f/YOUR_FORM_ID");
-curl_setopt_array($ch, [
-  CURLOPT_POST => true,
-  CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
-  CURLOPT_POSTFIELDS => json_encode([
-    "name" => $_POST["name"],
-    "email" => $_POST["email"],
-    "message" => $_POST["message"],
-  ]),
-  CURLOPT_RETURNTRANSFER => true,
-]);
-$result = curl_exec($ch);
-http_response_code(curl_getinfo($ch, CURLINFO_RESPONSE_CODE));
-?>`;
-
-const successExample = `{
+const responseExample = `{
   "success": true,
-  "leadId": "6d0d6d6e-8c37-4f1d-9a54-0f8f0b6f1f3a",
+  "leadId": "9d1f2c4a-7b3e-4f1a-9c2d-1a2b3c4d5e6f",
   "message": "Submission received."
 }`;
 
 const errorExample = `{
   "success": false,
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "The request contains invalid fields.",
-    "fields": { "data": "At least one field is required." }
+    "code": "FORM_PAUSED",
+    "message": "This form is not accepting submissions."
   }
 }`;
 
-const errorCodes = [
-  ["FORM_NOT_FOUND", "404", "The form id does not exist."],
-  ["FORM_INACTIVE", "409", "The form is paused and rejects submissions."],
-  ["FORBIDDEN", "403", "The request Origin is not in the form's allowed list."],
-  ["VALIDATION_ERROR", "422", "The payload is empty or invalid."],
-  ["PAYLOAD_TOO_LARGE", "413", "The request body is over 256 KB."],
-  ["UNSUPPORTED_MEDIA_TYPE", "415", "Use JSON, form-encoded or multipart (no files)."],
-  ["RATE_LIMITED", "429", "Too many requests; retry after the Retry-After header."],
-  ["QUOTA_EXCEEDED", "402", "The workspace monthly limit is reached."],
-  ["IDEMPOTENCY_CONFLICT", "409", "The key was reused with a different body."],
-  ["INTERNAL_ERROR", "500", "Something failed on our side; safe to retry."],
+const statusRows: [string, string, string][] = [
+  ["200", "HTML submission accepted", "Returns the thank-you page, or redirects to _redirect."],
+  ["201", "JSON submission accepted", "Returns the new leadId."],
+  ["400", "Invalid payload", "Malformed JSON, unsupported field types, too many fields."],
+  ["404", "Unknown form", "The form id does not exist or was deleted."],
+  ["409", "Form paused / quota exceeded", "Resume the form or upgrade the plan."],
+  ["413", "Body too large", "Requests are capped at 256 KB."],
+  ["415", "Unsupported content type", "Use JSON, form-encoded or multipart."],
+  ["429", "Rate limited", "Includes a Retry-After header."],
+  ["405", "Read attempted", "The public endpoint only accepts POST."],
 ];
+
+function Section({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      id={id}
+      className="flex scroll-mt-24 flex-col gap-4 border-t border-border pt-10 first:border-t-0 first:pt-0"
+    >
+      <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
+      {children}
+    </section>
+  );
+}
 
 export default function Page() {
   return (
-    <Container className="flex flex-col gap-12 py-12">
-      <PageHeader
-        title="Documentation"
-        description="Formivo is a form backend. You keep your form; Formivo stores submissions, enforces limits and shares results with clients. The public endpoint needs no secret or API key."
-      />
-
-      <div className="grid gap-10 lg:grid-cols-[14rem_1fr]">
-        <nav aria-label="Documentation sections" className="lg:sticky lg:top-6 lg:self-start">
-          <h2 className="text-xs font-semibold tracking-wide text-foreground-muted uppercase">
-            On this page
-          </h2>
-          <ul className="mt-3 flex flex-col gap-2 text-sm">
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#quickstart">
-                Quickstart
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#endpoint">
-                Endpoint
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#html">
-                HTML form
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#javascript">
-                JavaScript &amp; fetch
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#payload">
-                Payload
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#responses">
-                Responses
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#errors">
-                Error codes
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#origins">
-                CORS &amp; allowed domains
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#abuse">
-                Rate limits &amp; abuse
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#data">
-                Data privacy
-              </a>
-            </li>
-            <li>
-              <a className="text-foreground-secondary hover:text-foreground" href="#clients">
-                Client access
-              </a>
-            </li>
+    <Container className="grid gap-10 py-12 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-14 lg:py-16">
+      <aside className="lg:sticky lg:top-24 lg:h-fit">
+        <p className="mb-3 text-[11px] font-semibold tracking-[0.14em] text-foreground-muted uppercase">
+          Reference
+        </p>
+        <nav aria-label="Documentation sections">
+          <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm lg:flex-col lg:gap-1">
+            {toc.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="text-foreground-secondary transition-colors hover:text-foreground"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
-
-        <div className="flex min-w-0 flex-col gap-12">
-          <section id="quickstart" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Quickstart</h2>
-            <ol className="flex flex-col gap-2 text-sm text-foreground-secondary">
-              <li>
-                1.{" "}
-                <Link href="/signup" className="text-accent hover:underline">
-                  Create a workspace
-                </Link>{" "}
-                and a form.
-              </li>
-              <li>2. Copy the public endpoint from the form&apos;s Integration tab.</li>
-              <li>3. Paste it into an HTML form action, or POST to it from your code.</li>
-              <li>4. Open Leads in the dashboard. No key setup, no secret to store.</li>
-            </ol>
-            <CodeBlock title="HTML" language="html" code={htmlExample} />
-          </section>
-
-          <section id="endpoint" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Endpoint</h2>
-            <CodeBlock title="POST" code={`POST https://YOUR_APP_URL/api/f/{formId}`} />
-            <ul className="list-disc space-y-1 pl-5 text-sm text-foreground-secondary">
-              <li>
-                <strong>No authentication header.</strong> The form id is public and is not a
-                password. Do not treat it as one.
-              </li>
-              <li>
-                Accepted content types: <code className="font-mono text-xs">application/json</code>,{" "}
-                <code className="font-mono text-xs">application/x-www-form-urlencoded</code> and{" "}
-                <code className="font-mono text-xs">multipart/form-data</code> (no file uploads).
-              </li>
-              <li>
-                Optional <code className="font-mono text-xs">Idempotency-Key</code> header (max 255
-                characters) or a hidden <code className="font-mono text-xs">_idempotency_key</code>{" "}
-                field.
-              </li>
-              <li>Maximum body size 256 KB; up to 100 fields and 5 levels of nesting.</li>
-            </ul>
-          </section>
-
-          <section id="html" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">HTML form</h2>
-            <p className="text-sm text-foreground-secondary">
-              A normal form POST works without JavaScript. Formivo stores the fields and renders a
-              simple thank-you page. Add a hidden{" "}
-              <code className="font-mono text-xs">_redirect</code> field to send visitors to your
-              own page instead:
-            </p>
-            <CodeBlock
-              title="Thank-you redirect"
-              language="html"
-              code={`<input type="hidden" name="_redirect" value="https://your-site.com/thanks" />`}
-            />
-            <p className="text-sm text-foreground-secondary">
-              A hidden <code className="font-mono text-xs">_gotcha</code> field can be used as a
-              honeypot: when it is filled, Formivo shows a success page but stores nothing.
-            </p>
-          </section>
-
-          <section id="javascript" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">JavaScript &amp; fetch</h2>
-            <p className="text-sm text-foreground-secondary">
-              Submit without navigating away and render your own inline success or error message.
-              CORS is handled by Formivo for allowed origins.
-            </p>
-            <CodeBlock title="Browser JavaScript" language="javascript" code={fetchExample} />
-            <CodeBlock title="cURL" code={curlExample} />
-            <CodeBlock title="PHP" language="php" code={phpExample} />
-          </section>
-
-          <section id="payload" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Payload</h2>
-            <p className="text-sm text-foreground-secondary">
-              Send flat fields (like an HTML form) or wrap them in{" "}
-              <code className="font-mono text-xs">data</code>. Both are accepted.{" "}
-              <code className="font-mono text-xs">metadata</code> is optional context such as the
-              page or campaign. Reserved helper fields start with{" "}
-              <code className="font-mono text-xs">_</code> and are never stored as submission data.
-            </p>
-            <CodeBlock
-              title="Explicit shape"
-              language="json"
-              code={`{
-  "data": { "name": "Ada", "email": "ada@example.com" },
-  "metadata": { "page": "/contact" }
-}`}
-            />
-            <CodeBlock
-              title="Flat shape"
-              language="json"
-              code={`{ "name": "Ada", "email": "ada@example.com" }`}
-            />
-          </section>
-
-          <section id="responses" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Responses</h2>
-            <p className="text-sm text-foreground-secondary">
-              JSON requests get JSON. A new submission returns{" "}
-              <code className="font-mono text-xs">201</code>; a replayed idempotent request returns{" "}
-              <code className="font-mono text-xs">200</code> with the original lead id. HTML form
-              requests get an HTML page (200) or a 303 redirect when{" "}
-              <code className="font-mono text-xs">_redirect</code> is set.
-            </p>
-            <CodeBlock title="201 Created" language="json" code={successExample} />
-            <CodeBlock title="Error shape" language="json" code={errorExample} />
-          </section>
-
-          <section id="errors" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Error codes</h2>
-            <div className="overflow-x-auto rounded-lg border border-border">
-              <table className="w-full border-collapse text-left text-sm">
-                <thead className="bg-surface-muted">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-4 py-2.5 text-xs font-medium text-foreground-muted uppercase"
-                    >
-                      Code
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-2.5 text-xs font-medium text-foreground-muted uppercase"
-                    >
-                      HTTP
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-2.5 text-xs font-medium text-foreground-muted uppercase"
-                    >
-                      Meaning
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border bg-surface">
-                  {errorCodes.map(([code, status, meaning]) => (
-                    <tr key={code}>
-                      <td className="px-4 py-2.5 font-mono text-xs text-foreground">{code}</td>
-                      <td className="px-4 py-2.5 text-foreground-secondary">{status}</td>
-                      <td className="px-4 py-2.5 text-foreground-secondary">{meaning}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-sm text-foreground-secondary">
-              Errors never include stack traces, SQL details, environment values or other stored
-              submissions.
-            </p>
-          </section>
-
-          <section id="origins" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">CORS &amp; allowed domains</h2>
-            <p className="text-sm text-foreground-secondary">
-              By default the endpoint accepts browser submissions from any origin, because that is
-              how ordinary HTML forms behave. Optionally add allowed origins on the form&apos;s
-              Integration tab:
-            </p>
-            <ul className="list-disc space-y-1 pl-5 text-sm text-foreground-secondary">
-              <li>
-                When a list is configured, CORS preflight only allows those origins and requests
-                that declare a different <code className="font-mono text-xs">Origin</code> are
-                rejected with <code className="font-mono text-xs">403 FORBIDDEN</code>.
-              </li>
-              <li>
-                Origin and CORS are browser controls, not authentication: non-browser clients can
-                omit or forge headers. Rate limits, quotas and validation protect the endpoint
-                regardless.
-              </li>
-              <li>
-                Leave the list empty if you submit from a server or from several unknown domains.
-              </li>
-            </ul>
-          </section>
-
-          <section id="abuse" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Rate limits &amp; abuse</h2>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-foreground-secondary">
-              <li>120 requests/minute per form, 60/minute per IP and 30/minute per form+IP.</li>
-              <li>Limits use a shared database counter, so they hold across server instances.</li>
-              <li>
-                Body size, field count and value lengths are capped. Oversized or malformed requests
-                are rejected before storage.
-              </li>
-              <li>
-                Monthly plan limits are enforced atomically; concurrent requests cannot exceed them.
-              </li>
-              <li>
-                Retry timeouts with the same{" "}
-                <code className="font-mono text-xs">Idempotency-Key</code> and body to avoid
-                duplicate leads.
-              </li>
-              <li>Pause a form to stop submissions immediately while keeping stored data.</li>
-            </ul>
-          </section>
-
-          <section id="data" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Data privacy</h2>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-foreground-secondary">
-              <li>The public endpoint can create submissions; it can never read them.</li>
-              <li>
-                Dashboard reads and writes require an authenticated session, are scoped to the
-                signed-in user&apos;s workspace, and are additionally enforced by Supabase Row Level
-                Security.
-              </li>
-              <li>
-                Knowing a form id grants no access to stored submissions, analytics, billing or
-                workspace settings.
-              </li>
-              <li>
-                Service-role credentials stay on the server and are never sent to the browser.
-              </li>
-            </ul>
-          </section>
-
-          <section id="clients" className="flex scroll-mt-6 flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight">Client access</h2>
-            <p className="text-sm text-foreground-secondary">
-              Invite a client from a form&apos;s Clients tab. They receive a single-use invitation
-              link, sign in with that email, and get read-only access to that form&apos;s
-              submissions and analytics. Revoke access at any time; the next request is denied
-              server-side.
-            </p>
-            <p className="text-sm text-foreground-secondary">
-              Clients can never edit submissions, change form settings, pause a form, see billing or
-              access other forms and workspaces.
-            </p>
-          </section>
+        <div className="mt-6 hidden flex-col gap-2 rounded-xl border border-border bg-surface p-4 lg:flex">
+          <p className="text-sm font-medium text-foreground">Ready to try it?</p>
+          <p className="text-xs text-foreground-secondary">
+            Create a form and copy its endpoint in under a minute.
+          </p>
+          <ButtonLink href="/signup" size="sm" variant="secondary" className="mt-1">
+            Get started
+          </ButtonLink>
         </div>
+      </aside>
+
+      <div className="flex min-w-0 flex-col gap-10">
+        <header className="flex flex-col gap-3">
+          <Badge tone="accent" className="w-fit">
+            API v1
+          </Badge>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Documentation</h1>
+          <p className="max-w-2xl text-base text-foreground-secondary">
+            Formivo gives every form one public submission endpoint. It requires no secret, no SDK
+            and no server of your own — just the form id.
+          </p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-foreground-secondary">
+            {["JSON or form-encoded", "No authentication", "Works from any language"].map(
+              (item) => (
+                <span key={item} className="flex items-center gap-1.5">
+                  <Check className="size-4 text-accent" aria-hidden="true" />
+                  {item}
+                </span>
+              ),
+            )}
+          </div>
+        </header>
+
+        <Section id="quickstart" title="Quickstart">
+          <ol className="flex flex-col gap-3 text-sm text-foreground-secondary">
+            <li className="flex gap-3">
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-subtle font-mono text-xs font-semibold text-accent">
+                1
+              </span>
+              Create a form in the dashboard and open its{" "}
+              <strong className="text-foreground">Integration</strong> tab.
+            </li>
+            <li className="flex gap-3">
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-subtle font-mono text-xs font-semibold text-accent">
+                2
+              </span>
+              Copy the endpoint: <code className="font-mono text-xs">{endpoint}</code>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-subtle font-mono text-xs font-semibold text-accent">
+                3
+              </span>
+              Send a request, then read the submission in your dashboard.
+            </li>
+          </ol>
+          <CodeBlock title="HTML" language="html" code={htmlExample} />
+        </Section>
+
+        <Section id="endpoint" title="Endpoint">
+          <p className="text-sm text-foreground-secondary">
+            Every form has one endpoint. The form id is a random identifier — it is not a password.
+          </p>
+          <CodeBlock
+            title="HTTP"
+            language="http"
+            code={`POST ${endpoint}\nGET  ${endpoint}  →  405 Method Not Allowed`}
+          />
+          <div className="overflow-hidden rounded-xl border border-border">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-surface-muted/60 text-[11px] tracking-[0.08em] text-foreground-muted uppercase">
+                <tr>
+                  <th scope="col" className="px-4 py-2.5">
+                    Part
+                  </th>
+                  <th scope="col" className="px-4 py-2.5">
+                    Details
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border text-foreground-secondary">
+                {[
+                  ["Authentication", "None for submissions. Dashboard access is session-based."],
+                  [
+                    "Content types",
+                    "application/json, application/x-www-form-urlencoded, multipart/form-data",
+                  ],
+                  ["Body limit", "256 KB, up to 100 fields and 5 levels of nesting"],
+                  [
+                    "Idempotency",
+                    "Optional Idempotency-Key header; retries never create duplicates",
+                  ],
+                  ["Reserved fields", "_redirect, _gotcha, metadata"],
+                ].map(([key, value]) => (
+                  <tr key={key}>
+                    <th
+                      scope="row"
+                      className="w-44 px-4 py-3 align-top font-medium text-foreground"
+                    >
+                      {key}
+                    </th>
+                    <td className="px-4 py-3">{value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
+        <Section id="requests" title="Request formats">
+          <p className="text-sm text-foreground-secondary">
+            Send JSON from JavaScript or any HTTP client. Form-encoded and multipart bodies work for
+            plain HTML forms.
+          </p>
+          <CodeBlock title="Browser JavaScript" language="javascript" code={jsExample} />
+          <CodeBlock title="cURL" language="bash" code={curlExample} />
+          <p className="text-sm text-foreground-secondary">
+            Any extra string fields are stored as-is on the submission. Use{" "}
+            <code className="font-mono text-xs">metadata</code> for context such as the page path or
+            a campaign name. A filled <code className="font-mono text-xs">_gotcha</code> field is
+            treated as a bot and silently discarded.
+          </p>
+        </Section>
+
+        <Section id="responses" title="Responses">
+          <p className="text-sm text-foreground-secondary">
+            HTML submissions get a human-readable page. JSON submissions get a predictable body:
+          </p>
+          <div className="grid gap-3 lg:grid-cols-2">
+            <CodeBlock title="201 Created" language="json" code={responseExample} />
+            <CodeBlock title="Failure shape" language="json" code={errorExample} />
+          </div>
+        </Section>
+
+        <Section id="errors" title="Status codes & errors">
+          <div className="overflow-hidden rounded-xl border border-border">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-surface-muted/60 text-[11px] tracking-[0.08em] text-foreground-muted uppercase">
+                <tr>
+                  <th scope="col" className="px-4 py-2.5">
+                    Status
+                  </th>
+                  <th scope="col" className="px-4 py-2.5">
+                    Meaning
+                  </th>
+                  <th scope="col" className="px-4 py-2.5">
+                    Notes
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border text-foreground-secondary">
+                {statusRows.map(([status, meaning, notes]) => (
+                  <tr key={status}>
+                    <td className="px-4 py-3 font-mono text-xs text-foreground">{status}</td>
+                    <td className="px-4 py-3">{meaning}</td>
+                    <td className="px-4 py-3 text-foreground-muted">{notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-foreground-secondary">
+            Error bodies never include stack traces, SQL or configuration details. Retry 5xx
+            responses with backoff; do not retry 4xx responses without changing the request.
+          </p>
+        </Section>
+
+        <Section id="limits" title="Rate limits & quotas">
+          <ul className="flex flex-col gap-2 text-sm text-foreground-secondary">
+            {[
+              "120 requests per minute per form.",
+              "60 requests per minute per IP address, shared across forms.",
+              "30 requests per minute per form and IP address.",
+              "Monthly plan quota enforced atomically in the database.",
+            ].map((item) => (
+              <li key={item} className="flex gap-2.5">
+                <Check className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <Alert tone="info" title="Rate limited responses">
+            A <code className="font-mono text-xs">429</code> includes{" "}
+            <code className="font-mono text-xs">Retry-After</code> in seconds. Back off instead of
+            retrying immediately.
+          </Alert>
+        </Section>
+
+        <Section id="cors" title="CORS & allowed domains">
+          <p className="text-sm text-foreground-secondary">
+            Browser submissions are allowed from any origin by default. Each form can restrict
+            browser access to specific domains in the Integration tab, which tightens CORS and
+            rejects requests declaring a different <code className="font-mono text-xs">Origin</code>
+            .
+          </p>
+          <Alert tone="warning" title="Not an authentication mechanism">
+            Origin and Referer headers can be missing or forged outside a browser. Allowed domains
+            are a browser-side convenience; validation, rate limits and quotas apply to every
+            request regardless of headers.
+          </Alert>
+        </Section>
+
+        <Section id="security" title="Security model">
+          <div className="flex flex-col gap-3 text-sm text-foreground-secondary">
+            <p>The endpoint is public on purpose. Formivo protects the data, not the URL:</p>
+            <ul className="flex flex-col gap-2">
+              {[
+                "Reading, updating, exporting and deleting submissions require an authenticated workspace member.",
+                "Clients see only the forms explicitly shared with them, read-only.",
+                "Row Level Security is enabled on every table, and dashboard queries are also scoped server-side.",
+                "Service-role credentials never leave the server.",
+                "Workspace, owner, timestamps and plan are set by the server, never from the payload.",
+              ].map((item) => (
+                <li key={item} className="flex gap-2.5">
+                  <Check className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+
+        <Section id="sdks" title="Other languages">
+          <p className="text-sm text-foreground-secondary">
+            The contract is plain HTTP, so every language works the same way: POST the endpoint with
+            JSON. There is no mandatory SDK and no secret to manage. Server-side examples for PHP,
+            Python, Go and Node use the same three lines as the cURL example above.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {["cURL", "JavaScript", "TypeScript", "Node.js", "Python", "PHP", "Go", "Ruby"].map(
+              (lang) => (
+                <Badge key={lang}>{lang}</Badge>
+              ),
+            )}
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <ButtonLink href="/signup" size="sm">
+              Create a form
+              <ArrowRight aria-hidden="true" />
+            </ButtonLink>
+            <ButtonLink href="/pricing" size="sm" variant="secondary">
+              See pricing
+            </ButtonLink>
+          </div>
+        </Section>
       </div>
     </Container>
   );

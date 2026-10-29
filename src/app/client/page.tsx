@@ -16,6 +16,7 @@ export default async function Page() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        eyebrow="Client portal"
         title="Shared forms"
         description="Read-only access to the forms a developer has shared with you."
       />
@@ -32,7 +33,7 @@ export default async function Page() {
             <li key={form.formId}>
               <Link
                 href={`/client/forms/${form.formId}`}
-                className="flex h-full flex-col gap-3 rounded-lg border border-border bg-surface p-5 transition-colors hover:border-accent"
+                className="flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-5 shadow-[0_1px_2px_rgb(11_31_28/0.04)] transition-all hover:border-border-strong hover:shadow-[0_8px_24px_-16px_rgb(11_31_28/0.3)]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-semibold text-foreground">{form.name}</h2>

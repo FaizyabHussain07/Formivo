@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { AppPageSkeleton, UserPanel } from "@/components/layout/user-panel";
-import { clientNav } from "@/config/navigation";
+import { clientNav, clientNavGroups } from "@/config/navigation";
 import { getClientContext } from "@/lib/auth/viewer";
 
 export const metadata = { robots: { index: false } };
@@ -25,6 +25,7 @@ export default function ClientLayout({ children }: LayoutProps<"/client">) {
   return (
     <AppShell
       nav={clientNav}
+      groups={clientNavGroups}
       navLabel="Client"
       contextLabel="Client"
       homeHref="/client"

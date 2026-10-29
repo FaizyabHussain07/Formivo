@@ -7,3 +7,4 @@ package-lock.json
 next-env.d.ts
 FORMIVO_PRD_v3.md
 product-documentations
+.tmp-*

@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils/cn";
 
 export const controlStyles =
-  "w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground placeholder:text-foreground-muted transition-colors focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:bg-surface-muted disabled:opacity-70 aria-invalid:border-error aria-invalid:focus-visible:outline-error";
+  "w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground shadow-[0_1px_1px_rgb(11_31_28/0.03)] placeholder:text-foreground-muted transition-colors focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:bg-surface-muted disabled:opacity-70 aria-invalid:border-error aria-invalid:focus-visible:outline-error";
 
 export function Input({ className, type = "text", ...props }: ComponentProps<"input">) {
   return <input type={type} className={cn(controlStyles, "h-10", className)} {...props} />;

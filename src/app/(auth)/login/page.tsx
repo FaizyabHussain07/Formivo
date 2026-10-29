@@ -10,10 +10,10 @@ type SearchParams = Promise<{ next?: string; error?: string }>;
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <Card>
+    <Card className="shadow-[0_12px_32px_-20px_rgb(11_31_28/0.25)]">
       <CardHeader>
         <CardTitle>
-          <span className="text-xl">Sign in to Formivo</span>
+          <span className="text-[22px] tracking-tight">Sign in to Formivo</span>
         </CardTitle>
         <CardDescription>Manage your forms, leads and client access.</CardDescription>
       </CardHeader>
