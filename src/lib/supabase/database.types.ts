@@ -169,6 +169,8 @@ export type Database = {
         Update: {
           status?: string;
           expires_at?: string;
+          token_hash?: string;
+          invited_by_user_id?: string;
           accepted_by_user_id?: string | null;
           accepted_at?: string | null;
           revoked_at?: string | null;

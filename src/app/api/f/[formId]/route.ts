@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { submissionPage } from "@/lib/api/html-page";
 import { apiError, apiSuccess, clientIp, toAppError } from "@/lib/api/response";
 import { AppError } from "@/lib/errors";
 import { isOriginAllowed, normalizeOrigin } from "@/lib/forms/service";
@@ -35,46 +36,13 @@ function withCors(response: NextResponse, headers: Record<string, string>): Next
   return response;
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 function htmlResponse(
   status: number,
   title: string,
   message: string,
-  extra?: string,
+  tone: "success" | "error" = "success",
 ): NextResponse {
-  const body = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>${escapeHtml(title)}</title>
-    <style>
-      :root { color-scheme: light; }
-      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#f8fafc; color:#0f172a; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:24px; }
-      main { max-width:520px; width:100%; border:1px solid #e2e8f0; border-radius:12px; background:#fff; padding:32px; }
-      h1 { margin:0 0 8px; font-size:20px; line-height:1.3; }
-      p { margin:0; color:#475569; line-height:1.6; font-size:14px; }
-      .brand { color:#0f766e; font-weight:700; font-size:14px; margin-bottom:20px; }
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="brand">Formivo</div>
-      <h1>${escapeHtml(title)}</h1>
-      <p>${escapeHtml(message)}</p>
-      ${extra ?? ""}
-    </main>
-  </body>
-</html>`;
-  return new NextResponse(body, {
+  return new NextResponse(submissionPage({ title, message, tone }), {
     status,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },
   });
@@ -220,8 +188,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
     if (isHtml) {
       const response = htmlResponse(
         200,
-        "Thanks — your message was received.",
-        "The form owner can now review it in Formivo. You can close this page.",
+        "Thanks — your response is in.",
+        "The form owner has received your details and can reply soon. You can safely close this page.",
       );
       return withCors(response, cors);
     }
@@ -240,12 +208,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
     if (accept.includes("text/html")) {
       return withCors(
         htmlResponse(
-          appError.status === 429 ? 429 : appError.status,
+          appError.status,
           appError.status === 429 ? "Too many requests" : "Submission could not be saved",
-          appError.message,
           appError.status === 429
-            ? ""
-            : '<p style="margin-top:12px;color:#64748b;font-size:12px;">You can go back and try again.</p>',
+            ? "Please wait a moment, then go back and submit the form again."
+            : `${appError.message} Go back and try again, or contact the site owner if the problem continues.`,
+          "error",
         ),
         cors,
       );

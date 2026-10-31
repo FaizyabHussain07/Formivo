@@ -83,7 +83,6 @@ export async function createInvitation(input: {
     .eq("status", "pending")
     .maybeSingle();
   if (pendingError) throw new AppError("INTERNAL_ERROR", pendingError.message);
-  if (pending && new Date(pending.expires_at) > new Date()) throw new AppError("ALREADY_INVITED");
 
   await assertCanAddViewer(input.workspaceId);
 
@@ -91,20 +90,43 @@ export async function createInvitation(input: {
   const tokenHash = hashInvitationToken(token);
   const expiresAt = new Date(Date.now() + INVITATION_DAYS * 86_400_000);
 
-  const { data: invitation, error } = await admin
-    .from("client_invitations")
-    .insert({
-      form_id: form.id,
-      invited_email: email,
-      token_hash: tokenHash,
-      invited_by_user_id: input.invitedByUserId,
-      expires_at: expiresAt.toISOString(),
-    })
-    .select("id")
-    .single();
-  if (error || !invitation) {
-    if (error?.code === "23505") throw new AppError("ALREADY_INVITED");
-    throw new AppError("INTERNAL_ERROR", error?.message);
+  const pendingInvite = pending as unknown as { id: string; expires_at: string } | null;
+  const existingPending = Boolean(
+    pendingInvite && new Date(pendingInvite.expires_at) > new Date(),
+  );
+
+  let invitationId: string;
+  if (pendingInvite && existingPending) {
+    // Re-inviting the same address rotates the token: the newest email always works and
+    // an older link (for example one built before the domain was configured) stops working.
+    const { error: rotateError } = await admin
+      .from("client_invitations")
+      .update({
+        token_hash: tokenHash,
+        expires_at: expiresAt.toISOString(),
+        invited_by_user_id: input.invitedByUserId,
+      })
+      .eq("id", pendingInvite.id)
+      .eq("status", "pending");
+    if (rotateError) throw new AppError("INTERNAL_ERROR", rotateError.message);
+    invitationId = pendingInvite.id;
+  } else {
+    const { data: invitation, error } = await admin
+      .from("client_invitations")
+      .insert({
+        form_id: form.id,
+        invited_email: email,
+        token_hash: tokenHash,
+        invited_by_user_id: input.invitedByUserId,
+        expires_at: expiresAt.toISOString(),
+      })
+      .select("id")
+      .single();
+    if (error || !invitation) {
+      if (error?.code === "23505") throw new AppError("ALREADY_INVITED");
+      throw new AppError("INTERNAL_ERROR", error?.message);
+    }
+    invitationId = invitation.id;
   }
 
   const inviteUrl = `${input.appUrl.replace(/\/+$/, "")}/invite/${token}`;
@@ -120,14 +142,14 @@ export async function createInvitation(input: {
   await admin.from("audit_logs").insert({
     actor_user_id: input.invitedByUserId,
     workspace_id: input.workspaceId,
-    action: "invitation.created",
+    action: existingPending ? "invitation.resent" : "invitation.created",
     target_type: "form",
     target_id: form.id,
-    metadata: { invitation_id: invitation.id },
+    metadata: { invitation_id: invitationId },
   });
 
   return {
-    invitationId: invitation.id,
+    invitationId,
     inviteUrl,
     emailSent: delivery.sent,
     emailFailureReason: delivery.sent ? undefined : delivery.reason,

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath, refresh } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { requireDeveloper } from "@/lib/auth/viewer";
 import { AppError, errorMessage } from "@/lib/errors";
@@ -30,6 +31,7 @@ export async function createFormAction(
   formData: FormData,
 ): Promise<FormActionState> {
   const developer = await requireDeveloper();
+  let formId: string;
   try {
     const result = await createForm({
       workspaceId: developer.workspace.id,
@@ -40,15 +42,18 @@ export async function createFormAction(
         notificationEmail: read(formData, "notificationEmail"),
       },
     });
+    formId = result.formId;
     revalidatePath("/forms");
     revalidatePath("/dashboard");
-    return { formId: result.formId };
   } catch (error) {
     return {
       error: errorMessage(error),
       fieldErrors: error instanceof AppError ? error.fields : undefined,
     };
   }
+
+  // Straight to the new form's dashboard: endpoint, integration snippet and leads.
+  redirect(`/forms/${formId}`);
 }
 
 export async function updateFormAction(

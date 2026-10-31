@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import type { User } from "@supabase/supabase-js";
 
 import { getWorkspaceEntitlements, type WorkspaceEntitlements } from "@/lib/billing/entitlements";
@@ -40,6 +41,10 @@ export type ClientContext = {
  * Supabase Auth — it is the only identity source the server trusts.
  */
 export const getSessionUser = cache(async (): Promise<User | null> => {
+  // Session lookup reads cookies and JWT timestamps, so the render must be dynamic.
+  // Declaring that up front keeps Cache Components from rejecting non-deterministic
+  // values (Date.now inside the auth client) during prerendering.
+  await connection();
   const supabase = await createSupabaseServerClient();
   if (!supabase) return null;
   const {

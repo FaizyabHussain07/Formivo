@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { AutoRefresh } from "@/components/layout/auto-refresh";
 import { AppPageSkeleton, UserPanel } from "@/components/layout/user-panel";
 import { developerNav, developerNavGroups } from "@/config/navigation";
 import { getDeveloperContext } from "@/lib/auth/viewer";
@@ -35,6 +36,7 @@ export default function DeveloperLayout({ children }: LayoutProps<"/">) {
         </Suspense>
       }
     >
+      <AutoRefresh />
       <Suspense fallback={<AppPageSkeleton />}>{children}</Suspense>
     </AppShell>
   );
