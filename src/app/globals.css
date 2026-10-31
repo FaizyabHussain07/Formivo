@@ -115,6 +115,15 @@
     color: var(--foreground);
   }
 
+  /* Long tokens (endpoints, content types, IDs) must wrap instead of widening the page. */
+  code {
+    overflow-wrap: anywhere;
+  }
+
+  pre code {
+    overflow-wrap: normal;
+  }
+
   dialog::backdrop {
     background: rgb(8 26 23 / 0.45);
   }
