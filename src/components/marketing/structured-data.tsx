@@ -24,6 +24,7 @@ export function organizationSchema() {
     name: "Formivo",
     url: canonicalUrl("/"),
     logo: `${SITE_URL}/formivo-logo.png`,
+    image: `${SITE_URL}/og-image.png`,
     email: "team@formivo.faizyab.me",
     description:
       "A developer-first form backend: one public endpoint per form, a dashboard for submissions, and read-only client access.",

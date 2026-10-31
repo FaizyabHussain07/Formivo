@@ -91,9 +91,7 @@ export async function createInvitation(input: {
   const expiresAt = new Date(Date.now() + INVITATION_DAYS * 86_400_000);
 
   const pendingInvite = pending as unknown as { id: string; expires_at: string } | null;
-  const existingPending = Boolean(
-    pendingInvite && new Date(pendingInvite.expires_at) > new Date(),
-  );
+  const existingPending = Boolean(pendingInvite && new Date(pendingInvite.expires_at) > new Date());
 
   let invitationId: string;
   if (pendingInvite && existingPending) {

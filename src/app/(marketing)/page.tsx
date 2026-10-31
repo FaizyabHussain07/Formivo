@@ -206,7 +206,7 @@ export default function HomePage() {
 
       <section id="how-it-works" className="border-b border-border">
         <Container className="grid gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:items-start lg:gap-16">
-          <div className="flex flex-col gap-6">
+          <div className="flex min-w-0 flex-col gap-6">
             <div className="flex flex-col gap-3">
               <p className="text-xs font-medium tracking-[0.14em] text-foreground-muted uppercase">
                 How it works
@@ -239,7 +239,7 @@ export default function HomePage() {
             </ButtonLink>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex min-w-0 flex-col gap-3">
             <CodeTabs
               tabs={[
                 { id: "html", label: "HTML", language: "html", code: htmlSnippet },
@@ -291,7 +291,7 @@ export default function HomePage() {
 
       <section className="border-b border-border">
         <Container className="grid gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="flex flex-col gap-4">
+          <div className="flex min-w-0 flex-col gap-4">
             <p className="text-xs font-medium tracking-[0.14em] text-foreground-muted uppercase">
               Security
             </p>
@@ -318,7 +318,7 @@ export default function HomePage() {
             </ul>
           </div>
 
-          <div className="surface-ring overflow-hidden rounded-2xl border border-white/10 bg-[#0a1a17] p-6 text-slate-200">
+          <div className="surface-ring min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-[#0a1a17] p-6 text-slate-200">
             <div className="flex items-center justify-between gap-3">
               <p className="font-mono text-[11px] tracking-wide text-slate-400">
                 endpoint contract

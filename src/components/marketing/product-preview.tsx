@@ -72,7 +72,7 @@ export function ProductPreview() {
 
       <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
         {stats.map((stat) => (
-          <div key={stat.label} className="flex flex-col gap-1 p-4">
+          <div key={stat.label} className="flex min-w-0 flex-col gap-1 p-3 sm:p-4">
             <p className="text-[11px] font-medium tracking-wide text-foreground-muted uppercase">
               {stat.label}
             </p>

@@ -30,12 +30,26 @@ export const metadata: Metadata = {
     description:
       "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
     url: `${SITE_URL}/`,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Formivo — the form backend for developers. Connect your website forms, manage submissions, share with clients.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Formivo | Form Backend for Developers",
     description:
       "Connect your website forms to one public endpoint. Receive submissions, manage leads and share selected forms with clients.",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: "Formivo — the form backend for developers.",
+      },
+    ],
   },
   robots: { index: true, follow: true },
 };
