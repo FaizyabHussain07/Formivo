@@ -207,8 +207,8 @@ export default function Page() {
             </Badge>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Documentation</h1>
             <p className="max-w-2xl text-base text-foreground-secondary">
-              Formivo gives every form one public submission endpoint. It requires no secret, no SDK
-              and no server of your own — just the form id.
+              Formivo gives every form one public submission endpoint. It needs no secret, no SDK,
+              and no server of your own. Just the form id.
             </p>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-foreground-secondary">
               {["JSON or form-encoded", "No authentication", "Works from any language"].map(
@@ -249,8 +249,7 @@ export default function Page() {
 
           <Section id="endpoint" title="Endpoint">
             <p className="text-sm text-foreground-secondary">
-              Every form has one endpoint. The form id is a random identifier — it is not a
-              password.
+              Every form has one endpoint. The form id is a random identifier. It is not a password.
             </p>
             <CodeBlock
               title="HTTP"
