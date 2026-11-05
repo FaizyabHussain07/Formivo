@@ -124,16 +124,16 @@ automatically replaced with the production origin so emails never leak `localhos
 
 ## Scripts
 
-| Command             | Description                                          |
-| ------------------- | ---------------------------------------------------- |
-| `npm run dev`       | Development server                                   |
-| `npm run build`     | Production build                                     |
-| `npm run start`     | Serve the production build                           |
-| `npm run lint`      | ESLint with zero warnings allowed                    |
-| `npm run format`    | Prettier write (`format:check` to verify)            |
-| `npm run typecheck` | Generate route types, then `tsc --noEmit`            |
-| `npm run test`      | Vitest unit, API-shape and database/RLS suites       |
-| `npm run test:e2e`  | Playwright specs against a production build          |
+| Command             | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `npm run dev`       | Development server                                     |
+| `npm run build`     | Production build                                       |
+| `npm run start`     | Serve the production build                             |
+| `npm run lint`      | ESLint with zero warnings allowed                      |
+| `npm run format`    | Prettier write (`format:check` to verify)              |
+| `npm run typecheck` | Generate route types, then `tsc --noEmit`              |
+| `npm run test`      | Vitest unit, API-shape and database/RLS suites         |
+| `npm run test:e2e`  | Playwright specs against a production build            |
 | `npm run check`     | lint + format check + types + tests + production build |
 
 ## Discoverability
@@ -207,14 +207,14 @@ rate limiting, and one stored lead with the correct monthly usage.
 See [`.env.example`](.env.example). All values are validated with Zod at startup; provider-backed
 features degrade to an explicit "not configured" state instead of failing silently.
 
-| Variable                                                                            | Purpose                                  |
-| ----------------------------------------------------------------------------------- | ---------------------------------------- |
-| `NEXT_PUBLIC_APP_URL`                                                               | Public origin for links, emails, canons  |
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Database, auth, server-side admin  |
-| `INVITATION_TOKEN_PEPPER`                                                           | HMAC pepper for invitation tokens        |
-| `RESEND_API_KEY`, `RESEND_FROM_EMAIL`                                               | Invitation email                         |
-| `LEMONSQUEEZY_*`                                                                    | Checkout, portal, webhook verification   |
-| `CRON_SECRET`                                                                       | Scheduled maintenance tasks              |
+| Variable                                                                                 | Purpose                                 |
+| ---------------------------------------------------------------------------------------- | --------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`                                                                    | Public origin for links, emails, canons |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Database, auth, server-side admin       |
+| `INVITATION_TOKEN_PEPPER`                                                                | HMAC pepper for invitation tokens       |
+| `RESEND_API_KEY`, `RESEND_FROM_EMAIL`                                                    | Invitation email                        |
+| `LEMONSQUEEZY_*`                                                                         | Checkout, portal, webhook verification  |
+| `CRON_SECRET`                                                                            | Scheduled maintenance tasks             |
 
 ## Documentation
 

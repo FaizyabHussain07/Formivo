@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { AutoRefresh } from "@/components/layout/auto-refresh";
-import { AppPageSkeleton, UserPanel } from "@/components/layout/user-panel";
+import { UserPanel } from "@/components/layout/user-panel";
 import { clientNav, clientNavGroups } from "@/config/navigation";
 import { getClientContext } from "@/lib/auth/viewer";
 
@@ -31,7 +31,7 @@ export default function ClientLayout({ children }: LayoutProps<"/client">) {
       }
     >
       <AutoRefresh intervalMs={15_000} />
-      <Suspense fallback={<AppPageSkeleton />}>{children}</Suspense>
+      {children}
     </AppShell>
   );
 }

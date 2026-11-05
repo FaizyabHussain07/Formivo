@@ -1,9 +1,11 @@
 import { Check } from "lucide-react";
 import type { Metadata } from "next";
 
+import { socialImage } from "@/lib/seo";
+
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
+import { PLANS, PLAN_ORDER, type PlanKey } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils/cn";
 
 export const metadata: Metadata = {
@@ -11,6 +13,18 @@ export const metadata: Metadata = {
   description:
     "Compare Formivo plans for form endpoints, submissions, client access, and form management. Choose a plan that fits your workflow.",
   alternates: { canonical: "/pricing" },
+  keywords: ["form backend pricing","formspree pricing comparison","form backend plans","client portal pricing"],
+  openGraph: {
+    title: "Formivo pricing | Form backend plans for developers and agencies",
+    description: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
+    images: [socialImage({ title: "Formivo pricing | Form backend plans for developers and agencies", subtitle: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.", kind: "product" })],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Formivo pricing | Form backend plans for developers and agencies",
+    description: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
+    images: [socialImage({ title: "Formivo pricing | Form backend plans for developers and agencies", subtitle: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card." })],
+  },
 };
 
 const faqs = [
@@ -22,7 +36,17 @@ const faqs = [
   {
     question: "What happens if I hit my monthly limit?",
     answer:
-      "New submissions are rejected with a quota error until the next calendar month or until you upgrade. Existing leads and history are always retained.",
+      "New submissions are rejected with a quota error until the allowance resets at the start of your next billing cycle (the same date each month) or until you upgrade. Existing leads and history are always retained.",
+  },
+  {
+    question: "When does my monthly allowance reset?",
+    answer:
+      "On the anniversary of your subscription date, not on the 1st of the calendar month: subscribe on the 14th and the allowance renews on the 14th. Free workspaces reset on the 1st, in UTC.",
+  },
+  {
+    question: "Can I export submissions?",
+    answer:
+      "CSV export is included on Pro and Agency. The Free plan cannot export, and the restriction is enforced by the server, not just hidden in the interface. Exports are also limited to forms you own or were invited to view.",
   },
   {
     question: "What is a client viewer?",
@@ -55,9 +79,8 @@ export default function Page() {
           Start free and upgrade only when you need more forms, submissions or client viewers. Every
           plan includes the same endpoint, validation and abuse protection.
         </p>
-      </header>
-
-      <div className="grid gap-4 md:grid-cols-3">
+      </header>{" "}
+      <div id="plans" className="grid scroll-mt-24 gap-4 md:grid-cols-3">
         {PLAN_ORDER.map((key) => {
           const plan = PLANS[key];
           const featured = key === "pro";
@@ -112,8 +135,70 @@ export default function Page() {
           );
         })}
       </div>
-
-      <section aria-labelledby="faq-heading" className="flex flex-col gap-4">
+      <section
+        id="compare"
+        aria-labelledby="compare-heading"
+        className="flex scroll-mt-24 flex-col gap-4"
+      >
+        <h2 id="compare-heading" className="text-xl font-semibold tracking-tight">
+          Compare the plans
+        </h2>
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <table className="w-full min-w-[620px] text-left text-sm">
+            <thead className="bg-surface-muted/60">
+              <tr>
+                <th scope="col" className="px-4 py-3 text-xs font-semibold tracking-wide uppercase">
+                  Capability
+                </th>
+                {PLAN_ORDER.map((key) => (
+                  <th
+                    key={key}
+                    scope="col"
+                    className="px-4 py-3 text-xs font-semibold tracking-wide uppercase"
+                  >
+                    {PLANS[key].name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { label: "Price", render: (key: PlanKey) => `$${PLANS[key].priceMonthly}/mo` },
+                { label: "Active forms", render: (key: PlanKey) => String(PLANS[key].forms) },
+                {
+                  label: "Submissions per month",
+                  render: (key: PlanKey) => PLANS[key].monthlyLeads.toLocaleString("en-US"),
+                },
+                { label: "Client viewers", render: (key: PlanKey) => String(PLANS[key].viewers) },
+                {
+                  label: "CSV export",
+                  render: (key: PlanKey) =>
+                    PLANS[key].canExportSubmissions ? "Included" : "Not available",
+                },
+                { label: "Public endpoints", render: () => "Unlimited calls" },
+                { label: "Rate limits and spam controls", render: () => "Included" },
+                { label: "Per-form client permissions", render: () => "Included" },
+                {
+                  label: "Support",
+                  render: (key: PlanKey) => (key === "free" ? "Community" : "Email"),
+                },
+              ].map((row) => (
+                <tr key={row.label} className="border-t border-border">
+                  <th scope="row" className="px-4 py-3 text-left font-medium text-foreground">
+                    {row.label}
+                  </th>
+                  {PLAN_ORDER.map((key) => (
+                    <td key={key} className="px-4 py-3 text-foreground-secondary">
+                      {row.render(key)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="faq" aria-labelledby="faq-heading" className="flex scroll-mt-24 flex-col gap-4">
         <h2 id="faq-heading" className="text-xl font-semibold tracking-tight">
           Frequently asked questions
         </h2>
@@ -126,7 +211,6 @@ export default function Page() {
           ))}
         </div>
       </section>
-
       <div className="flex flex-col items-start gap-3 rounded-xl border border-border bg-surface p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-medium text-foreground">Need something larger?</p>

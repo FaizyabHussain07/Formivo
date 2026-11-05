@@ -66,14 +66,34 @@ export async function createInvitation(input: {
   if (formError) throw new AppError("INTERNAL_ERROR", formError.message);
   if (!form) throw new AppError("FORM_NOT_FOUND");
 
-  const { data: existingPermission, error: permissionError } = await admin
-    .from("form_client_permissions")
-    .select("id")
+  // "Already has access" is per invited person, never per form: a form can be shared
+  // with several clients, and the plan's viewer allowance is the only cap.
+  const { data: acceptedInvitations, error: acceptedError } = await admin
+    .from("client_invitations")
+    .select("accepted_by_user_id")
     .eq("form_id", form.id)
-    .is("revoked_at", null)
-    .maybeSingle();
-  if (permissionError) throw new AppError("INTERNAL_ERROR", permissionError.message);
-  if (existingPermission) throw new AppError("ALREADY_HAS_ACCESS");
+    .eq("invited_email", email)
+    .eq("status", "accepted")
+    .not("accepted_by_user_id", "is", null);
+  if (acceptedError) throw new AppError("INTERNAL_ERROR", acceptedError.message);
+
+  const acceptedUserIds = ((acceptedInvitations ?? []) as { accepted_by_user_id: string | null }[])
+    .map((row) => row.accepted_by_user_id)
+    .filter((value): value is string => Boolean(value));
+
+  if (acceptedUserIds.length > 0) {
+    const { data: existingPermission, error: permissionError } = await admin
+      .from("form_client_permissions")
+      .select("id")
+      .eq("form_id", form.id)
+      .in("client_user_id", acceptedUserIds)
+      .is("revoked_at", null)
+      .limit(1);
+    if (permissionError) throw new AppError("INTERNAL_ERROR", permissionError.message);
+    if (existingPermission && existingPermission.length > 0) {
+      throw new AppError("ALREADY_HAS_ACCESS");
+    }
+  }
 
   const { data: pending, error: pendingError } = await admin
     .from("client_invitations")

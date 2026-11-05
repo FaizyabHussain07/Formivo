@@ -65,15 +65,27 @@ describe("migrations", () => {
     expect(secured.map((r) => r.relname)).toEqual([]);
   });
 
-  it("applies the one-active-client-per-form partial unique index", async () => {
+  it("keeps one permission row per form and client while allowing many clients", async () => {
     const indexes = await selectAll<{ indexdef: string }>(
       db,
       `select indexdef from pg_indexes
        where schemaname = 'public' and tablename = 'form_client_permissions'`,
     );
-    const active = indexes.find((i) => i.indexdef.includes("WHERE (revoked_at IS NULL)"));
-    expect(active).toBeDefined();
-    expect(active?.indexdef).toContain("UNIQUE");
+
+    // (form, client) stays unique so a person is never granted the same form twice.
+    const perClient = indexes.find(
+      (i) => i.indexdef.includes("UNIQUE") && i.indexdef.includes("(form_id, client_user_id)"),
+    );
+    expect(perClient).toBeDefined();
+
+    // No index may cap a form to a single active client: plans sell up to 50 viewers.
+    const oneActivePerForm = indexes.find(
+      (i) =>
+        i.indexdef.includes("UNIQUE") &&
+        i.indexdef.includes("(form_id)") &&
+        i.indexdef.includes("WHERE (revoked_at IS NULL)"),
+    );
+    expect(oneActivePerForm).toBeUndefined();
   });
 
   it("keeps invitation tokens unique and hashed-only by convention", async () => {

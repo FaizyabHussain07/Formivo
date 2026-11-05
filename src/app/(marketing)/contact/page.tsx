@@ -1,5 +1,7 @@
 import { ArrowRight, BookOpen, LifeBuoy, ShieldCheck, Users } from "lucide-react";
 import type { Metadata } from "next";
+
+import { socialImage } from "@/lib/seo";
 import Link from "next/link";
 
 import { ButtonLink } from "@/components/ui/button";
@@ -12,6 +14,18 @@ export const metadata: Metadata = {
   description:
     "Contact the Formivo team with product questions, support requests, or feedback about form submission management.",
   alternates: { canonical: "/contact" },
+  keywords: ["formivo support","form backend support","contact formivo"],
+  openGraph: {
+    title: "Talk to the Formivo team",
+    description: "Product questions, support requests and feedback about form submission management.",
+    images: [socialImage({ title: "Talk to the Formivo team", subtitle: "Product questions, support requests and feedback about form submission management.", kind: "product" })],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Talk to the Formivo team",
+    description: "Product questions, support requests and feedback about form submission management.",
+    images: [socialImage({ title: "Talk to the Formivo team", subtitle: "Product questions, support requests and feedback about form submission management." })],
+  },
 };
 
 const channels = [

@@ -32,9 +32,30 @@ export function toAppError(error: unknown): AppError {
   return new AppError("INTERNAL_ERROR");
 }
 
-/** Best-effort client IP from proxy headers (used only for rate-limit bucketing). */
+/**
+ * Client IP for rate-limit bucketing only.
+ *
+ * `x-forwarded-for` is client-writable, so its leftmost entry must never be
+ * trusted: rotating a spoofed value would give an attacker a fresh bucket on
+ * every request. Platform headers set by the edge come first, then the rightmost
+ * hop (the one appended by the nearest trusted proxy).
+ */
 export function clientIp(request: Request): string {
+  const platform = request.headers.get("x-vercel-forwarded-for");
+  if (platform) return platform.split(",")[0]?.trim() || "unknown";
+
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp?.trim()) return realIp.trim();
+
   const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() || "unknown";
-  return request.headers.get("x-real-ip")?.trim() || "unknown";
+  if (forwarded) {
+    const hops = forwarded
+      .split(",")
+      .map((hop) => hop.trim())
+      .filter(Boolean);
+    const nearest = hops[hops.length - 1];
+    if (nearest) return nearest;
+  }
+
+  return "unknown";
 }

@@ -174,7 +174,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
       idempotencyKey,
       clientIp: clientIp(request),
       requestOrigin: origin,
-      sourceOrigin: readHelperField(parsed.payload, "_subject") ?? origin,
+      // `_subject` is an email-subject helper, never provenance: only the real
+      // request origin is stored as the source.
+      sourceOrigin: origin,
     });
 
     const redirectTarget = isHtml

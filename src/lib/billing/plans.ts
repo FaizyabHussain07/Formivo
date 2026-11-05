@@ -7,6 +7,8 @@ export type PlanDefinition = {
   forms: number;
   monthlyLeads: number;
   viewers: number;
+  /** CSV export of submissions is a paid capability, enforced server-side. */
+  canExportSubmissions: boolean;
   description: string;
   features: string[];
 };
@@ -19,8 +21,14 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
     forms: 3,
     monthlyLeads: 300,
     viewers: 3,
+    canExportSubmissions: false,
     description: "For trying Formivo on a real project.",
-    features: ["3 active forms", "300 submissions / month", "3 client viewers", "Email support"],
+    features: [
+      "3 active forms",
+      "300 submissions / month",
+      "3 client viewers",
+      "Community support",
+    ],
   },
   pro: {
     key: "pro",
@@ -29,11 +37,13 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
     forms: 10,
     monthlyLeads: 2000,
     viewers: 10,
+    canExportSubmissions: true,
     description: "For freelancers shipping client work.",
     features: [
       "10 active forms",
       "2,000 submissions / month",
       "10 client viewers",
+      "CSV export",
       "Priority email support",
     ],
   },
@@ -44,11 +54,13 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
     forms: 50,
     monthlyLeads: 10000,
     viewers: 50,
+    canExportSubmissions: true,
     description: "For agencies running many client forms.",
     features: [
       "50 active forms",
       "10,000 submissions / month",
       "50 client viewers",
+      "CSV export",
       "Priority support",
     ],
   },

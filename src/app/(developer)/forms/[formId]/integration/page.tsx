@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { AllowedOriginsForm } from "@/components/forms/allowed-origins-form";
+import { ConnectKit } from "@/components/forms/connect-kit";
 import { TestSubmission } from "@/components/forms/test-submission";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
-import { CopyButton } from "@/components/ui/copy-button";
 import { requireDeveloper } from "@/lib/auth/viewer";
 import { getPublicEnv } from "@/lib/env/public";
 import { AppError } from "@/lib/errors";
@@ -28,98 +28,68 @@ export default async function Page({ params }: { params: Promise<{ formId: strin
 
   const endpoint = formSubmissionEndpoint(getPublicEnv().NEXT_PUBLIC_APP_URL, form.id);
 
-  const htmlSnippet = `<form action="${endpoint}" method="POST">
-  <label>
-    Name
-    <input type="text" name="name" required />
-  </label>
-  <label>
-    Email
-    <input type="email" name="email" required />
-  </label>
-  <label>
-    Message
-    <textarea name="message"></textarea>
-  </label>
-
-  <!-- Optional: send visitors to your own thank-you page -->
-  <input type="hidden" name="_redirect" value="https://your-site.com/thanks" />
-
-  <button type="submit">Send</button>
-</form>`;
-
-  const fetchSnippet = `// Inline success and error messages, no page navigation, no API key.
-const response = await fetch("${endpoint}", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    name,
-    email,
-    message,
-    metadata: { page: window.location.pathname },
-  }),
-});
-
-if (response.ok) {
-  showSuccess();
-} else {
-  const { error } = await response.json();
-  showError(error.message);
-}`;
-
-  const curlSnippet = `curl -X POST "${endpoint}" \\
-  -H "Content-Type: application/json" \\
-  -H "Idempotency-Key: order-1042" \\
-  -d '{
-    "name": "Ada Lovelace",
-    "email": "ada@example.com",
-    "message": "Please call me back.",
-    "metadata": { "page": "/contact" }
-  }'`;
-
   const responseSnippet = `{
   "success": true,
   "leadId": "9d1f2c4a-…",
   "message": "Submission received."
 }`;
 
+  const errorSnippet = `{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Field \\"email\\" must be a valid email address."
+  }
+}`;
+
   return (
     <div className="flex flex-col gap-8">
+      <ConnectKit endpoint={endpoint} formName={form.name} />
+
+      <Alert tone="info" title="The endpoint is public. Your data is not.">
+        Anyone who knows the form ID can send a submission, exactly like a normal website form. The
+        endpoint never reads or returns stored submissions. Only you (and a client you explicitly
+        invite) can view, update or export them from the dashboard.
+      </Alert>
+
+      <section aria-labelledby="contract-heading" className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 id="contract-heading" className="text-base font-semibold text-foreground">
+            Response contract
+          </h2>
+          <p className="text-sm text-foreground-secondary">
+            Every request returns JSON. Branch on the HTTP status first, then read{" "}
+            <code className="font-mono text-xs">error.message</code> when the request fails.
+          </p>
+        </div>
+        <div className="grid gap-3 lg:grid-cols-2">
+          <CodeBlock title="201 Created" language="json" code={responseSnippet} />
+          <CodeBlock title="4xx Error" language="json" code={errorSnippet} />
+        </div>
+      </section>
+
       <section aria-labelledby="credentials-heading" className="flex flex-col gap-4">
         <h2 id="credentials-heading" className="text-base font-semibold text-foreground">
-          Public endpoint
+          Endpoint details
         </h2>
-        <dl className="grid gap-4 rounded-lg border border-border bg-surface p-5 sm:grid-cols-2">
-          <div className="flex flex-col gap-1 sm:col-span-2">
-            <dt className="text-xs font-medium tracking-wide text-foreground-muted uppercase">
-              Endpoint
-            </dt>
-            <dd className="flex flex-wrap items-center gap-2">
-              <code className="min-w-0 overflow-x-auto font-mono text-xs text-foreground">
-                POST {endpoint}
-              </code>
-              <CopyButton value={endpoint} label="Copy endpoint" />
-            </dd>
-          </div>
+        <dl className="grid gap-x-6 gap-y-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-1">
-            <dt className="text-xs font-medium tracking-wide text-foreground-muted uppercase">
+            <dt className="text-[11px] font-medium tracking-wide text-foreground-muted uppercase">
               Authentication
             </dt>
             <dd className="text-sm text-foreground-secondary">
               <Badge tone="success">None required</Badge>
-              <span className="mt-1 block text-xs text-foreground-muted">
-                No secret, API key or token. The form id is public.
-              </span>
             </dd>
+            <p className="text-xs text-foreground-muted">No secret or token. The form id is public.</p>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-xs font-medium tracking-wide text-foreground-muted uppercase">
+            <dt className="text-[11px] font-medium tracking-wide text-foreground-muted uppercase">
               Form ID
             </dt>
             <dd className="font-mono text-xs break-all text-foreground-secondary">{form.id}</dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-xs font-medium tracking-wide text-foreground-muted uppercase">
+            <dt className="text-[11px] font-medium tracking-wide text-foreground-muted uppercase">
               Accepted bodies
             </dt>
             <dd className="text-sm text-foreground-secondary">
@@ -127,43 +97,12 @@ if (response.ok) {
             </dd>
           </div>
           <div className="flex flex-col gap-1">
-            <dt className="text-xs font-medium tracking-wide text-foreground-muted uppercase">
+            <dt className="text-[11px] font-medium tracking-wide text-foreground-muted uppercase">
               Limits
             </dt>
             <dd className="text-sm text-foreground-secondary">256 KB · 100 fields · 5 levels</dd>
           </div>
         </dl>
-      </section>
-
-      <Alert tone="info" title="The endpoint is public — your data is not">
-        Anyone who knows the form ID can send a submission, exactly like a normal website form. The
-        endpoint never reads or returns stored submissions. Only you (and a client you explicitly
-        invite) can view, update or export them from the dashboard.
-      </Alert>
-
-      <section aria-labelledby="html-heading" className="flex flex-col gap-4">
-        <h2 id="html-heading" className="text-base font-semibold text-foreground">
-          HTML form
-        </h2>
-        <p className="text-sm text-foreground-secondary">
-          Paste your endpoint into an ordinary form. Formivo accepts form-encoded submissions and
-          shows a simple thank-you page (or redirects to your{" "}
-          <code className="font-mono text-xs">_redirect</code> URL).
-        </p>
-        <CodeBlock title="HTML" language="html" code={htmlSnippet} />
-      </section>
-
-      <section aria-labelledby="js-heading" className="flex flex-col gap-4">
-        <h2 id="js-heading" className="text-base font-semibold text-foreground">
-          JavaScript / fetch
-        </h2>
-        <p className="text-sm text-foreground-secondary">
-          Submit without leaving your page and render your own success or error state. CORS is
-          enabled for the origins allowed below.
-        </p>
-        <CodeBlock title="Browser JavaScript" language="javascript" code={fetchSnippet} />
-        <CodeBlock title="cURL (any language)" code={curlSnippet} />
-        <CodeBlock title="Success response (201 Created)" language="json" code={responseSnippet} />
       </section>
 
       <section aria-labelledby="origins-heading" className="flex flex-col gap-4">

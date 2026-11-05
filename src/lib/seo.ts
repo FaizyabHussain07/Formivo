@@ -15,6 +15,43 @@ export function canonicalUrl(path = "/"): string {
   return `${SITE_URL}${normalized}`;
 }
 
+export type OgKind = "product" | "blog" | "guide" | "comparison" | "docs";
+
+/** Absolute URL of the generated social card for a page. */
+export function ogImageUrl({
+  title,
+  subtitle,
+  kind = "product",
+}: {
+  title: string;
+  subtitle?: string;
+  kind?: OgKind;
+}): string {
+  const params = new URLSearchParams({ title, kind });
+  if (subtitle) params.set("subtitle", subtitle);
+  return `${SITE_URL}/og?${params.toString()}`;
+}
+
+/** Ready-made `openGraph.images` / `twitter.images` entry for a page. */
+export function socialImage({
+  title,
+  subtitle,
+  kind,
+  alt,
+}: {
+  title: string;
+  subtitle?: string;
+  kind?: OgKind;
+  alt?: string;
+}) {
+  return {
+    url: ogImageUrl({ title, subtitle, kind }),
+    width: 1200,
+    height: 630,
+    alt: alt ?? title,
+  };
+}
+
 /** Robots rules: public marketing and docs are open, application routes are closed. */
 const PRIVATE_PREFIXES = [
   "/dashboard",
@@ -36,4 +73,17 @@ const PRIVATE_PREFIXES = [
 
 export const DISALLOWED_PATHS: string[] = [...PRIVATE_PREFIXES];
 
-export const SITEMAP_PATHS = ["/", "/docs", "/pricing", "/contact", "/privacy", "/terms"] as const;
+export const SITEMAP_PATHS = [
+  "/",
+  "/features",
+  "/guides",
+  "/alternatives",
+  "/blog",
+  "/docs",
+  "/pricing",
+  "/security",
+  "/about",
+  "/contact",
+  "/privacy",
+  "/terms",
+] as const;

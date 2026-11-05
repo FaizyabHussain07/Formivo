@@ -452,19 +452,27 @@ describe("invitation acceptance", () => {
     );
   });
 
-  it("enforces one active client per form", async () => {
+  it("shares one form with several clients, each seeing only their own access", async () => {
     // clientZ accepts for form A3 first...
     await accept(tokens.z, users.clientZ.id, users.clientZ.email);
 
-    // ...so a different account with its own invitation cannot take over that form.
-    const takeoverToken = "takeover-token".padEnd(40, "x");
-    await invite(forms.a3, users.clientY.email, takeoverToken, users.devA.id);
-    await expectErrorCode(
-      accept(takeoverToken, users.clientY.id, users.clientY.email, 10),
-      "ACTIVE_CLIENT_EXISTS",
-    );
+    // ...and a second, independently invited client is granted the same form.
+    const secondToken = "second-client".padEnd(40, "x");
+    await invite(forms.a3, users.clientY.email, secondToken, users.devA.id);
+    await accept(secondToken, users.clientY.id, users.clientY.email, 10);
 
-    // A concurrent-style conflict: direct insert violating the partial index.
+    const permissions = await asServiceRole(db, async () =>
+      selectAll<{ client_user_id: string }>(
+        db,
+        `select client_user_id from public.form_client_permissions
+         where form_id = $1 and revoked_at is null`,
+        [forms.a3],
+      ),
+    );
+    expect(permissions).toHaveLength(2);
+    expect(await visibleFormIds(users.clientY.id)).toContain(forms.a3);
+
+    // A second grant for the same person is still rejected by the unique index.
     await expectErrorCode(
       asServiceRole(db, async () =>
         db.query(
@@ -486,13 +494,21 @@ describe("invitation acceptance", () => {
     );
   });
 
-  it("rejects an acceptance when another client is already active on the form", async () => {
+  it("accepts a second client on a form that already has an active client", async () => {
     const freshToken = "fresh-active".padEnd(40, "y");
     await invite(forms.a1, "fresh@example.test", freshToken, users.devA.id);
-    await expectErrorCode(
-      accept(freshToken, users.clientY.id, "fresh@example.test"),
-      "ACTIVE_CLIENT_EXISTS",
+    await accept(freshToken, users.clientY.id, "fresh@example.test");
+
+    const rows = await asServiceRole(db, async () =>
+      selectAll<{ client_user_id: string }>(
+        db,
+        `select client_user_id from public.form_client_permissions
+         where form_id = $1 and revoked_at is null`,
+        [forms.a1],
+      ),
     );
+    expect(rows.length).toBeGreaterThan(1);
+    expect(await visibleFormIds(users.clientY.id)).toContain(forms.a1);
   });
 });
 

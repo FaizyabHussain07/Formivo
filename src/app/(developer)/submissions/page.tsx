@@ -2,6 +2,7 @@ import { Inbox, Search } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ExportButton } from "@/components/submissions/export-button";
 import { Pagination, SubmissionTable } from "@/components/submissions/submission-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input, Select } from "@/components/ui/input";
@@ -54,12 +55,18 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
         title="Submissions"
         description={`${result.total.toLocaleString("en-US")} leads across your workspace.`}
         actions={
-          <Link
-            href="/forms/new"
-            className="inline-flex h-10 items-center rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-[0_1px_2px_rgb(11_31_28/0.04)] transition-colors hover:bg-surface-muted"
-          >
-            New form
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <ExportButton
+              href={`/api/submissions/export${formId ? `?formId=${formId}` : ""}`}
+              canExport={developer.entitlements.canExportSubmissions}
+            />
+            <Link
+              href="/forms/new"
+              className="inline-flex h-10 items-center rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-[0_1px_2px_rgb(11_31_28/0.04)] transition-colors hover:bg-surface-muted"
+            >
+              New form
+            </Link>
+          </div>
         }
       />
 

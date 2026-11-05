@@ -17,7 +17,7 @@ export function CodeBlock({
 }) {
   return (
     <div
-      className={`min-w-0 max-w-full overflow-hidden rounded-xl border border-white/10 bg-[#0a1a17] ${className ?? ""}`}
+      className={`max-w-full min-w-0 overflow-hidden rounded-xl border border-white/10 bg-[#0a1a17] ${className ?? ""}`}
     >
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2">
         <span className="font-mono text-[11px] tracking-wide text-slate-400">

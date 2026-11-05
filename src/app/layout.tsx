@@ -3,7 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 
 import { ThemeScript } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/config/site";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, socialImage } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -31,12 +31,12 @@ export const metadata: Metadata = {
       "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
     url: `${SITE_URL}/`,
     images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Formivo — the form backend for developers. Connect your website forms, manage submissions, share with clients.",
-      },
+      socialImage({
+        title: "The backend your forms were missing",
+        subtitle: "One endpoint per form, submissions and leads in one dashboard",
+        kind: "product",
+        alt: "Formivo, the form backend for developers. Connect your website forms, manage submissions, share with clients.",
+      }),
     ],
   },
   twitter: {
@@ -45,13 +45,37 @@ export const metadata: Metadata = {
     description:
       "Connect your website forms to one public endpoint. Receive submissions, manage leads and share selected forms with clients.",
     images: [
-      {
-        url: "/og-image.png",
-        alt: "Formivo — the form backend for developers.",
-      },
+      socialImage({
+        title: "Formivo, the form backend for developers",
+        subtitle: "Point any form at one endpoint. Manage submissions. Share them with clients.",
+        kind: "product",
+      }),
     ],
   },
   robots: { index: true, follow: true },
+  keywords: [
+    "form backend",
+    "form backend as a service",
+    "html form backend",
+    "form submission endpoint",
+    "contact form backend",
+    "form to dashboard",
+    "client portal for forms",
+  ],
+  authors: [{ name: "Formivo", url: SITE_URL }],
+  creator: "Formivo",
+  publisher: "Formivo",
+  category: "technology",
+  // Search Console / Bing ownership tokens are deployment configuration, so they are
+  // read from the environment instead of being committed to the repository.
+  verification: {
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+      ? { other: { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } }
+      : {}),
+  },
 };
 
 export const viewport: Viewport = {

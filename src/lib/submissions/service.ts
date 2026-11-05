@@ -1,7 +1,6 @@
 import "server-only";
 
 import { getWorkspaceEntitlements } from "@/lib/billing/entitlements";
-import { currentUsageWindow } from "@/lib/billing/plans";
 import { AppError, mapDatabaseError } from "@/lib/errors";
 import { isOriginAllowed, parseAllowedOrigins } from "@/lib/forms/service";
 import { hashRequestBody } from "@/lib/security/tokens";
@@ -180,12 +179,12 @@ export async function ingestSubmission(input: IngestInput): Promise<IngestResult
   }
 
   const admin = requireAdminClient();
-  const window = currentUsageWindow();
-
+  // The same window entitlements were computed from: the provider billing cycle
+  // for paid workspaces, the calendar month for free ones.
   const { data, error } = await admin.rpc("api_record_submission", {
     p_form_id: form.id,
-    p_period_start: window.start.toISOString(),
-    p_period_end: window.end.toISOString(),
+    p_period_start: entitlements.usageWindowStart.toISOString(),
+    p_period_end: entitlements.usageWindowEnd.toISOString(),
     p_max_submissions: entitlements.plan.monthlyLeads,
     p_data: payload.data as Json,
     p_source_origin: input.sourceOrigin ?? undefined,

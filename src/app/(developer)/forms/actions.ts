@@ -52,8 +52,8 @@ export async function createFormAction(
     };
   }
 
-  // Straight to the new form's dashboard: endpoint, integration snippet and leads.
-  redirect(`/forms/${formId}`);
+  // Connect screen first: endpoint plus ready-made AI prompts, then the dashboard.
+  redirect(`/connect/${formId}?new=1`);
 }
 
 export async function updateFormAction(

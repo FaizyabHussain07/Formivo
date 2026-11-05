@@ -1,10 +1,12 @@
 import { Inbox } from "lucide-react";
 import type { Metadata } from "next";
 
+import { ExportButton } from "@/components/submissions/export-button";
 import { Pagination, SubmissionTable } from "@/components/submissions/submission-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input, Select } from "@/components/ui/input";
 import { requireClientForm } from "@/lib/auth/viewer";
+import { getWorkspaceEntitlements } from "@/lib/billing/entitlements";
 import { getFormWorkspaceId } from "@/lib/forms/service";
 import {
   LEAD_STATUSES,
@@ -27,6 +29,7 @@ export default async function Page({
   const [{ formId }, sp] = await Promise.all([params, searchParams]);
   await requireClientForm(formId);
   const workspaceId = await getFormWorkspaceId(formId);
+  const entitlements = await getWorkspaceEntitlements(workspaceId);
 
   const page = Number.parseInt(sp.page ?? "1", 10);
   const status = sp.status && isLeadStatus(sp.status) ? sp.status : "all";
@@ -83,6 +86,13 @@ export default async function Page({
           Filter
         </button>
       </form>
+
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <ExportButton
+          href={`/api/submissions/export?formId=${formId}`}
+          canExport={entitlements.canExportSubmissions}
+        />
+      </div>
 
       {result.items.length === 0 ? (
         <EmptyState

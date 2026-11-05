@@ -12,10 +12,11 @@ export type NavGroup = {
 };
 
 export const marketingNav: NavItem[] = [
-  { href: "/#features", label: "Features" },
-  { href: "/#how-it-works", label: "How it works" },
+  { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/docs", label: "Docs" },
+  { href: "/guides", label: "Guides" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export const legalNav: NavItem[] = [

@@ -12,10 +12,12 @@ import {
   Zap,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { CodeTabs } from "@/components/marketing/code-tabs";
 import { Faq } from "@/components/marketing/faq";
 import { faqItems } from "@/components/marketing/faq";
+import { ClientPortalPreview, EndpointResponsePreview } from "@/components/marketing/previews";
 import { ProductPreview } from "@/components/marketing/product-preview";
 import {
   JsonLd,
@@ -28,12 +30,53 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/config/site";
+import { alternatives } from "@/content/alternatives";
+import { sortedPosts } from "@/content/blog";
+import { guides } from "@/content/guides";
+import { socialImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: { absolute: "Formivo | Form Backend and Submission Management for Developers" },
   description:
-    "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
+    "A form backend for websites you have already built. Point any HTML, React, Next.js or PHP form at one endpoint, collect submissions, manage leads and give clients read-only access.",
   alternates: { canonical: "/" },
+  keywords: [
+    "form backend",
+    "html form backend",
+    "form backend for static sites",
+    "contact form backend",
+    "form submission backend",
+    "form endpoint",
+    "form to email backend",
+    "formspree alternative",
+    "client form portal",
+    "no-code form backend",
+  ],
+  openGraph: {
+    type: "website",
+    title: "Formivo | The form backend for the website you already built",
+    description:
+      "One endpoint per form. Collect, manage and share form submissions without writing a backend.",
+    url: siteConfig.productionUrl,
+    images: [
+      socialImage({
+        title: "The backend your forms were missing",
+        subtitle: "One endpoint per form · submissions, leads and read-only client access",
+        kind: "product",
+      }),
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Formivo | Form backend for developers",
+    description: "Point any form at one endpoint. Manage submissions. Share them with clients.",
+    images: [
+      socialImage({
+        title: "The backend your forms were missing",
+        subtitle: "One endpoint per form · submissions, leads and read-only client access",
+      }),
+    ],
+  },
 };
 
 const endpoint = `${siteConfig.productionUrl}/api/f/YOUR_FORM_ID`;
@@ -85,7 +128,8 @@ const steps = [
   },
   {
     title: "Point your form at it",
-    description: "Reuse the form you already have. HTML, React, Vue, PHP or cURL — same endpoint.",
+    description:
+      "Reuse the form you already have. HTML, React, Vue, PHP and cURL all post to the same endpoint.",
   },
   {
     title: "Collect submissions",
@@ -144,6 +188,35 @@ const plans = [
   { name: "Agency", price: "$49", blurb: "50 forms · 10,000 submissions/mo" },
 ];
 
+const audiences = [
+  {
+    title: "Freelancers and studios",
+    body: "Ship a client site without standing up a server. The contact form posts to an endpoint you own, and the brief lands in a dashboard instead of a shared inbox.",
+    link: { href: "/guides/html", label: "Wire up an HTML form" },
+  },
+  {
+    title: "Agencies with clients",
+    body: "Run every client form from one workspace. Each client gets a read-only view of their own leads, with no logins to your inbox and no forwarded spreadsheets.",
+    link: { href: "/blog/share-form-submissions-with-clients", label: "How client access works" },
+  },
+  {
+    title: "SaaS and marketing teams",
+    body: "Demo requests, waitlists and feedback widgets on sites that deploy on every commit. The endpoint is the same in preview, staging and production.",
+    link: { href: "/guides/nextjs", label: "Next.js integration" },
+  },
+  {
+    title: "Docs, blogs and static sites",
+    body: "No framework required. A plain form action, a fetch call, or curl from a build script. Anything that can send an HTTP request works.",
+    link: { href: "/guides/static", label: "Static site setup" },
+  },
+];
+
+const stackGuides = guides.slice(0, 8);
+
+const latestPosts = sortedPosts.slice(0, 3);
+
+const comparisons = alternatives.slice(0, 5);
+
 export default function HomePage() {
   return (
     <>
@@ -160,17 +233,17 @@ export default function HomePage() {
           <div className="flex flex-col items-start">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent-subtle px-3 py-1 text-xs font-medium text-accent-hover">
               <Sparkles className="size-3.5" aria-hidden="true" />
-              Lead infrastructure for modern websites
+              Form backend · client portal · no rebuild
             </span>
 
             <h1 className="mt-5 text-4xl leading-[1.05] font-semibold tracking-tight text-balance text-foreground sm:text-5xl lg:text-[56px]">
-              Your forms. Your backend. Your leads in one place.
+              The backend your forms were missing.
             </h1>
 
             <p className="mt-5 max-w-xl text-base leading-relaxed text-foreground-secondary sm:text-lg">
-              Connect your existing website forms to Formivo with a single endpoint. Collect
-              submissions, manage leads, and share them with your clients without building another
-              backend.
+              Point the form you already built at one Formivo endpoint. It validates the request,
+              stores the submission, and puts every lead in a dashboard you can search. When a
+              client needs their leads, invite them to a read-only view of just their form.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -184,7 +257,11 @@ export default function HomePage() {
             </div>
 
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-foreground-secondary">
-              {["No form rebuild", "No backend to deploy", "Read-only client portal"].map(
+              {[
+                "Works with HTML, React, Next.js and PHP",
+                "No server to deploy",
+                "Free plan, no card",
+              ].map(
                 (item) => (
                   <li key={item} className="flex items-center gap-2">
                     <Check className="size-4 text-accent" aria-hidden="true" />
@@ -267,8 +344,8 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="max-w-sm text-sm text-foreground-secondary">
-              The unglamorous parts of receiving form data — validation, abuse control, storage,
-              permissions — handled.
+              The unglamorous parts of receiving form data: validation, abuse control, storage and
+              permissions. Handled.
             </p>
           </div>
 
@@ -289,6 +366,119 @@ export default function HomePage() {
         </Container>
       </section>
 
+      <section id="who-its-for" className="border-b border-border bg-surface">
+        <Container className="flex flex-col gap-10 py-16 sm:py-20">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-medium tracking-[0.14em] text-foreground-muted uppercase">
+                Who it is for
+              </p>
+              <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                Built for people who ship websites, not servers.
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm text-foreground-secondary">
+              The same endpoint serves a hand-coded page, a Next.js app and a client&apos;s WordPress
+              site. Only the amount of data changes.
+            </p>
+          </div>
+
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {audiences.map((audience) => (
+              <li
+                key={audience.title}
+                className="flex flex-col gap-2.5 rounded-xl border border-border bg-background p-5"
+              >
+                <h3 className="text-[15px] font-semibold text-foreground">{audience.title}</h3>
+                <p className="text-sm leading-relaxed text-foreground-secondary">{audience.body}</p>
+                <Link
+                  href={audience.link.href}
+                  className="mt-1 inline-flex w-fit items-center gap-1 text-sm font-medium text-accent hover:underline"
+                >
+                  {audience.link.label}
+                  <ArrowRight className="size-3.5" aria-hidden="true" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <section className="border-b border-border">
+        <Container className="grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+          <div className="flex min-w-0 flex-col gap-4">
+            <p className="text-xs font-medium tracking-[0.14em] text-foreground-muted uppercase">
+              What comes back
+            </p>
+            <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+              A request in. A stored lead out.
+            </h2>
+            <p className="max-w-lg text-base text-foreground-secondary">
+              Success is a <code className="font-mono text-[13px]">201</code> with the submission id,
+              so your front-end can show the right state without guessing. Failures are specific:
+              validation errors list the offending fields, rate limits say when to retry, paused
+              forms stop accepting writes immediately.
+            </p>
+            <ul className="flex flex-col gap-2.5 text-sm text-foreground-secondary">
+              {[
+                "Accepts form-encoded payloads, multipart bodies and JSON.",
+                "Idempotency keys make retries safe on flaky connections.",
+                "Every submission keeps its full payload, source URL and timestamp.",
+              ].map((item) => (
+                <li key={item} className="flex gap-2.5">
+                  <Check className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <ButtonLink href="/docs" variant="secondary" size="sm" className="w-fit">
+              See the API reference
+              <ArrowRight aria-hidden="true" />
+            </ButtonLink>
+          </div>
+          <EndpointResponsePreview />
+        </Container>
+      </section>
+
+      <section className="border-b border-border">
+        <Container className="grid gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:items-start lg:gap-16">
+          <div className="flex min-w-0 flex-col gap-4">
+            <p className="text-xs font-medium tracking-[0.14em] text-foreground-muted uppercase">
+              Client access
+            </p>
+            <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+              Send the leads. Not the workspace.
+            </h2>
+            <p className="max-w-lg text-base text-foreground-secondary">
+              Invite a client by email. They accept, land on their own form&apos;s submissions, and can
+              search, filter and export, without seeing another client&apos;s data or any of your
+              workspace settings.
+            </p>
+            <ul className="mt-2 flex flex-col gap-3 text-sm text-foreground-secondary">
+              {[
+                "Access is scoped to one form per invitation.",
+                "Removing a viewer revokes access on their very next request.",
+                "A client can never edit forms, change plans or invite anyone else.",
+                "Invitations expire, and acceptance is logged.",
+              ].map((item) => (
+                <li key={item} className="flex gap-2.5">
+                  <Check className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/features"
+              className="inline-flex w-fit items-center gap-1 text-sm font-medium text-accent hover:underline"
+            >
+              See the full feature list
+              <ArrowRight className="size-3.5" aria-hidden="true" />
+            </Link>
+          </div>
+          <ClientPortalPreview />
+        </Container>
+      </section>
+
       <section className="border-b border-border">
         <Container className="grid gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="flex min-w-0 flex-col gap-4">
@@ -299,16 +489,16 @@ export default function HomePage() {
               A public endpoint. A private database.
             </h2>
             <p className="max-w-lg text-base text-foreground-secondary">
-              Anyone can copy the URL from your website source. That is fine — the endpoint can only
-              write a validated submission. Reading, updating and exporting require an authenticated
-              workspace member.
+              Anyone can copy the URL from your website source. That is fine, because the endpoint
+              can only write a validated submission. Reading, updating and exporting require an
+              authenticated workspace member.
             </p>
             <ul className="mt-2 flex flex-col gap-3 text-sm text-foreground-secondary">
               {[
                 "Row Level Security on every table, enforced with server-side authorization.",
                 "Workspaces and plans can never be overridden by client input.",
                 "Distributed rate limits return 429 with Retry-After.",
-                "Optional allowed-domain list for browser CORS — not a substitute for the real controls.",
+                "Optional allowed-domain list for browser CORS, never a substitute for the real controls.",
               ].map((item) => (
                 <li key={item} className="flex gap-2.5">
                   <Check className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
@@ -332,7 +522,7 @@ export default function HomePage() {
                 ["400 / 413 / 415", "invalid, too large, unsupported body"],
                 ["404 / 409", "unknown or paused form"],
                 ["429", "rate limited · Retry-After"],
-                ["GET", "405 — the endpoint never reads data"],
+                ["GET", "405, the endpoint never reads data"],
               ].map(([key, value]) => (
                 <div key={key} className="flex flex-col gap-0.5">
                   <dt className="font-mono text-[12.5px] text-teal-300">{key}</dt>
@@ -377,6 +567,87 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </Container>
+      </section>
+
+      <section id="resources" className="border-b border-border bg-surface">
+        <Container className="flex flex-col gap-10 py-16 sm:py-20">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-medium tracking-[0.14em] text-foreground-muted uppercase">
+                Learn the setup
+              </p>
+              <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                Guides for the stack you already use.
+              </h2>
+            </div>
+            <ButtonLink href="/guides" variant="secondary" size="sm" className="w-fit">
+              All guides
+              <ArrowRight aria-hidden="true" />
+            </ButtonLink>
+          </div>
+
+          <ul className="flex flex-wrap gap-2">
+            {stackGuides.map((guide) => (
+              <li key={guide.slug}>
+                <Link
+                  href={`/guides/${guide.slug}`}
+                  className="inline-flex items-center rounded-full border border-border bg-background px-3.5 py-1.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:border-border-strong hover:text-foreground"
+                >
+                  {guide.language}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/guides"
+                className="inline-flex items-center gap-1 rounded-full border border-accent/25 bg-accent-subtle px-3.5 py-1.5 text-[13px] font-medium text-accent-hover"
+              >
+                +6 more
+                <ArrowRight className="size-3.5" aria-hidden="true" />
+              </Link>
+            </li>
+          </ul>
+
+          <div className="grid gap-8 border-t border-border pt-10 lg:grid-cols-[1.3fr_1fr]">
+            <div className="flex flex-col gap-4">
+              <h3 className="text-lg font-semibold tracking-tight">From the blog</h3>
+              <ul className="flex flex-col gap-3">
+                {latestPosts.map((post) => (
+                  <li key={post.slug}>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="group flex flex-col gap-0.5 rounded-lg border border-transparent p-2 -mx-2 transition-colors hover:border-border hover:bg-background"
+                    >
+                      <span className="text-[14.5px] font-medium text-foreground group-hover:text-accent-hover">
+                        {post.title}
+                      </span>
+                      <span className="text-[12.5px] text-foreground-muted">
+                        {post.category} · {post.readingMinutes} min read
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h3 className="text-lg font-semibold tracking-tight">Comparing options</h3>
+              <ul className="flex flex-col gap-2 text-sm text-foreground-secondary">
+                {comparisons.map((item) => (
+                  <li key={item.slug}>
+                    <Link
+                      href={`/alternatives/${item.slug}`}
+                      className="inline-flex items-center gap-1 text-foreground-secondary transition-colors hover:text-accent-hover"
+                    >
+                      Formivo vs {item.competitor}
+                      <ArrowRight className="size-3.5" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </Container>
       </section>
 
