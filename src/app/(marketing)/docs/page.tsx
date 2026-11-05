@@ -167,19 +167,19 @@ export default function Page() {
               ))}
             </ul>
           </nav>
-          <div className="mt-6 hidden flex-col gap-2 rounded-xl border border-border bg-surface p-4 lg:flex">
+          <div className="mt-6 flex flex-col gap-2 rounded-xl border border-border bg-surface p-4">
             <p className="text-sm font-medium text-foreground">Ready to try it?</p>
             <p className="text-xs text-foreground-secondary">
               Create a form and copy its endpoint in under a minute.
             </p>
-            <ButtonLink href="/signup" size="sm" variant="secondary" className="mt-1">
-              Get started
+            <ButtonLink href="/signup" size="sm" className="mt-1">
+              Create a free form
             </ButtonLink>
           </div>
         </aside>
 
         <div className="flex min-w-0 flex-col gap-10">
-          <header className="flex flex-col gap-3">
+          <header className="flex flex-col gap-4 border-t border-border pb-8 pt-8">
             <Badge tone="accent" className="w-fit">
               API v1
             </Badge>
@@ -219,7 +219,7 @@ export default function Page() {
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-subtle font-mono text-xs font-semibold text-accent">
                   3
                 </span>
-                Send a request, then read the submission in your dashboard.
+                Paste it into your form, or ask an AI coding agent to wire it for you.
               </li>
             </ol>
             <CodeBlock title="HTML" language="html" code={htmlExample} />
@@ -284,7 +284,7 @@ export default function Page() {
             <CodeBlock title="Browser JavaScript" language="javascript" code={jsExample} />
             <CodeBlock title="cURL" language="bash" code={curlExample} />
             <p className="text-sm text-foreground-secondary">
-              Any extra string fields are stored as-is on the submission. Use{" "}
+              Any extra string fields are stored as-is. Use{" "}
               <code className="font-mono text-xs">metadata</code> for context such as the page path
               or a campaign name. A filled <code className="font-mono text-xs">_gotcha</code> field
               is treated as a bot and silently discarded.
