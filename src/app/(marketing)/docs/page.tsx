@@ -297,8 +297,16 @@ export default function Page() {
             </p>
             <div className="grid gap-3 lg:grid-cols-2">
               <CodeBlock title="201 Created" language="json" code={responseExample} />
-              <CodeBlock title="Failure shape" language="json" code={errorExample} />
+              <CodeBlock title="Failure shape (4xx)" language="json" code={errorExample} />
             </div>
+            <p className="text-sm text-foreground-muted">
+              Any request that the validator rejects produces the failure shape with a machine-readable{"
+              }
+              <code className="font-mono text-xs">code</code> and a human-readable{"
+              }
+              <code className="font-mono text-xs">message</code>. Retry 5xx with backoff; do not retry 4xx
+              without changing the request.
+            </p>
           </Section>
 
           <Section id="errors" title="Status codes & errors">
