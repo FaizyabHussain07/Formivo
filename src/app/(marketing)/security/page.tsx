@@ -11,17 +11,37 @@ export const metadata: Metadata = {
   description:
     "The concrete controls behind Formivo: unauthenticated write-only endpoints, validation and rate limits, row-level security, client isolation and revocable access.",
   alternates: { canonical: "/security" },
-  keywords: ["form backend security","secure form endpoint","spam protection form","form data privacy"],
+  keywords: [
+    "form backend security",
+    "secure form endpoint",
+    "spam protection form",
+    "form data privacy",
+  ],
   openGraph: {
     title: "How Formivo protects form submissions",
-    description: "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.",
-    images: [socialImage({ title: "How Formivo protects form submissions", subtitle: "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.", kind: "product" })],
+    description:
+      "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.",
+    images: [
+      socialImage({
+        title: "How Formivo protects form submissions",
+        subtitle:
+          "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.",
+        kind: "product",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "How Formivo protects form submissions",
-    description: "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.",
-    images: [socialImage({ title: "How Formivo protects form submissions", subtitle: "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog." })],
+    description:
+      "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.",
+    images: [
+      socialImage({
+        title: "How Formivo protects form submissions",
+        subtitle:
+          "Write-only endpoints, validation, rate limits, row-level security and revocable client access, explained without marketing fog.",
+      }),
+    ],
   },
 };
 

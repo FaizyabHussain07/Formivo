@@ -6,24 +6,10 @@
  */
 
 export type PromptTargetId =
-  | "html"
-  | "react"
-  | "nextjs"
-  | "vue"
-  | "svelte"
-  | "astro"
-  | "javascript"
-  | "php";
+  "html" | "react" | "nextjs" | "vue" | "svelte" | "astro" | "javascript" | "php";
 
 export type PromptToolId =
-  | "claude-code"
-  | "cursor"
-  | "copilot"
-  | "codex"
-  | "opencode"
-  | "antigravity"
-  | "windsurf"
-  | "v0";
+  "claude-code" | "cursor" | "copilot" | "codex" | "opencode" | "antigravity" | "windsurf" | "v0";
 
 export type PromptTarget = {
   id: PromptTargetId;
@@ -148,7 +134,9 @@ Keep the page static: render the form in .astro markup with action="${endpoint}"
     name: "Vanilla JS",
     summary: "No framework: a form plus a module that posts and renders the result.",
     produces: "an HTML partial and a script module",
-    instructions: (endpoint) => `Task: connect a plain HTML form to this endpoint with vanilla JavaScript.
+    instructions: (
+      endpoint,
+    ) => `Task: connect a plain HTML form to this endpoint with vanilla JavaScript.
 
 Endpoint: POST ${endpoint}
 

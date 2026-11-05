@@ -13,17 +13,37 @@ export const metadata: Metadata = {
   description:
     "Compare Formivo plans for form endpoints, submissions, client access, and form management. Choose a plan that fits your workflow.",
   alternates: { canonical: "/pricing" },
-  keywords: ["form backend pricing","formspree pricing comparison","form backend plans","client portal pricing"],
+  keywords: [
+    "form backend pricing",
+    "formspree pricing comparison",
+    "form backend plans",
+    "client portal pricing",
+  ],
   openGraph: {
     title: "Formivo pricing | Form backend plans for developers and agencies",
-    description: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
-    images: [socialImage({ title: "Formivo pricing | Form backend plans for developers and agencies", subtitle: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.", kind: "product" })],
+    description:
+      "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
+    images: [
+      socialImage({
+        title: "Formivo pricing | Form backend plans for developers and agencies",
+        subtitle:
+          "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
+        kind: "product",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Formivo pricing | Form backend plans for developers and agencies",
-    description: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
-    images: [socialImage({ title: "Formivo pricing | Form backend plans for developers and agencies", subtitle: "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card." })],
+    description:
+      "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
+    images: [
+      socialImage({
+        title: "Formivo pricing | Form backend plans for developers and agencies",
+        subtitle:
+          "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
+      }),
+    ],
   },
 };
 

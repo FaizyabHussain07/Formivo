@@ -9,9 +9,30 @@ import { Badge } from "@/components/ui/badge";
  */
 
 const leads = [
-  { name: "Jordan Alvarez", company: "Northside Studio", message: "Need a quote for a 6-page site.", status: "New", tone: "accent" as const, when: "9:12" },
-  { name: "Priya Raman", company: "Raman Legal", message: "Can we book a call this week?", status: "Contacted", tone: "neutral" as const, when: "8:40" },
-  { name: "Tomas Lind", company: "Lind & Co", message: "Budget approved, sending brief.", status: "Qualified", tone: "warning" as const, when: "Yesterday" },
+  {
+    name: "Jordan Alvarez",
+    company: "Northside Studio",
+    message: "Need a quote for a 6-page site.",
+    status: "New",
+    tone: "accent" as const,
+    when: "9:12",
+  },
+  {
+    name: "Priya Raman",
+    company: "Raman Legal",
+    message: "Can we book a call this week?",
+    status: "Contacted",
+    tone: "neutral" as const,
+    when: "8:40",
+  },
+  {
+    name: "Tomas Lind",
+    company: "Lind & Co",
+    message: "Budget approved, sending brief.",
+    status: "Qualified",
+    tone: "warning" as const,
+    when: "Yesterday",
+  },
 ];
 
 export function ClientPortalPreview() {
@@ -90,8 +111,8 @@ export function EndpointResponsePreview() {
       </div>
       <pre className="overflow-x-auto px-4 py-4 font-mono text-[12px] leading-relaxed">
         <code>
-          <span className="text-slate-500">$</span> curl -X POST &quot;https://formivo.faizyab.me/api/f/
-          frm_2c9a41be7f&quot; \{"\n"}
+          <span className="text-slate-500">$</span> curl -X POST
+          &quot;https://formivo.faizyab.me/api/f/ frm_2c9a41be7f&quot; \{"\n"}
           {"  "}-H &quot;Content-Type: application/json&quot; \{"\n"}
           {"  "}-d &apos;{`{"name":"Ada Lovelace","email":"ada@example.com"}`}&apos;{"\n\n"}
           <span className="text-teal-300">HTTP/2 201</span>

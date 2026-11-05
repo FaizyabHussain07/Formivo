@@ -21,17 +21,37 @@ export const metadata: Metadata = {
   description:
     "Every Formivo feature explained: public endpoints without keys, validated intake, lead statuses, CSV exports, client viewers, rate limits and plan enforcement.",
   alternates: { canonical: "/features" },
-  keywords: ["form backend features","form endpoint features","client portal for forms","csv export submissions"],
+  keywords: [
+    "form backend features",
+    "form endpoint features",
+    "client portal for forms",
+    "csv export submissions",
+  ],
   openGraph: {
     title: "Everything Formivo does after the submit button",
-    description: "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
-    images: [socialImage({ title: "Everything Formivo does after the submit button", subtitle: "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.", kind: "product" })],
+    description:
+      "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+    images: [
+      socialImage({
+        title: "Everything Formivo does after the submit button",
+        subtitle:
+          "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+        kind: "product",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Everything Formivo does after the submit button",
-    description: "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
-    images: [socialImage({ title: "Everything Formivo does after the submit button", subtitle: "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint." })],
+    description:
+      "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+    images: [
+      socialImage({
+        title: "Everything Formivo does after the submit button",
+        subtitle:
+          "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+      }),
+    ],
   },
 };
 

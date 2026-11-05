@@ -12,17 +12,37 @@ export const metadata: Metadata = {
   description:
     "Copy-paste integration guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Express, Python, Django, Flask and static sites.",
   alternates: { canonical: "/guides" },
-  keywords: ["form backend tutorial","html form to backend","react form backend","php form backend"],
+  keywords: [
+    "form backend tutorial",
+    "html form to backend",
+    "react form backend",
+    "php form backend",
+  ],
   openGraph: {
     title: "Integration guides for every stack",
-    description: "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.",
-    images: [socialImage({ title: "Integration guides for every stack", subtitle: "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.", kind: "guide" })],
+    description:
+      "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.",
+    images: [
+      socialImage({
+        title: "Integration guides for every stack",
+        subtitle:
+          "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.",
+        kind: "guide",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Integration guides for every stack",
-    description: "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.",
-    images: [socialImage({ title: "Integration guides for every stack", subtitle: "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites." })],
+    description:
+      "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.",
+    images: [
+      socialImage({
+        title: "Integration guides for every stack",
+        subtitle:
+          "Copy-paste guides for HTML, JavaScript, React, Next.js, Vue, Nuxt, PHP, Laravel, Node, Python and static sites.",
+      }),
+    ],
   },
 };
 

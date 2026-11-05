@@ -16,17 +16,32 @@ export const metadata: Metadata = {
     canonical: "/blog",
     types: { "application/rss+xml": "/blog/rss.xml" },
   },
-  keywords: ["form backend blog","form submission tutorials","contact form backend guide"],
+  keywords: ["form backend blog", "form submission tutorials", "contact form backend guide"],
   openGraph: {
     title: "Notes on form backends and client work",
-    description: "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.",
-    images: [socialImage({ title: "Notes on form backends and client work", subtitle: "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.", kind: "blog" })],
+    description:
+      "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.",
+    images: [
+      socialImage({
+        title: "Notes on form backends and client work",
+        subtitle:
+          "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.",
+        kind: "blog",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Notes on form backends and client work",
-    description: "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.",
-    images: [socialImage({ title: "Notes on form backends and client work", subtitle: "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins." })],
+    description:
+      "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.",
+    images: [
+      socialImage({
+        title: "Notes on form backends and client work",
+        subtitle:
+          "Practical writing on form backends, integrations, spam control and handing leads to clients without sharing logins.",
+      }),
+    ],
   },
 };
 

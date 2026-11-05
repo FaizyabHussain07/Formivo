@@ -261,14 +261,12 @@ export default function HomePage() {
                 "Works with HTML, React, Next.js and PHP",
                 "No server to deploy",
                 "Free plan, no card",
-              ].map(
-                (item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <Check className="size-4 text-accent" aria-hidden="true" />
-                    {item}
-                  </li>
-                ),
-              )}
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <Check className="size-4 text-accent" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -378,8 +376,8 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="max-w-sm text-sm text-foreground-secondary">
-              The same endpoint serves a hand-coded page, a Next.js app and a client&apos;s WordPress
-              site. Only the amount of data changes.
+              The same endpoint serves a hand-coded page, a Next.js app and a client&apos;s
+              WordPress site. Only the amount of data changes.
             </p>
           </div>
 
@@ -414,10 +412,10 @@ export default function HomePage() {
               A request in. A stored lead out.
             </h2>
             <p className="max-w-lg text-base text-foreground-secondary">
-              Success is a <code className="font-mono text-[13px]">201</code> with the submission id,
-              so your front-end can show the right state without guessing. Failures are specific:
-              validation errors list the offending fields, rate limits say when to retry, paused
-              forms stop accepting writes immediately.
+              Success is a <code className="font-mono text-[13px]">201</code> with the submission
+              id, so your front-end can show the right state without guessing. Failures are
+              specific: validation errors list the offending fields, rate limits say when to retry,
+              paused forms stop accepting writes immediately.
             </p>
             <ul className="flex flex-col gap-2.5 text-sm text-foreground-secondary">
               {[
@@ -450,9 +448,9 @@ export default function HomePage() {
               Send the leads. Not the workspace.
             </h2>
             <p className="max-w-lg text-base text-foreground-secondary">
-              Invite a client by email. They accept, land on their own form&apos;s submissions, and can
-              search, filter and export, without seeing another client&apos;s data or any of your
-              workspace settings.
+              Invite a client by email. They accept, land on their own form&apos;s submissions, and
+              can search, filter and export, without seeing another client&apos;s data or any of
+              your workspace settings.
             </p>
             <ul className="mt-2 flex flex-col gap-3 text-sm text-foreground-secondary">
               {[
@@ -617,7 +615,7 @@ export default function HomePage() {
                   <li key={post.slug}>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="group flex flex-col gap-0.5 rounded-lg border border-transparent p-2 -mx-2 transition-colors hover:border-border hover:bg-background"
+                      className="group -mx-2 flex flex-col gap-0.5 rounded-lg border border-transparent p-2 transition-colors hover:border-border hover:bg-background"
                     >
                       <span className="text-[14.5px] font-medium text-foreground group-hover:text-accent-hover">
                         {post.title}

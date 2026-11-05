@@ -89,13 +89,7 @@ if (!res.ok) throw new Error(data.error.message);`;
   -d '{"name":"Ada Lovelace","email":"ada@example.com","message":"Please call me back."}'`;
 }
 
-export function ConnectKit({
-  endpoint,
-  formName,
-}: {
-  endpoint: string;
-  formName?: string;
-}) {
+export function ConnectKit({ endpoint, formName }: { endpoint: string; formName?: string }) {
   const [tool, setTool] = useState<PromptToolId>("claude-code");
   const [target, setTarget] = useState<PromptTargetId>("react");
   const [snippet, setSnippet] = useState<"html" | "fetch" | "curl">("html");
@@ -239,7 +233,6 @@ export function ConnectKit({
                 Prompt for {activeTool.name}
               </p>
               <CopyButton value={prompt} label="Copy prompt" />
-
             </div>
 
             <div className="overflow-hidden rounded-xl border border-border bg-surface">
@@ -298,7 +291,9 @@ export function ConnectKit({
         <CodeBlock
           code={snippetFor(endpoint, snippet)}
           language={snippet === "curl" ? "bash" : snippet === "html" ? "html" : "javascript"}
-          title={snippet === "html" ? "contact.html" : snippet === "fetch" ? "submit.js" : "terminal"}
+          title={
+            snippet === "html" ? "contact.html" : snippet === "fetch" ? "submit.js" : "terminal"
+          }
         />
       </section>
     </div>

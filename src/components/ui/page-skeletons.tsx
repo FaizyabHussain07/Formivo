@@ -182,7 +182,10 @@ export function ContentListSkeleton({
   label?: string;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-5 py-14 sm:px-8" aria-busy="true">
+    <div
+      className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-5 py-14 sm:px-8"
+      aria-busy="true"
+    >
       <LoadingAnnouncement label={label} />
       <div className="flex flex-col gap-3">
         <Skeleton className="h-3 w-24" />
@@ -191,7 +194,10 @@ export function ContentListSkeleton({
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: cards }).map((_, index) => (
-          <div key={index} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+          <div
+            key={index}
+            className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5"
+          >
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-5 w-4/5" />
             <SkeletonText lines={3} />

@@ -11,17 +11,32 @@ export const metadata: Metadata = {
   description:
     "Why Formivo exists: a form backend that treats client access as a first-class feature instead of a shared login or a monthly CSV email.",
   alternates: { canonical: "/about" },
-  keywords: ["form backend for agencies","formivo about","client form portal"],
+  keywords: ["form backend for agencies", "formivo about", "client form portal"],
   openGraph: {
     title: "Why Formivo exists",
-    description: "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.",
-    images: [socialImage({ title: "Why Formivo exists", subtitle: "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.", kind: "product" })],
+    description:
+      "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.",
+    images: [
+      socialImage({
+        title: "Why Formivo exists",
+        subtitle:
+          "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.",
+        kind: "product",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Why Formivo exists",
-    description: "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.",
-    images: [socialImage({ title: "Why Formivo exists", subtitle: "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace." })],
+    description:
+      "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.",
+    images: [
+      socialImage({
+        title: "Why Formivo exists",
+        subtitle:
+          "A form backend built around the part most tools ignore: getting leads to your client without handing over your workspace.",
+      }),
+    ],
   },
 };
 

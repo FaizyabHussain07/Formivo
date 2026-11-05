@@ -19,15 +19,37 @@ export const metadata: Metadata = {
   description:
     "Learn how to create a Formivo endpoint, connect an HTML or JavaScript form, handle submissions, and manage form data.",
   alternates: { canonical: "/docs" },
-  keywords: ["form backend api","form endpoint documentation","post form to api","form backend quickstart"],    openGraph: {
+  keywords: [
+    "form backend api",
+    "form endpoint documentation",
+    "post form to api",
+    "form backend quickstart",
+  ],
+  openGraph: {
     title: "Formivo documentation | One public endpoint per form",
-    description: "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.",
-    images: [socialImage({ title: "Formivo documentation | One public endpoint per form", subtitle: "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.", kind: "docs" })],
-  },    twitter: {
+    description:
+      "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.",
+    images: [
+      socialImage({
+        title: "Formivo documentation | One public endpoint per form",
+        subtitle:
+          "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.",
+        kind: "docs",
+      }),
+    ],
+  },
+  twitter: {
     card: "summary_large_image",
     title: "Formivo documentation | One public endpoint per form",
-    description: "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.",
-    images: [socialImage({ title: "Formivo documentation | One public endpoint per form", subtitle: "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access." })],
+    description:
+      "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.",
+    images: [
+      socialImage({
+        title: "Formivo documentation | One public endpoint per form",
+        subtitle:
+          "Create a form, copy the endpoint, send a POST. Reference for request formats, responses, errors and client access.",
+      }),
+    ],
   },
 };
 
@@ -179,7 +201,7 @@ export default function Page() {
         </aside>
 
         <div className="flex min-w-0 flex-col gap-10">
-          <header className="flex flex-col gap-4 border-t border-border pb-8 pt-8">
+          <header className="flex flex-col gap-4 border-t border-border pt-8 pb-8">
             <Badge tone="accent" className="w-fit">
               API v1
             </Badge>
@@ -300,9 +322,9 @@ export default function Page() {
               <CodeBlock title="Failure shape (4xx)" language="json" code={errorExample} />
             </div>
             <p className="text-sm text-foreground-muted">
-              Any request the validator rejects produces the failure shape with a machine-readable code
-              and a human-readable message. Retry 5xx with backoff; do not retry 4xx
-              without changing the request.
+              Any request the validator rejects produces the failure shape with a machine-readable
+              code and a human-readable message. Retry 5xx with backoff; do not retry 4xx without
+              changing the request.
             </p>
           </Section>
 
@@ -397,8 +419,8 @@ export default function Page() {
           <Section id="sdks" title="Other languages">
             <p className="text-sm text-foreground-secondary">
               The contract is plain HTTP, so every language works the same way: POST the endpoint
-              with JSON. There is no mandatory SDK and no secret to manage. The same three lines above
-              work in PHP, Python, Go, Ruby, Node and anything that speaks HTTP.
+              with JSON. There is no mandatory SDK and no secret to manage. The same three lines
+              above work in PHP, Python, Go, Ruby, Node and anything that speaks HTTP.
             </p>
             <div className="flex flex-wrap gap-2">
               {["cURL", "JavaScript", "TypeScript", "Node.js", "Python", "PHP", "Go", "Ruby"].map(

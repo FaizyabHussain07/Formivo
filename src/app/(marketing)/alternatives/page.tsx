@@ -12,17 +12,37 @@ export const metadata: Metadata = {
   description:
     "Honest comparisons between Formivo and Formspree, Web3Forms, Formspark, Basin and FormSubmit — with competitor facts read from their own pages.",
   alternates: { canonical: "/alternatives" },
-  keywords: ["formspree alternative","web3forms alternative","form backend alternatives","formspark alternative"],
+  keywords: [
+    "formspree alternative",
+    "web3forms alternative",
+    "form backend alternatives",
+    "formspark alternative",
+  ],
   openGraph: {
     title: "Form backend alternatives, compared honestly",
-    description: "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.",
-    images: [socialImage({ title: "Form backend alternatives, compared honestly", subtitle: "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.", kind: "comparison" })],
+    description:
+      "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.",
+    images: [
+      socialImage({
+        title: "Form backend alternatives, compared honestly",
+        subtitle:
+          "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.",
+        kind: "comparison",
+      }),
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Form backend alternatives, compared honestly",
-    description: "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.",
-    images: [socialImage({ title: "Form backend alternatives, compared honestly", subtitle: "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick." })],
+    description:
+      "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.",
+    images: [
+      socialImage({
+        title: "Form backend alternatives, compared honestly",
+        subtitle:
+          "Formivo next to Formspree, Web3Forms, Formspark, Basin and FormSubmit — including when each one is the better pick.",
+      }),
+    ],
   },
 };
 

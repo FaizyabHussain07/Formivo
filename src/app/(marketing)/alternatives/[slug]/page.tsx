@@ -41,9 +41,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       card: "summary_large_image",
       title: item.seoTitle,
       description: item.description,
-      images: [
-        socialImage({ title: item.title, subtitle: item.summary, kind: "comparison" }),
-      ],
+      images: [socialImage({ title: item.title, subtitle: item.summary, kind: "comparison" })],
     },
     keywords: [
       `${item.competitor} alternative`,

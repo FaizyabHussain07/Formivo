@@ -122,9 +122,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
               F
             </span>
             <div className="flex flex-col text-[12.5px] leading-snug">
-              <span className="font-medium text-foreground">
-                Written by the Formivo team
-              </span>
+              <span className="font-medium text-foreground">Written by the Formivo team</span>
               <span className="text-foreground-muted">
                 Checked against the live product
                 {post.updatedAt ? ` · Updated ${formatDate(post.updatedAt)}` : null}

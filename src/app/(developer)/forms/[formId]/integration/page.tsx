@@ -80,7 +80,9 @@ export default async function Page({ params }: { params: Promise<{ formId: strin
             <dd className="text-sm text-foreground-secondary">
               <Badge tone="success">None required</Badge>
             </dd>
-            <p className="text-xs text-foreground-muted">No secret or token. The form id is public.</p>
+            <p className="text-xs text-foreground-muted">
+              No secret or token. The form id is public.
+            </p>
           </div>
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-medium tracking-wide text-foreground-muted uppercase">

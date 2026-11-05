@@ -53,7 +53,7 @@ export default async function Page({
             </p>
           )}
 
-          <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-[30px]">
+          <h1 className="text-2xl font-semibold tracking-tight text-balance text-foreground sm:text-[30px]">
             {form.name} is live. Give it somewhere to send leads.
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-foreground-secondary">
