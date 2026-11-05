@@ -300,11 +300,8 @@ export default function Page() {
               <CodeBlock title="Failure shape (4xx)" language="json" code={errorExample} />
             </div>
             <p className="text-sm text-foreground-muted">
-              Any request that the validator rejects produces the failure shape with a machine-readable{"
-              }
-              <code className="font-mono text-xs">code</code> and a human-readable{"
-              }
-              <code className="font-mono text-xs">message</code>. Retry 5xx with backoff; do not retry 4xx
+              Any request the validator rejects produces the failure shape with a machine-readable code
+              and a human-readable message. Retry 5xx with backoff; do not retry 4xx
               without changing the request.
             </p>
           </Section>
@@ -400,8 +397,8 @@ export default function Page() {
           <Section id="sdks" title="Other languages">
             <p className="text-sm text-foreground-secondary">
               The contract is plain HTTP, so every language works the same way: POST the endpoint
-              with JSON. There is no mandatory SDK and no secret to manage. Server-side examples for
-              PHP, Python, Go and Node use the same three lines as the cURL example above.
+              with JSON. There is no mandatory SDK and no secret to manage. The same three lines above
+              work in PHP, Python, Go, Ruby, Node and anything that speaks HTTP.
             </p>
             <div className="flex flex-wrap gap-2">
               {["cURL", "JavaScript", "TypeScript", "Node.js", "Python", "PHP", "Go", "Ruby"].map(

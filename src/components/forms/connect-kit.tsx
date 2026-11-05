@@ -6,7 +6,6 @@ import {
   Braces,
   Bot,
   Check,
-  Copy,
   FileCode2,
   Flame,
   Layers,
@@ -240,6 +239,7 @@ export function ConnectKit({
                 Prompt for {activeTool.name}
               </p>
               <CopyButton value={prompt} label="Copy prompt" />
+
             </div>
 
             <div className="overflow-hidden rounded-xl border border-border bg-surface">
