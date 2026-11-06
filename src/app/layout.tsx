@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
+import Script from "next/script";
 
 import { ThemeScript } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/config/site";
@@ -94,6 +95,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <head>
         <ThemeScript />
+        <Script
+          src="https://datafa.st/js/script.cookieless.js"
+          data-website-id="dfid_Gyrcs8T5eudLqWpnDXxUR"
+          data-domain="formivo.faizyab.me"
+          strategy="afterInteractive"
+        />
       </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <a
