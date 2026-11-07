@@ -27,7 +27,7 @@ export function UserPanel({
           <p className="truncate text-[13px] font-medium text-foreground">{name}</p>
           <p className="truncate text-[11px] text-foreground-muted">{email}</p>
         </div>
-        <form action={signOutAction}>
+        <form action={signOutAction} data-posthog-reset="true">
           <button
             type="submit"
             className="inline-flex size-8 items-center justify-center rounded-lg text-foreground-muted transition-colors hover:bg-surface-muted hover:text-foreground"

@@ -1,12 +1,19 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useEffect } from "react";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
-export default function GlobalRouteError({ error, retry }: { error: unknown; retry: () => void }) {
+export default function GlobalRouteError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
   const digest =
     typeof error === "object" &&
     error !== null &&
@@ -16,6 +23,9 @@ export default function GlobalRouteError({ error, retry }: { error: unknown; ret
       : undefined;
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.captureException(error);
+    }
     console.error(error);
   }, [error]);
 
@@ -26,7 +36,7 @@ export default function GlobalRouteError({ error, retry }: { error: unknown; ret
           An unexpected error occurred. Try again, and contact support if it continues.
           {digest ? <p className="mt-2 font-mono text-xs">Reference: {digest}</p> : null}
         </Alert>
-        <Button className="mt-6" variant="secondary" onClick={() => retry()}>
+        <Button className="mt-6" variant="secondary" onClick={() => reset()}>
           Try again
         </Button>
       </Container>

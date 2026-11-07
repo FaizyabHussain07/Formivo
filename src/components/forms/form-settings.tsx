@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useActionState } from "react";
 
 import { updateFormAction, type FormActionState } from "@/app/(developer)/forms/actions";
@@ -23,8 +24,19 @@ export function FormSettings({
 }) {
   const [state, formAction, pending] = useActionState(updateFormAction, initialState);
 
+  function captureFormSettingsUpdate() {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.capture("form_settings_update_requested", { form_id: formId });
+    }
+  }
+
   return (
-    <form action={formAction} className="flex flex-col gap-5" noValidate>
+    <form
+      action={formAction}
+      className="flex flex-col gap-5"
+      noValidate
+      onSubmit={captureFormSettingsUpdate}
+    >
       <input type="hidden" name="formId" value={formId} />
       {state.error ? <Alert tone="error" title={state.error} /> : null}
       {state.success ? <Alert tone="success" title={state.success} /> : null}

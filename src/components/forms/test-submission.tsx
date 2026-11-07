@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useActionState } from "react";
 
 import { sendTestSubmissionAction, type FormActionState } from "@/app/(developer)/forms/actions";
@@ -13,8 +14,19 @@ const initialState: FormActionState = {};
 export function TestSubmission({ formId }: { formId: string }) {
   const [state, formAction, pending] = useActionState(sendTestSubmissionAction, initialState);
 
+  function captureTestSubmission() {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.capture("test_submission_requested", { form_id: formId });
+    }
+  }
+
   return (
-    <form action={formAction} className="flex flex-col gap-4" noValidate>
+    <form
+      action={formAction}
+      className="flex flex-col gap-4"
+      noValidate
+      onSubmit={captureTestSubmission}
+    >
       <input type="hidden" name="formId" value={formId} />
       {state.error ? <Alert tone="error" title={state.error} /> : null}
       {state.success ? <Alert tone="success" title={state.success} /> : null}

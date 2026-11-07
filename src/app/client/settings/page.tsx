@@ -40,7 +40,11 @@ export default async function Page() {
         <h2 id="session-heading" className="text-base font-semibold text-foreground">
           Session
         </h2>
-        <form action={signOutAction} className="rounded-lg border border-border bg-surface p-5">
+        <form
+          action={signOutAction}
+          data-posthog-reset="true"
+          className="rounded-lg border border-border bg-surface p-5"
+        >
           <Button type="submit" variant="secondary">
             Sign out
           </Button>

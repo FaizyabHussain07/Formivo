@@ -13,12 +13,22 @@ async function DeveloperIdentity() {
   const developer = await getDeveloperContext();
   if (!developer) return null;
   return (
-    <UserPanel
-      name={developer.user.displayName}
-      email={developer.user.email}
-      context={developer.workspace.name}
-      badge={developer.plan.name}
-    />
+    <>
+      <AutoRefresh
+        user={{
+          id: developer.user.id,
+          email: developer.user.email,
+          displayName: developer.user.displayName,
+          role: "developer",
+        }}
+      />
+      <UserPanel
+        name={developer.user.displayName}
+        email={developer.user.email}
+        context={developer.workspace.name}
+        badge={developer.plan.name}
+      />
+    </>
   );
 }
 
@@ -36,7 +46,6 @@ export default function DeveloperLayout({ children }: LayoutProps<"/">) {
         </Suspense>
       }
     >
-      <AutoRefresh />
       {children}
     </AppShell>
   );

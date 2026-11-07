@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useActionState } from "react";
 
 import { updateOriginsAction, type FormActionState } from "@/app/(developer)/forms/actions";
@@ -19,8 +20,19 @@ export function AllowedOriginsForm({
 }) {
   const [state, formAction, pending] = useActionState(updateOriginsAction, initialState);
 
+  function captureOriginRestrictionsUpdate() {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.capture("origin_restrictions_update_requested", { form_id: formId });
+    }
+  }
+
   return (
-    <form action={formAction} className="flex flex-col gap-4" noValidate>
+    <form
+      action={formAction}
+      className="flex flex-col gap-4"
+      noValidate
+      onSubmit={captureOriginRestrictionsUpdate}
+    >
       <input type="hidden" name="formId" value={formId} />
       {state.error ? <Alert tone="error" title={state.error} /> : null}
       {state.success ? <Alert tone="success" title={state.success} /> : null}

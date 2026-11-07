@@ -55,7 +55,7 @@ export default async function Page() {
           <p className="text-sm text-foreground-secondary">
             Signing out ends this browser session. Your forms keep receiving submissions.
           </p>
-          <form action={signOutAction}>
+          <form action={signOutAction} data-posthog-reset="true">
             <Button type="submit" variant="secondary">
               Sign out
             </Button>

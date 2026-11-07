@@ -1,8 +1,22 @@
 "use client";
 
+import posthog from "posthog-js";
+import { useEffect } from "react";
+
 import "./globals.css";
 
-export default function GlobalError({ retry }: { error: unknown; retry: () => void }) {
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.captureException(error);
+    }
+  }, [error]);
   return (
     <html lang="en">
       <body className="flex min-h-screen items-center justify-center bg-background p-6 text-foreground">
@@ -14,7 +28,7 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
           </p>
           <button
             type="button"
-            onClick={() => retry()}
+            onClick={() => reset()}
             className="mt-6 h-10 rounded-md border border-border bg-surface px-4 text-sm font-medium hover:bg-surface-muted"
           >
             Try again

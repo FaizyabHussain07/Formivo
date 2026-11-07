@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 
 import { submissionPage } from "@/lib/api/html-page";
 import { apiError, apiSuccess, clientIp, toAppError } from "@/lib/api/response";
 import { AppError } from "@/lib/errors";
 import { isOriginAllowed, normalizeOrigin } from "@/lib/forms/service";
+import { flushPostHogLogs, logSubmissionOutcome } from "@/lib/observability/posthog-logs";
 import { getFormOriginPolicy, ingestSubmission } from "@/lib/submissions/service";
 import {
   formEntriesToPayload,
@@ -153,6 +154,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
     const honeypot =
       readHelperField(parsed.payload, "_gotcha") ?? readHelperField(parsed.payload, "_honey");
     if (honeypot) {
+      logSubmissionOutcome({ outcome: "honeypot", statusCode: isHtml ? 200 : 201 });
+      after(flushPostHogLogs);
       return withCors(
         isHtml
           ? htmlResponse(200, "Thanks — your message was received.", "We will be in touch soon.")
@@ -183,11 +186,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
       ? safeRedirectTarget(readHelperField(parsed.payload, "_redirect"))
       : null;
     if (redirectTarget) {
+      logSubmissionOutcome({ outcome: result.replayed ? "replayed" : "accepted", statusCode: 303 });
+      after(flushPostHogLogs);
       const response = NextResponse.redirect(redirectTarget, 303);
       return withCors(response, cors);
     }
 
     if (isHtml) {
+      logSubmissionOutcome({ outcome: result.replayed ? "replayed" : "accepted", statusCode: 200 });
+      after(flushPostHogLogs);
       const response = htmlResponse(
         200,
         "Thanks — your response is in.",
@@ -196,16 +203,28 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
       return withCors(response, cors);
     }
 
+    const statusCode = result.replayed ? 200 : 201;
+    logSubmissionOutcome({
+      outcome: result.replayed ? "replayed" : "accepted",
+      statusCode,
+    });
+    after(flushPostHogLogs);
     const response = apiSuccess(
       {
         leadId: result.submissionId,
         message: result.replayed ? "Submission already received." : "Submission received.",
       },
-      result.replayed ? 200 : 201,
+      statusCode,
     );
     return withCors(response, cors);
   } catch (error) {
     const appError = toAppError(error);
+    logSubmissionOutcome({
+      outcome: "rejected",
+      statusCode: appError.status,
+      errorCode: appError.code,
+    });
+    after(flushPostHogLogs);
 
     if (accept.includes("text/html")) {
       return withCors(

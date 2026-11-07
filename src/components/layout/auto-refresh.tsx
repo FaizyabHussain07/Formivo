@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,10 +10,55 @@ import { useEffect } from "react";
  * Refreshes are skipped while the user is typing, has a dialog open, or the tab is hidden
  * so forms in progress are never disturbed.
  */
-export function AutoRefresh({ intervalMs = 12_000 }: { intervalMs?: number }) {
+type IdentifiedUser = {
+  id: string;
+  email?: string;
+  displayName?: string;
+  role?: "client" | "developer";
+};
+
+const posthogConfigured = Boolean(
+  process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST,
+);
+
+export function AutoRefresh({
+  intervalMs = 12_000,
+  user,
+}: {
+  intervalMs?: number;
+  user?: IdentifiedUser;
+}) {
   const router = useRouter();
 
   useEffect(() => {
+    if (!posthogConfigured || !user) return;
+
+    posthog.identify(user.id, {
+      ...(user.email ? { email: user.email } : {}),
+      ...(user.displayName ? { name: user.displayName } : {}),
+      ...(user.role ? { role: user.role } : {}),
+    });
+  }, [user]);
+
+  useEffect(() => {
+    function resetPostHogOnSignOut(event: SubmitEvent) {
+      if (
+        event.defaultPrevented ||
+        !(event.target instanceof HTMLFormElement) ||
+        event.target.dataset.posthogReset !== "true" ||
+        !posthogConfigured
+      ) {
+        return;
+      }
+      posthog.reset();
+    }
+
+    document.addEventListener("submit", resetPostHogOnSignOut);
+    return () => document.removeEventListener("submit", resetPostHogOnSignOut);
+  }, []);
+
+  useEffect(() => {
+    if (intervalMs <= 0) return;
     function isEditing() {
       const element = document.activeElement;
       if (!element) return false;

@@ -8,18 +8,19 @@ const isProduction = process.env.NODE_ENV === "production";
  * Next.js streams inline bootstrap scripts and Tailwind emits inline styles, so
  * `'unsafe-inline'` is required for those two directives until a nonce pipeline is
  * added. Everything that can be locked down is: no eval in production, no framing,
- * no plugins, no third-party script origins. Supabase Auth is the only allowed
- * external connection (REST + realtime websocket).
+ * no plugins, no third-party script origins. Supabase Auth and PostHog are the
+ * allowed external connections (REST + realtime websocket and analytics).
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
   isProduction
-    ? "script-src 'self' 'unsafe-inline' https://datafa.st"
-    : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://datafa.st",
+    ? "script-src 'self' 'unsafe-inline' https://datafa.st https://*.posthog.com"
+    : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://datafa.st https://*.posthog.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://datafa.st",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://datafa.st https://*.posthog.com",
+  "worker-src 'self' blob:",
   "manifest-src 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",

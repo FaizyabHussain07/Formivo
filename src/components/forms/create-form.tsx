@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import posthog from "posthog-js";
 import { useActionState } from "react";
 
 import { createFormAction, type FormActionState } from "@/app/(developer)/forms/actions";
@@ -14,8 +15,19 @@ const initialState: FormActionState = {};
 export function CreateForm() {
   const [state, formAction, pending] = useActionState(createFormAction, initialState);
 
+  function captureFormCreation() {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      posthog.capture("form_creation_requested");
+    }
+  }
+
   return (
-    <form action={formAction} className="flex max-w-xl flex-col gap-5" noValidate>
+    <form
+      action={formAction}
+      className="flex max-w-xl flex-col gap-5"
+      noValidate
+      onSubmit={captureFormCreation}
+    >
       {state.error ? <Alert tone="error" title={state.error} /> : null}
 
       <Field

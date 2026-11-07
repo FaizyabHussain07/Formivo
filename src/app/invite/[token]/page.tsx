@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { signOutAction } from "@/app/(auth)/actions";
 import { AcceptInvitation } from "@/components/clients/accept-invitation";
+import { AutoRefresh } from "@/components/layout/auto-refresh";
 import { Alert } from "@/components/ui/alert";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,9 +19,17 @@ export const instant = false;
 export default async function Page({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const [invitation, user] = await Promise.all([findInvitationByToken(token), getSessionUser()]);
+  const displayName =
+    typeof user?.user_metadata?.display_name === "string"
+      ? user.user_metadata.display_name
+      : undefined;
 
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <AutoRefresh
+        intervalMs={0}
+        user={user ? { id: user.id, email: user.email ?? undefined, displayName } : undefined}
+      />
       <Container className="max-w-lg px-0">
         <Card>
           <CardHeader>
@@ -91,7 +100,7 @@ export default async function Page({ params }: { params: Promise<{ token: string
                       You are signed in as {user.email}, but this invitation was sent to{" "}
                       {invitation.email}. Sign out and use the invited address.
                     </Alert>
-                    <form action={signOutAction}>
+                    <form action={signOutAction} data-posthog-reset="true">
                       <Button type="submit" variant="secondary">
                         Sign out
                       </Button>

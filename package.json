@@ -20,11 +20,16 @@
     "check": "npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
+    "@opentelemetry/api-logs": "^0.223.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.301.0",
+    "@opentelemetry/resources": "^3.1.0",
+    "@opentelemetry/sdk-logs": "^3.1.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.62.0",
     "next": "16.4.3",
+    "posthog-js": "^1.447.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",

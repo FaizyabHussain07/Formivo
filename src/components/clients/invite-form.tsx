@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import posthog from "posthog-js";
+import { type FormEvent, useActionState } from "react";
 
 import { inviteClientAction, type InviteState } from "@/app/(developer)/clients/actions";
 import { Alert } from "@/components/ui/alert";
@@ -20,6 +21,15 @@ export function InviteClientForm({
 }) {
   const [state, formAction, pending] = useActionState(inviteClientAction, initialState);
 
+  function captureClientInvitation(event: FormEvent<HTMLFormElement>) {
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+      const submittedFormId = new FormData(event.currentTarget).get("formId");
+      posthog.capture("client_invitation_requested", {
+        ...(typeof submittedFormId === "string" ? { form_id: submittedFormId } : {}),
+      });
+    }
+  }
+
   if (forms.length === 0) {
     return (
       <Alert tone="info" title="Create a form first">
@@ -29,7 +39,12 @@ export function InviteClientForm({
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4" noValidate>
+    <form
+      action={formAction}
+      className="flex flex-col gap-4"
+      noValidate
+      onSubmit={captureClientInvitation}
+    >
       {state.error ? <Alert tone="error" title={state.error} /> : null}
       {state.success ? (
         <Alert tone={state.emailSent ? "success" : "warning"} title={state.success}>
