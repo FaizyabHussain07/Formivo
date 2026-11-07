@@ -5,7 +5,7 @@ import Script from "next/script";
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { ThemeScript } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/config/site";
-import { SITE_URL, socialImage } from "@/lib/seo";
+import { SITE_SOCIAL_IMAGE, SITE_URL } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -32,27 +32,14 @@ export const metadata: Metadata = {
     description:
       "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads in your dashboard, and share selected forms with clients.",
     url: `${SITE_URL}/`,
-    images: [
-      socialImage({
-        title: "The backend your forms were missing",
-        subtitle: "One endpoint per form, submissions and leads in one dashboard",
-        kind: "product",
-        alt: "Formivo, the form backend for developers. Connect your website forms, manage submissions, share with clients.",
-      }),
-    ],
+    images: [SITE_SOCIAL_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Formivo | Form Backend for Developers",
     description:
       "Connect your website forms to one public endpoint. Receive submissions, manage leads and share selected forms with clients.",
-    images: [
-      socialImage({
-        title: "Formivo, the form backend for developers",
-        subtitle: "Point any form at one endpoint. Manage submissions. Share them with clients.",
-        kind: "product",
-      }),
-    ],
+    images: [SITE_SOCIAL_IMAGE],
   },
   robots: { index: true, follow: true },
   keywords: [

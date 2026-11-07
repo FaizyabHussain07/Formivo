@@ -33,7 +33,7 @@ import { siteConfig } from "@/config/site";
 import { alternatives } from "@/content/alternatives";
 import { sortedPosts } from "@/content/blog";
 import { guides } from "@/content/guides";
-import { socialImage } from "@/lib/seo";
+import { SITE_SOCIAL_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: { absolute: "Formivo | Form Backend and Submission Management for Developers" },
@@ -58,24 +58,13 @@ export const metadata: Metadata = {
     description:
       "One endpoint per form. Collect, manage and share form submissions without writing a backend.",
     url: siteConfig.productionUrl,
-    images: [
-      socialImage({
-        title: "The backend your forms were missing",
-        subtitle: "One endpoint per form · submissions, leads and read-only client access",
-        kind: "product",
-      }),
-    ],
+    images: [SITE_SOCIAL_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Formivo | Form backend for developers",
     description: "Point any form at one endpoint. Manage submissions. Share them with clients.",
-    images: [
-      socialImage({
-        title: "The backend your forms were missing",
-        subtitle: "One endpoint per form · submissions, leads and read-only client access",
-      }),
-    ],
+    images: [SITE_SOCIAL_IMAGE],
   },
 };
 

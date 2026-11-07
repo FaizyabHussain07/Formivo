@@ -32,6 +32,18 @@ export function ogImageUrl({
   return `${SITE_URL}/og?${params.toString()}`;
 }
 
+/**
+ * The hand-made brand card shipped from `public/`. Used for the main share links where a
+ * per-page title card adds nothing, and as the site-wide fallback. It is a plain static
+ * file on purpose: no query string, no rendering step, so every crawler can fetch it.
+ */
+export const SITE_SOCIAL_IMAGE = {
+  url: `${SITE_URL}/og-image.jpg`,
+  width: 1200,
+  height: 630,
+  alt: "Formivo, forms to leads and leads to clients. A simple form backend for developers and agencies.",
+} as const;
+
 /** Ready-made `openGraph.images` / `twitter.images` entry for a page. */
 export function socialImage({
   title,
