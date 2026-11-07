@@ -202,3 +202,23 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Documentation sidebar: a thin scrollbar so long navigation does not draw the
+   default OS chrome inside a dark panel. */
+.docs-scroll {
+  scrollbar-width: thin;
+}
+
+.docs-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.docs-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.docs-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: rgb(148 163 184 / 0.35);
+}

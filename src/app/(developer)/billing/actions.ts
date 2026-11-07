@@ -2,7 +2,9 @@
 
 import { redirect } from "next/navigation";
 
+import { queueAnalyticsEvent } from "@/lib/analytics/intent";
 import { requireDeveloper } from "@/lib/auth/viewer";
+import { getPaymentAvailability } from "@/lib/billing/availability";
 import { createCheckoutUrl, getCustomerPortalUrl } from "@/lib/billing/lemonsqueezy";
 import { isPlanKey } from "@/lib/billing/plans";
 import { AppError, errorMessage } from "@/lib/errors";
@@ -24,6 +26,11 @@ export async function startCheckoutAction(
     return { error: `You are already on the ${developer.plan.name} plan.` };
   }
 
+  // The server enforces the same availability the buttons show, so a crafted request
+  // cannot open a checkout that is not supposed to exist yet.
+  const payments = getPaymentAvailability();
+  if (!payments.checkoutEnabled) return { error: payments.note };
+
   try {
     const url = await createCheckoutUrl({
       workspaceId: developer.workspace.id,
@@ -31,6 +38,7 @@ export async function startCheckoutAction(
       email: developer.user.email,
       appUrl: getPublicEnv().NEXT_PUBLIC_APP_URL,
     });
+    await queueAnalyticsEvent("checkout_started");
     redirect(url);
   } catch (error) {
     if (error instanceof AppError) return { error: errorMessage(error) };

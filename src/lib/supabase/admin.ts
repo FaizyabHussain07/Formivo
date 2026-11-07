@@ -44,6 +44,11 @@ export function getAdminClient(): AdminClient | null {
   return cached;
 }
 
+/** Whether a service-role client can be built at all, without throwing. */
+export function isSupabaseAdminConfigured(): boolean {
+  return getAdminClient() !== null;
+}
+
 /** Like {@link getAdminClient} but throws when Supabase is not configured. */
 export function requireAdminClient(): AdminClient {
   const client = getAdminClient();

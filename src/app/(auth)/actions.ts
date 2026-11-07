@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 
+import { queueAnalyticsEvent } from "@/lib/analytics/intent";
+import { resolvePostAuthPath } from "@/lib/auth/landing";
 import { ensureAccountForSession } from "@/lib/auth/viewer";
 import { getPublicEnv } from "@/lib/env/public";
 import { errorMessage } from "@/lib/errors";
@@ -20,6 +22,43 @@ function readString(formData: FormData, key: string): string {
 
 function safeNext(value: string): string {
   return value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
+}
+
+/**
+ * Attribution arrives from the browser as a JSON string. Only a small, known shape is
+ * kept, every value is length-capped and trimmed, and anything else is dropped: account
+ * metadata must never become an arbitrary storage slot.
+ */
+function readAttribution(formData: FormData): Record<string, string> | undefined {
+  const raw = readString(formData, "attribution");
+  if (!raw || raw.length > 1200) return undefined;
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return undefined;
+  }
+  if (typeof parsed !== "object" || parsed === null) return undefined;
+
+  const allowed = [
+    "source",
+    "medium",
+    "campaign",
+    "term",
+    "content",
+    "referrer",
+    "landingPage",
+  ] as const;
+
+  const attribution: Record<string, string> = {};
+  for (const key of allowed) {
+    const value = (parsed as Record<string, unknown>)[key];
+    if (typeof value === "string" && value.trim()) {
+      attribution[key] = value.trim().slice(0, 200);
+    }
+  }
+  return Object.keys(attribution).length > 0 ? attribution : undefined;
 }
 
 function validateEmail(email: string): string | null {
@@ -56,6 +95,7 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
   const email = readString(formData, "email").toLowerCase();
   const password = readString(formData, "password");
   const next = safeNext(readString(formData, "next") || "/dashboard");
+  const attribution = readAttribution(formData);
 
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
@@ -74,7 +114,7 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
     email,
     password,
     options: {
-      data: { display_name: displayName },
+      data: { display_name: displayName, ...(attribution ? { attribution } : {}) },
       emailRedirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
@@ -93,7 +133,8 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
     } catch (setupError) {
       return { error: errorMessage(setupError), values: { email, displayName } };
     }
-    redirect(next);
+    await queueAnalyticsEvent("sign_up");
+    redirect(await resolvePostAuthPath(data.user.id, next));
   }
 
   return {
@@ -127,7 +168,10 @@ export async function signInAction(_prev: AuthState, formData: FormData): Promis
     return { error: errorMessage(setupError), values: { email } };
   }
 
-  redirect(next);
+  // Resolving the role first means a client account never flashes the developer shell.
+  const destination = await resolvePostAuthPath(data.user.id, next);
+  await queueAnalyticsEvent("login");
+  redirect(destination);
 }
 
 export async function requestPasswordResetAction(

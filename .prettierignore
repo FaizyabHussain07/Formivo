@@ -8,3 +8,6 @@ next-env.d.ts
 FORMIVO_PRD_v3.md
 product-documentations
 .tmp-*
+
+# Search engine ownership verification file (must stay byte-identical)
+google*.html

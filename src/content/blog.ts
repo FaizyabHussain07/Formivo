@@ -1,3 +1,4 @@
+import { novemberPosts } from "./posts/november-2026";
 import type { BlogPost } from "./types";
 
 /**
@@ -6,6 +7,7 @@ import type { BlogPost } from "./types";
  * POST https://formivo.faizyab.me/api/f/{formId}
  */
 export const blogPosts: BlogPost[] = [
+  ...novemberPosts,
   {
     slug: "what-is-a-form-backend",
     title: "What is a form backend?",

@@ -180,6 +180,18 @@ const features = [
     description:
       "Track submissions over time and know exactly how close you are to your monthly limit.",
   },
+  {
+    icon: Sparkles,
+    title: "Connect in minutes",
+    description:
+      "Creating a form opens its endpoint, copy-ready snippets and prompts for the AI coding tool you already use.",
+  },
+  {
+    icon: FileText,
+    title: "Docs that answer questions",
+    description:
+      "A searchable twelve-page reference: integration examples for every stack, status codes and limits.",
+  },
 ];
 
 const plans = [

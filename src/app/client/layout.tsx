@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { IdentifyUser } from "@/components/analytics/identify-user";
 import { AppShell } from "@/components/layout/app-shell";
 import { AutoRefresh } from "@/components/layout/auto-refresh";
 import { UserPanel } from "@/components/layout/user-panel";
@@ -12,7 +13,12 @@ export const instant = false;
 async function ClientIdentity() {
   const client = await getClientContext();
   if (!client) return null;
-  return <UserPanel name={client.user.displayName} email={client.user.email} context="Formivo" />;
+  return (
+    <>
+      <IdentifyUser userId={client.user.id} role="client" />
+      <UserPanel name={client.user.displayName} email={client.user.email} context="Formivo" />
+    </>
+  );
 }
 
 export default function ClientLayout({ children }: LayoutProps<"/client">) {

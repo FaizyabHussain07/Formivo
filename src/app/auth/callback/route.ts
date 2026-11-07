@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { resolvePostAuthPath } from "@/lib/auth/landing";
 import { ensureAccountForSession } from "@/lib/auth/viewer";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -7,6 +8,9 @@ function safeNext(value: string | null): string {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return "/dashboard";
   return value;
 }
+
+/** Matches the constant in `lib/analytics/intent.ts`; the browser reports the event. */
+const INTENT_COOKIE = "formivo_evt";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -35,5 +39,15 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/login?error=account_setup", url.origin));
   }
 
-  return NextResponse.redirect(new URL(next, url.origin));
+  // A confirmed email is the end of sign-up, so the account lands on the dashboard that
+  // matches its role instead of being bounced there by a protected layout.
+  const destination = await resolvePostAuthPath(data.user.id, next);
+  const response = NextResponse.redirect(new URL(destination, url.origin));
+  response.cookies.set(INTENT_COOKIE, "sign_up", {
+    path: "/",
+    maxAge: 180,
+    sameSite: "lax",
+    httpOnly: false,
+  });
+  return response;
 }

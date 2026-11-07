@@ -22,6 +22,7 @@ import { useMemo, useState } from "react";
 
 import { CodeBlock } from "@/components/ui/code-block";
 import { CopyButton } from "@/components/ui/copy-button";
+import { track } from "@/lib/analytics/client";
 import {
   buildPrompt,
   PROMPT_TARGETS,
@@ -232,7 +233,13 @@ export function ConnectKit({ endpoint, formName }: { endpoint: string; formName?
               <p className="text-[11px] font-semibold tracking-[0.14em] text-foreground-muted uppercase">
                 Prompt for {activeTool.name}
               </p>
-              <CopyButton value={prompt} label="Copy prompt" />
+              <CopyButton
+                value={prompt}
+                label="Copy prompt"
+                onCopy={() =>
+                  track("prompt_copied", { tool: activeTool.id, target: activeTarget.id })
+                }
+              />
             </div>
 
             <div className="overflow-hidden rounded-xl border border-border bg-surface">

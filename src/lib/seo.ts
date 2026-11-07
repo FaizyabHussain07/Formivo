@@ -54,6 +54,7 @@ export function socialImage({
 
 /** Robots rules: public marketing and docs are open, application routes are closed. */
 const PRIVATE_PREFIXES = [
+  "/admin",
   "/dashboard",
   "/forms",
   "/submissions",

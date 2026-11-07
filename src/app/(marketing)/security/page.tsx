@@ -131,7 +131,7 @@ export default function SecurityPage() {
           </p>
           <p className="text-sm leading-6 text-foreground-secondary">
             The full endpoint contract is in the{" "}
-            <Link href="/docs#security" className="text-accent hover:underline">
+            <Link href="/docs/spam-protection" className="text-accent hover:underline">
               documentation
             </Link>
             .

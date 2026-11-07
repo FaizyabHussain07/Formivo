@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 
+import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { ThemeScript } from "@/components/theme/theme-toggle";
 import { siteConfig } from "@/config/site";
 import { SITE_URL, socialImage } from "@/lib/seo";
@@ -110,6 +111,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to main content
         </a>
         {children}
+        <AnalyticsProvider />
       </body>
     </html>
   );

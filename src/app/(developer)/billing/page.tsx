@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatCard, UsageBar } from "@/components/ui/stat-card";
 import { requireDeveloper } from "@/lib/auth/viewer";
-import { getBillingConfig } from "@/lib/billing/lemonsqueezy";
+import { getPaymentAvailability } from "@/lib/billing/availability";
 import { PLANS, PLAN_ORDER, formatLimit } from "@/lib/billing/plans";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils/cn";
@@ -30,7 +30,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
 async function BillingContent({ searchParams }: { searchParams: SearchParams }) {
   const developer = await requireDeveloper();
   const sp = await searchParams;
-  const billing = getBillingConfig();
+  const payments = getPaymentAvailability();
   const entitlements = developer.entitlements;
 
   return (
@@ -149,8 +149,8 @@ async function BillingContent({ searchParams }: { searchParams: SearchParams }) 
                   <CheckoutButton
                     plan={planKey === "pro" ? "pro" : "agency"}
                     label={`Upgrade to ${plan.name}`}
-                    disabled={!billing.configured}
-                    disabledLabel="Coming soon"
+                    disabled={!payments.checkoutEnabled}
+                    disabledLabel={payments.label}
                   />
                 ) : (
                   <p className="text-xs text-foreground-muted">

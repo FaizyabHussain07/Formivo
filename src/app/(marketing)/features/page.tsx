@@ -1,5 +1,7 @@
 import {
   ArrowRight,
+  BookOpen,
+  Bot,
   Code2,
   Download,
   Gauge,
@@ -7,6 +9,8 @@ import {
   LayoutDashboard,
   Mail,
   ShieldCheck,
+  Sparkles,
+  Tag,
   Users,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -19,7 +23,7 @@ import { Container } from "@/components/ui/container";
 export const metadata: Metadata = {
   title: { absolute: "Features | Formivo Form Backend" },
   description:
-    "Every Formivo feature explained: public endpoints without keys, validated intake, lead statuses, CSV exports, client viewers, rate limits and plan enforcement.",
+    "Every Formivo feature explained: public endpoints without keys, validated intake, lead statuses, CSV exports, client viewers, rate limits, plan enforcement, the connect screen and copy-ready AI prompts.",
   alternates: { canonical: "/features" },
   keywords: [
     "form backend features",
@@ -30,12 +34,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Everything Formivo does after the submit button",
     description:
-      "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+      "Validated intake, rate limits, searchable submissions, CSV export, scoped client access, a connect screen and prompts for AI coding tools.",
     images: [
       socialImage({
         title: "Everything Formivo does after the submit button",
         subtitle:
-          "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+          "Validated intake, rate limits, searchable submissions, CSV export and scoped client access, a connect screen and prompts for AI coding tools.",
         kind: "product",
       }),
     ],
@@ -44,12 +48,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Everything Formivo does after the submit button",
     description:
-      "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+      "Validated intake, rate limits, searchable submissions, CSV export, scoped client access, a connect screen and prompts for AI coding tools.",
     images: [
       socialImage({
         title: "Everything Formivo does after the submit button",
         subtitle:
-          "Validated intake, rate limits, searchable submissions, CSV export and scoped client access — the features behind the endpoint.",
+          "Validated intake, rate limits, searchable submissions, CSV export and scoped client access, a connect screen and prompts for AI coding tools.",
       }),
     ],
   },
@@ -60,7 +64,7 @@ const features = [
     icon: Code2,
     title: "Public endpoint per form",
     body: "One POST URL that accepts JSON, urlencoded and multipart bodies. It works with plain HTML, any framework, curl or a webhook. There is no key to embed because a key in client markup is not a secret.",
-    href: "/docs#endpoint",
+    href: "/docs/api#endpoint",
     linkLabel: "Endpoint reference",
   },
   {
@@ -94,7 +98,7 @@ const features = [
   {
     icon: Download,
     title: "CSV export on paid plans",
-    body: "Exports respect the workspace plan and the form permission, are escaped for spreadsheets, and are gated on the server — hiding a button is not a control.",
+    body: "Exports respect the workspace plan and the form permission, are escaped for spreadsheets, and are gated on the server. Hiding a button is not a control.",
     href: "/pricing",
     linkLabel: "See plans",
   },
@@ -102,7 +106,7 @@ const features = [
     icon: KeyRound,
     title: "Optional origin allow-lists",
     body: "Restrict a form to the sites that should use it. Documented honestly as a browser control, not authentication, and paired with rate limits for that reason.",
-    href: "/docs#security",
+    href: "/docs/spam-protection",
     linkLabel: "Security model",
   },
   {
@@ -111,6 +115,34 @@ const features = [
     body: "Form count, viewer count and monthly submissions are checked in the same transaction that stores the data. The plan is a ceiling, not a suggestion.",
     href: "/pricing#plans",
     linkLabel: "Plan limits",
+  },
+  {
+    icon: Sparkles,
+    title: "A connect screen, not a blank page",
+    body: "Creating a form opens the endpoint, a copy button and ready-made snippets, so the first submission happens minutes after signup instead of after reading a manual.",
+    href: "/docs/quickstart",
+    linkLabel: "Walk through the quickstart",
+  },
+  {
+    icon: Bot,
+    title: "Prompts for the AI tools you already use",
+    body: "Copy a prompt written for Claude Code, Cursor, Copilot, Codex, OpenCode, Antigravity, Windsurf or v0, aimed at HTML, React, Next.js, Vue, Svelte, Astro, vanilla JavaScript or PHP.",
+    href: "/docs/javascript",
+    linkLabel: "See an integration example",
+  },
+  {
+    icon: BookOpen,
+    title: "Documentation you can search",
+    body: "Twelve pages of reference, not one long scroll: sidebar search, on-page contents, previous and next links, and a real status-code table.",
+    href: "/docs",
+    linkLabel: "Open the docs",
+  },
+  {
+    icon: Tag,
+    title: "Context attached to every lead",
+    body: "Send a metadata object with a submission, such as the page path or a campaign, and it is stored beside the answers rather than mixed into them.",
+    href: "/docs/api#request",
+    linkLabel: "Reserved fields",
   },
 ];
 

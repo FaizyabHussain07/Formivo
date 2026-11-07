@@ -33,6 +33,10 @@ export const publicEnvSchema = z.object({
   ),
   NEXT_PUBLIC_SUPABASE_URL: optionalUrl,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
+  // Analytics are optional: a deployment without either id stays fully functional.
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: optionalString,
+  NEXT_PUBLIC_POSTHOG_KEY: optionalString,
+  NEXT_PUBLIC_POSTHOG_HOST: optionalUrl,
 });
 
 const optionalSecret = z.preprocess(
@@ -52,6 +56,15 @@ export const serverEnvSchema = publicEnvSchema.extend({
   LEMONSQUEEZY_WEBHOOK_SECRET: optionalString,
   LEMONSQUEEZY_PRO_VARIANT_ID: optionalString,
   LEMONSQUEEZY_AGENCY_VARIANT_ID: optionalString,
+  // Deliberate switch: production checkout stays off until this is "true".
+  BILLING_CHECKOUT_ENABLED: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.enum(["true", "false"]).optional(),
+  ),
+  // Admin dashboard credentials. Server-only: never referenced from client code.
+  ADMIN_USERNAME: optionalString,
+  ADMIN_PASSWORD: optionalString,
+  ADMIN_SESSION_SECRET: optionalSecret,
   CRON_SECRET: optionalSecret,
   INVITATION_TOKEN_PEPPER: optionalSecret,
 });

@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 
 import { socialImage } from "@/lib/seo";
 
+import { TrackView } from "@/components/analytics/track-view";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { getPaymentAvailability } from "@/lib/billing/availability";
 import { PLANS, PLAN_ORDER, type PlanKey } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils/cn";
 
@@ -86,8 +88,11 @@ const faqs = [
 ];
 
 export default function Page() {
+  const payments = getPaymentAvailability();
+
   return (
     <Container className="flex flex-col gap-14 py-14 sm:py-20">
+      <TrackView event="pricing_viewed" />
       <header className="flex flex-col items-center gap-4 text-center">
         <span className="rounded-full border border-accent/25 bg-accent-subtle px-3 py-1 text-xs font-medium text-accent-hover">
           Simple pricing
@@ -140,16 +145,19 @@ export default function Page() {
                   </li>
                 ))}
               </ul>
-              <ButtonLink
-                href={key === "free" ? "/signup" : "/signup"}
-                variant={featured ? "primary" : "secondary"}
-              >
-                {key === "free" ? "Start free" : `Choose ${plan.name}`}
+              <ButtonLink href="/signup" variant={featured ? "primary" : "secondary"}>
+                {key === "free"
+                  ? "Start free"
+                  : payments.checkoutEnabled
+                    ? `Choose ${plan.name}`
+                    : `Get ${plan.name}`}
               </ButtonLink>
               <p className="text-center text-xs text-foreground-muted">
                 {key === "free"
                   ? "No card required."
-                  : "Secure checkout via Lemon Squeezy. Cancel anytime."}
+                  : payments.checkoutEnabled
+                    ? payments.note
+                    : "Coming soon. Join free and we will email you when paid plans open."}
               </p>
             </section>
           );

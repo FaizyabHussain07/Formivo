@@ -8,18 +8,35 @@ const isProduction = process.env.NODE_ENV === "production";
  * Next.js streams inline bootstrap scripts and Tailwind emits inline styles, so
  * `'unsafe-inline'` is required for those two directives until a nonce pipeline is
  * added. Everything that can be locked down is: no eval in production, no framing,
- * no plugins, no third-party script origins. Supabase Auth is the only allowed
- * external connection (REST + realtime websocket).
+ * no plugins, no arbitrary third-party origins. Only the analytics providers this app
+ * actually loads are allowed, plus Supabase Auth for REST and the realtime websocket.
  */
+const analyticsScriptOrigins = [
+  "https://datafa.st",
+  "https://www.googletagmanager.com",
+  "https://us.i.posthog.com",
+  "https://us-assets.i.posthog.com",
+].join(" ");
+
+const analyticsConnectOrigins = [
+  "https://datafa.st",
+  "https://www.google-analytics.com",
+  "https://*.google-analytics.com",
+  "https://*.analytics.google.com",
+  "https://www.googletagmanager.com",
+  "https://us.i.posthog.com",
+  "https://us-assets.i.posthog.com",
+].join(" ");
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   isProduction
-    ? "script-src 'self' 'unsafe-inline' https://datafa.st"
-    : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://datafa.st",
+    ? `script-src 'self' 'unsafe-inline' ${analyticsScriptOrigins}`
+    : `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${analyticsScriptOrigins}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://datafa.st",
+  `connect-src 'self' https://*.supabase.co wss://*.supabase.co ${analyticsConnectOrigins}`,
   "manifest-src 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",

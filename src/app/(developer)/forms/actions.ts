@@ -3,6 +3,7 @@
 import { revalidatePath, refresh } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { queueAnalyticsEvent } from "@/lib/analytics/intent";
 import { requireDeveloper } from "@/lib/auth/viewer";
 import { AppError, errorMessage } from "@/lib/errors";
 import {
@@ -52,6 +53,7 @@ export async function createFormAction(
     };
   }
 
+  await queueAnalyticsEvent("form_created");
   // Connect screen first: endpoint plus ready-made AI prompts, then the dashboard.
   redirect(`/connect/${formId}?new=1`);
 }

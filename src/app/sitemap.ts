@@ -3,6 +3,7 @@ import type { MetadataRoute } from "next";
 import { alternatives } from "@/content/alternatives";
 import { blogPosts } from "@/content/blog";
 import { guides } from "@/content/guides";
+import { DOCS_FLAT } from "@/config/docs";
 import { SITEMAP_PATHS, canonicalUrl } from "@/lib/seo";
 
 /**
@@ -24,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...alternatives.map((item) => ({
       url: canonicalUrl(`/alternatives/${item.slug}`),
       lastModified: `${item.verifiedOn}T00:00:00Z`,
+    })),
+    // Documentation pages come from the same config that builds the sidebar, so a new
+    // page is always indexable.
+    // `/docs` is already in SITEMAP_PATHS; only the child pages are added here.
+    ...DOCS_FLAT.filter((page) => page.href !== "/docs").map((page) => ({
+      url: canonicalUrl(page.href),
     })),
   ];
 

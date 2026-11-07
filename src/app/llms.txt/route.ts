@@ -1,3 +1,4 @@
+import { DOCS_FLAT } from "@/config/docs";
 import { alternatives } from "@/content/alternatives";
 import { sortedPosts } from "@/content/blog";
 import { guides } from "@/content/guides";
@@ -42,7 +43,7 @@ function content(): string {
 
 ## Documentation
 
-- [Documentation](${canonicalUrl("/docs")}): Endpoint reference, quickstart, request formats, responses, status codes, rate limits, CORS, and the security model.
+${DOCS_FLAT.map((page) => `- [${page.title}](${canonicalUrl(page.href)}): ${page.description}`).join("\n")}
 
 ## Guides
 

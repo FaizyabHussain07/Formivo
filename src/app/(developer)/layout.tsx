@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { IdentifyUser } from "@/components/analytics/identify-user";
 import { AppShell } from "@/components/layout/app-shell";
 import { AutoRefresh } from "@/components/layout/auto-refresh";
 import { UserPanel } from "@/components/layout/user-panel";
@@ -13,12 +14,15 @@ async function DeveloperIdentity() {
   const developer = await getDeveloperContext();
   if (!developer) return null;
   return (
-    <UserPanel
-      name={developer.user.displayName}
-      email={developer.user.email}
-      context={developer.workspace.name}
-      badge={developer.plan.name}
-    />
+    <>
+      <IdentifyUser userId={developer.user.id} role="developer" />
+      <UserPanel
+        name={developer.user.displayName}
+        email={developer.user.email}
+        context={developer.workspace.name}
+        badge={developer.plan.name}
+      />
+    </>
   );
 }
 

@@ -9,10 +9,13 @@ export function CopyButton({
   value,
   label = "Copy",
   size = "sm",
+  onCopy,
 }: {
   value: string;
   label?: string;
   size?: "sm" | "md";
+  /** Called after a successful copy, so callers can record the action without the button knowing about analytics. */
+  onCopy?: () => void;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -20,6 +23,7 @@ export function CopyButton({
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
+      onCopy?.();
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);

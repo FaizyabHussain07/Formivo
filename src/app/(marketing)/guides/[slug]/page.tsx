@@ -187,7 +187,7 @@ export default async function GuidePage({ params }: { params: Params }) {
             Need the full endpoint contract? Status codes, limits and headers are documented.
           </p>
           <Link
-            href="/docs#endpoint"
+            href="/docs/api#endpoint"
             className="inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground hover:bg-accent-hover"
           >
             Read the docs

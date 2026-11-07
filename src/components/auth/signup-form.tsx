@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 import { signUpAction, type AuthState } from "@/app/(auth)/actions";
+import { readAttribution } from "@/lib/analytics/attribution";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -19,10 +20,21 @@ export function SignupForm({
   invitation?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(signUpAction, initialState);
+  const attributionField = useRef<HTMLInputElement>(null);
+
+  // The traffic source lives in localStorage, so it is written into the hidden field after
+  // hydration and carried into the account at sign-up. A direct visit submits an empty value.
+  useEffect(() => {
+    const touch = readAttribution().firstTouch;
+    if (touch && attributionField.current) {
+      attributionField.current.value = JSON.stringify(touch);
+    }
+  }, []);
 
   return (
     <form action={formAction} className="flex flex-col gap-5" noValidate>
       <input type="hidden" name="next" value={next} />
+      <input ref={attributionField} type="hidden" name="attribution" defaultValue="" />
       {state.error ? <Alert tone="error" title={state.error} /> : null}
       {state.notice ? (
         <Alert tone="success" title="Check your email">

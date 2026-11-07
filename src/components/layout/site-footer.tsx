@@ -19,7 +19,7 @@ const columns = [
     title: "Developers",
     links: [
       { href: "/docs", label: "Documentation" },
-      { href: "/docs#endpoint", label: "API reference" },
+      { href: "/docs/api#endpoint", label: "API reference" },
       { href: "/guides/html", label: "HTML integration" },
       { href: "/guides/react", label: "React integration" },
       { href: "/guides/nextjs", label: "Next.js integration" },
