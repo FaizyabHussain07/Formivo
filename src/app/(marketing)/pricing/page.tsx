@@ -6,7 +6,7 @@ import { socialImage } from "@/lib/seo";
 import { TrackView } from "@/components/analytics/track-view";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { getPaymentAvailability } from "@/lib/billing/availability";
+import { getPaymentAvailability, PRO_BUTTON_LABEL } from "@/lib/billing/availability";
 import { PLANS, PLAN_ORDER, type PlanKey } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils/cn";
 
@@ -150,7 +150,7 @@ export default function Page() {
                   ? "Start free"
                   : payments.checkoutEnabled
                     ? `Choose ${plan.name}`
-                    : `Get ${plan.name}`}
+                    : key === "pro" ? PRO_BUTTON_LABEL : `Get ${plan.name}`}
               </ButtonLink>
               <p className="text-center text-xs text-foreground-muted">
                 {key === "free"

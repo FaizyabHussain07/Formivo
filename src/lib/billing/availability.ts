@@ -50,8 +50,14 @@ export function getPaymentAvailability(): PaymentAvailability {
 
   return {
     checkoutEnabled: true,
-    label: "Choose plan",
+    label: PRO_BUTTON_LABEL,
     note: "Secure checkout via Lemon Squeezy. Cancel anytime.",
     missing: [],
   };
 }
+
+/**
+ * Short label for the Pro plan's CTA when checkout is open.
+ * Plain prose, no em dashes.
+ */
+export const PRO_BUTTON_LABEL = "Get Pro";

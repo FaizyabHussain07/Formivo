@@ -7,7 +7,7 @@ export type PlanDefinition = {
   forms: number;
   monthlyLeads: number;
   viewers: number;
-  /** CSV export of submissions is a paid capability, enforced server-side. */
+  /** CSV export of submissions is a paid capability. */
   canExportSubmissions: boolean;
   description: string;
   features: string[];
