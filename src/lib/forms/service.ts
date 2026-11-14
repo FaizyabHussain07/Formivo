@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import { assertCanCreateForm } from "@/lib/billing/entitlements";
+import { assertCanActivateForm } from "@/lib/billing/form-limit";
 import { AppError } from "@/lib/errors";
 import { requireAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/supabase/database.types";
@@ -250,6 +251,10 @@ export async function setFormStatus(input: {
   status: "active" | "paused";
 }): Promise<void> {
   await getOwnedForm(input.formId, input.workspaceId);
+  // Reactivating counts against the plan's active-form allowance.
+  if (input.status === "active") {
+    await assertCanActivateForm(input.workspaceId, input.formId);
+  }
 
   const admin = requireAdminClient();
   const { error } = await admin

@@ -36,7 +36,13 @@ function content(): string {
 
 - [Homepage](${canonicalUrl("/")}): Product overview, how it works, features, security model and FAQ.
 - [Features](${canonicalUrl("/features")}): Every capability with a link to how it works.
-- [Pricing](${canonicalUrl("/pricing")}): Free, Pro and Agency plans with form, submission and client-viewer limits.
+- [How it works](${canonicalUrl("/how-it-works")}): The three-step workflow from form to client access.
+- [Pricing](${canonicalUrl("/pricing")}): Free, Light, Pro and Agency plans with form, submission and client-view limits.
+- [Client portal](${canonicalUrl("/client-portal")}): What a client sees, and how isolation is enforced.
+- [Comparisons](${canonicalUrl("/compare")}): Workflow comparisons with form backends and form builders.
+- [Integrations](${canonicalUrl("/integrations")}): HTML, JavaScript, React and Next.js guides.
+- [FAQ](${canonicalUrl("/faq")}): Direct answers, including what the product does not do.
+- [Press](${canonicalUrl("/press")}): Boilerplate and verifiable product facts.
 - [Security](${canonicalUrl("/security")}): The concrete controls behind the public endpoint and client access.
 - [About](${canonicalUrl("/about")}): Why the product exists and what it deliberately does not do.
 - [Contact](${canonicalUrl("/contact")}): Support, sales and security contact channels.
@@ -59,9 +65,21 @@ ${alternativeLines}
 
 ## Pricing summary
 
-- Free: $0, 3 active forms, 300 submissions per month, 3 client viewers, no CSV export.
-- Pro: $19 per month, 10 active forms, 2,000 submissions per month, 10 client viewers, CSV export.
-- Agency: $49 per month, 50 active forms, 10,000 submissions per month, 50 client viewers, CSV export.
+Monthly prices in USD, billed through Paddle. Free requires no card.
+
+- Free: $0, 1 active form, 100 submissions per month, 1 client view, no CSV export.
+- Light: $9 per month, 5 active forms, 1,000 submissions per month, 3 client views, CSV export.
+- Pro: $19 per month, 25 active forms, 5,000 submissions per month, 10 client views, CSV export.
+- Agency: $49 per month, 100 active forms, 20,000 submissions per month, 50 client views, CSV export.
+
+A workspace has one owner account. Team seats are not available, and no plan sells one.
+
+## Limitations
+
+- No form builder: Formivo receives submissions from forms you already built.
+- No email notifications, native CRM sync, webhooks, automation or file uploads yet.
+- No custom domains or white-label branding.
+- Annual billing is not configured.
 
 ## API summary
 

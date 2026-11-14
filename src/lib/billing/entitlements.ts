@@ -12,6 +12,8 @@ export type WorkspaceEntitlements = {
   cancelAtPeriodEnd: boolean;
   currentPeriodEnd: string | null;
   providerSubscriptionId: string | null;
+  providerCustomerId: string | null;
+  priceId: string | null;
   activeFormCount: number;
   viewerCount: number;
   monthlyUsage: number;
@@ -33,12 +35,14 @@ type SubscriptionState = {
   current_period_start: string | null;
   current_period_end: string | null;
   provider_subscription_id: string | null;
+  provider_customer_id: string | null;
+  price_id: string | null;
 };
 
 /**
  * A cancelled subscription keeps its entitlements until the paid period it already
  * paid for actually ends. Cancelling must not immediately downgrade a customer who
- * cancelled mid-cycle (Lemon Squeezy reports status "cancelled" with `ends_at`).
+ * cancelled mid-cycle (Paddle reports `canceled` with a scheduled change).
  */
 function isEntitled(subscription: SubscriptionState | null, now: Date): boolean {
   if (!subscription) return false;
@@ -78,11 +82,14 @@ export async function getWorkspaceEntitlements(
   const admin = requireAdminClient();
   const now = new Date();
 
+  // `select("*")` rather than an explicit column list: the Paddle columns
+  // (`price_id`, `provider_customer_id`) are added by a migration, and a deployment can
+  // legitimately run against a database where that migration has not been applied yet.
+  // Naming them here would throw for every workspace and take the whole dashboard down.
+  // Missing fields simply read back as `null`.
   const subscriptionResult = await admin
     .from("subscriptions")
-    .select(
-      "plan_key, status, cancel_at_period_end, current_period_start, current_period_end, provider_subscription_id",
-    )
+    .select("*")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (subscriptionResult.error) throw new Error(subscriptionResult.error.message);
@@ -131,6 +138,8 @@ export async function getWorkspaceEntitlements(
     cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
     currentPeriodEnd: subscription?.current_period_end ?? null,
     providerSubscriptionId: subscription?.provider_subscription_id ?? null,
+    providerCustomerId: subscription?.provider_customer_id ?? null,
+    priceId: subscription?.price_id ?? null,
     activeFormCount,
     viewerCount,
     monthlyUsage,

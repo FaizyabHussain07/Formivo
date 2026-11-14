@@ -16,10 +16,15 @@ const analyticsScriptOrigins = [
   "https://www.googletagmanager.com",
   "https://us.i.posthog.com",
   "https://us-assets.i.posthog.com",
+  // Paddle.js is loaded from the CDN and opens the overlay in an iframe.
+  "https://cdn.paddle.com",
+  "https://sandbox-cdn.paddle.com",
 ].join(" ");
 
 const analyticsConnectOrigins = [
   "https://datafa.st",
+  "https://*.paddle.com",
+  "https://paddle.com",
   "https://www.google-analytics.com",
   "https://*.google-analytics.com",
   "https://*.analytics.google.com",
@@ -34,8 +39,11 @@ const contentSecurityPolicy = [
     ? `script-src 'self' 'unsafe-inline' ${analyticsScriptOrigins}`
     : `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${analyticsScriptOrigins}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
+  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://i.ytimg.com https://api.producthunt.com https://www.uneed.best https://peerpush.com https://img.turbo0.com https://twelve.tools https://startupfa.me https://fazier.com https://www.sideprojectors.com https://awesomeindie.com",
   "font-src 'self' data:",
+  // The founder walkthrough and the Paddle checkout overlay are the only third-party
+  // frames on the site.
+  "frame-src https://www.youtube-nocookie.com https://www.youtube.com https://*.paddle.com",
   `connect-src 'self' https://*.supabase.co wss://*.supabase.co ${analyticsConnectOrigins}`,
   "manifest-src 'self'",
   "frame-ancestors 'none'",
@@ -76,6 +84,8 @@ const PRIVATE_PREFIXES = [
   "/invite",
   "/login",
   "/signup",
+  "/verify",
+  "/checkout",
   "/forgot-password",
   "/reset-password",
   "/auth",
@@ -94,6 +104,24 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async redirects() {
+    // Stable aliases for documentation URLs that appear in guides, articles and
+    // external links. They point at pages that exist rather than a 404.
+    return [
+      { source: "/docs/getting-started", destination: "/docs/quickstart", permanent: true },
+      { source: "/docs/create-a-form", destination: "/docs/quickstart", permanent: true },
+      { source: "/docs/connect-a-form", destination: "/docs/html", permanent: true },
+      { source: "/docs/manage-submissions", destination: "/docs/submissions", permanent: true },
+      { source: "/docs/client-access", destination: "/docs/client-portal", permanent: true },
+      { source: "/docs/submission-limits", destination: "/docs/submissions", permanent: true },
+      { source: "/docs/export-data", destination: "/docs/submissions", permanent: true },
+      { source: "/integrations/php", destination: "/guides/php", permanent: true },
+      { source: "/integrations/laravel", destination: "/guides/laravel", permanent: true },
+      { source: "/integrations/vue", destination: "/guides/vue", permanent: true },
+      { source: "/integrations/python", destination: "/guides/python", permanent: true },
+      { source: "/insights", destination: "/blog", permanent: true },
+    ];
   },
   async headers() {
     return [

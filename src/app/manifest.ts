@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Formivo — form backend for developers",
+    name: "Formivo | Form backend for developers",
     short_name: "Formivo",
     description:
       "Connect your existing website forms to Formivo. Receive submissions through a simple endpoint, manage leads, and share selected forms with clients.",

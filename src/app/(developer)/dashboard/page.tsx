@@ -4,12 +4,14 @@ import Link from "next/link";
 
 import { FormStatusBadge } from "@/components/submissions/status-badge";
 import { SubmissionTable } from "@/components/submissions/submission-table";
+import { PlanLimitNotice } from "@/components/billing/plan-limit-notice";
 import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatCard, UsageBar } from "@/components/ui/stat-card";
 import { requireDeveloper } from "@/lib/auth/viewer";
+import { enforceActiveFormLimit } from "@/lib/billing/form-limit";
 import { getPublicEnv } from "@/lib/env/public";
 import { formSubmissionEndpoint, listFormsWithCounts } from "@/lib/forms/service";
 import { getWorkspaceSubmissionStats } from "@/lib/submissions/queries";
@@ -18,6 +20,7 @@ export const metadata: Metadata = { title: "Overview" };
 
 export default async function Page() {
   const developer = await requireDeveloper();
+  const limit = await enforceActiveFormLimit(developer.workspace.id);
   const [forms, stats] = await Promise.all([
     listFormsWithCounts(developer.workspace.id),
     getWorkspaceSubmissionStats(developer.workspace.id),
@@ -44,6 +47,8 @@ export default async function Page() {
         }
       />
 
+      <PlanLimitNotice enforcement={limit} />
+
       {forms.length === 0 ? (
         <section
           aria-labelledby="onboarding-heading"
@@ -66,7 +71,7 @@ export default async function Page() {
           <ol className="mt-6 grid gap-4 sm:grid-cols-3">
             {[
               "Create a form and copy its public endpoint.",
-              "Point your existing form — or a server route — at the endpoint.",
+              "Point your existing form, or a server route, at the endpoint.",
               "Review leads here, and invite your client read-only access.",
             ].map((step, index) => (
               <li

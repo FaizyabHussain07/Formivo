@@ -4,7 +4,7 @@ import type { Alternative } from "./types";
  * Competitor facts below were read from each provider's own site on the date in
  * `verifiedOn`. They are stated with their source so they can be re-checked rather
  * than trusted forever, and no claim is made about a competitor's internals we did
- * not read. If a number changes, the fix is to update it here — not to soften it.
+ * not read. If a number changes, the fix is to update it here, not to soften it.
  */
 export const alternatives: Alternative[] = [
   {
@@ -34,7 +34,7 @@ export const alternatives: Alternative[] = [
       "Client accounts are a separate account type: no workspace, no billing, only the forms you invite them to.",
       "Access is granted per form and revoked per form, with the permission checked on every request.",
       "Every plan includes client viewers (3 on Free, 10 on Pro, 50 on Agency), so sharing is not an add-on.",
-      "The endpoint needs no access key in your HTML — protection comes from rate limits, quotas and origin policy.",
+      "The endpoint needs no access key in your HTML. Protection comes from rate limits, quotas and origin policy.",
     ],
     comparison: [
       {
@@ -59,12 +59,12 @@ export const alternatives: Alternative[] = [
       },
       {
         dimension: "CSV export",
-        formivo: "Pro and Agency plans",
+        formivo: "Light, Pro and Agency plans",
         competitor: "Listed from the entry paid plan",
       },
       {
         dimension: "Free plan volume",
-        formivo: "300 submissions/month, 3 forms, 3 client viewers",
+        formivo: "100 submissions/month, 1 form, 1 client view",
         competitor: "50 submissions/month, unlimited forms",
       },
       {
@@ -152,7 +152,7 @@ export const alternatives: Alternative[] = [
       },
       {
         dimension: "Free volume",
-        formivo: "300 submissions/month",
+        formivo: "100 submissions/month",
         competitor: "250 submissions/month",
       },
       {
@@ -175,7 +175,7 @@ export const alternatives: Alternative[] = [
       {
         question: "Is a public access key actually a security problem?",
         answer:
-          "Not automatically — Web3Forms designs it as a public alias for an email address. The trade-off is that anyone who copies it can post to that form, so abuse control has to come from rate limits and spam filtering rather than from the key being secret.",
+          "Not automatically. Web3Forms designs it as a public alias for an email address. The trade-off is that anyone who copies it can post to that form, so abuse control has to come from rate limits and spam filtering rather than from the key being secret.",
       },
       {
         question: "Can both products be used at the same time?",
@@ -226,12 +226,12 @@ export const alternatives: Alternative[] = [
       },
       {
         dimension: "Free volume",
-        formivo: "300 submissions/month, 3 forms",
+        formivo: "100 submissions/month, 1 form",
         competitor: "250 submissions, 10 forms",
       },
       {
         dimension: "Exports",
-        formivo: "Pro and Agency",
+        formivo: "Light, Pro and Agency",
         competitor: "Listed on free and upgraded workspaces",
       },
       {
@@ -259,7 +259,7 @@ export const alternatives: Alternative[] = [
       {
         question: "Does Formivo expire unused submissions?",
         answer:
-          "Yes — the monthly allowance resets at the start of each billing cycle and unused capacity does not carry over, which is the opposite of a prepaid bundle.",
+          "Yes. The monthly allowance resets at the start of each billing cycle and unused capacity does not carry over, which is the opposite of a prepaid bundle.",
       },
     ],
   },
@@ -288,7 +288,7 @@ export const alternatives: Alternative[] = [
     ],
     formivoDifference: [
       "Clients are viewers, not collaborators: they cannot change form settings or see other projects.",
-      "Client access is per form and free of charge on every plan — no paid collaborator tier.",
+      "Client access is per form and free of charge on every plan. No paid collaborator tier.",
       "The endpoint stays minimal: no key, no project configuration required to accept a post.",
       "Data retention is not cut to 30 days on the free tier; submissions stay until you remove them.",
     ],
@@ -305,7 +305,7 @@ export const alternatives: Alternative[] = [
       },
       {
         dimension: "Free tier",
-        formivo: "300 submissions/month, 3 forms, 3 viewers",
+        formivo: "100 submissions/month, 1 form, 1 client view",
         competitor: "50 submissions/month, 1 form, 30-day retention",
       },
       {
@@ -388,7 +388,7 @@ export const alternatives: Alternative[] = [
       },
       {
         dimension: "Export",
-        formivo: "CSV on Pro and Agency",
+        formivo: "CSV on Light, Pro and Agency",
         competitor: "Not applicable",
       },
     ],
@@ -405,7 +405,7 @@ export const alternatives: Alternative[] = [
       {
         question: "Is email-only delivery risky?",
         answer:
-          "It removes your only copy of the data. Inbox rules, spam folders, mailbox quotas and staff changes can all lose submissions with no audit trail — which matters most for client work.",
+          "It removes your only copy of the data. Inbox rules, spam folders, mailbox quotas and staff changes can all lose submissions with no audit trail, which matters most for client work.",
       },
     ],
   },

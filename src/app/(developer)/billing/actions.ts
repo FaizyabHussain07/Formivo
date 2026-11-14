@@ -5,12 +5,26 @@ import { redirect } from "next/navigation";
 import { queueAnalyticsEvent } from "@/lib/analytics/intent";
 import { requireDeveloper } from "@/lib/auth/viewer";
 import { getPaymentAvailability } from "@/lib/billing/availability";
-import { createCheckoutUrl, getCustomerPortalUrl } from "@/lib/billing/lemonsqueezy";
+import {
+  createCheckoutTransaction,
+  getCustomerPortalUrl,
+  updateSubscriptionPlan,
+} from "@/lib/billing/paddle";
 import { isPlanKey } from "@/lib/billing/plans";
-import { AppError, errorMessage } from "@/lib/errors";
 import { getPublicEnv } from "@/lib/env/public";
+import { AppError, errorMessage } from "@/lib/errors";
 
-export type BillingState = { error?: string };
+export type BillingState = {
+  error?: string;
+  notice?: string;
+  checkout?: {
+    transactionId: string;
+    clientToken: string;
+    environment: "sandbox" | "production";
+    checkoutUrl: string | null;
+    plan: string;
+  };
+};
 
 export async function startCheckoutAction(
   _prev: BillingState,
@@ -32,27 +46,46 @@ export async function startCheckoutAction(
   if (!payments.checkoutEnabled) return { error: payments.note };
 
   try {
-    const url = await createCheckoutUrl({
+    // An existing subscriber changes plan on the subscription, so they never end up
+    // paying for two subscriptions at once.
+    const existingSubscription = developer.entitlements.providerSubscriptionId;
+    if (existingSubscription) {
+      await updateSubscriptionPlan({ subscriptionId: existingSubscription, plan });
+      await queueAnalyticsEvent("upgrade");
+      return {
+        notice:
+          "Paddle is applying the plan change. Your limits update as soon as the subscription webhook arrives, usually within a minute.",
+      };
+    }
+
+    const checkout = await createCheckoutTransaction({
       workspaceId: developer.workspace.id,
       plan,
-      email: developer.user.email,
       appUrl: getPublicEnv().NEXT_PUBLIC_APP_URL,
     });
-    await queueAnalyticsEvent("checkout_started");
-    redirect(url);
+    await queueAnalyticsEvent("select_plan", "begin_checkout");
+
+    return {
+      checkout: {
+        transactionId: checkout.transactionId,
+        clientToken: checkout.clientToken,
+        environment: checkout.environment,
+        checkoutUrl: checkout.checkoutUrl,
+        plan,
+      },
+    };
   } catch (error) {
     if (error instanceof AppError) return { error: errorMessage(error) };
-    // redirect() throws a control-flow error that must not be swallowed.
     throw error;
   }
 }
 
 export async function openBillingPortalAction(): Promise<void> {
   const developer = await requireDeveloper();
-  const subscriptionId = developer.entitlements.providerSubscriptionId;
-  if (!subscriptionId) redirect("/billing?portal=unavailable");
+  const customerId = developer.entitlements.providerCustomerId;
+  if (!customerId) redirect("/billing?portal=unavailable");
 
-  const url = await getCustomerPortalUrl(subscriptionId);
+  const url = await getCustomerPortalUrl(customerId);
   if (!url) redirect("/billing?portal=unavailable");
   redirect(url);
 }

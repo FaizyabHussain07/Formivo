@@ -29,7 +29,7 @@ export const blogPosts: BlogPost[] = [
       {
         type: "ul",
         items: [
-          "Accepts the HTTP request the browser sends — form-encoded, multipart or JSON.",
+          "Accepts the HTTP request the browser sends. Form-encoded, multipart or JSON.",
           "Validates structure and size before anything is stored.",
           "Applies abuse controls: rate limits, spam filtering, origin checks.",
           "Stores the submission durably, scoped to the right owner.",
@@ -179,7 +179,7 @@ export const blogPosts: BlogPost[] = [
       {
         type: "ol",
         items: [
-          "Leaving `method` off the form — the browser then sends GET and nothing is stored.",
+          "Leaving `method` off the form. The browser then sends GET and nothing is stored.",
           'Using `enctype="text/plain"`; only urlencoded and multipart are supported.',
           "Naming two inputs the same on purpose, then expecting one value.",
           "Blocking the submit button before the response returns, so a slow network looks broken.",
@@ -264,7 +264,7 @@ form.addEventListener("submit", async (event) => {
           "No navigation: the visitor stays where they are.",
           "You own validation messages, focus management and the error state.",
           "You must handle network failure, timeouts and double submits yourself.",
-          "The loading state is your responsibility — disable the button and say what is happening.",
+          "The loading state is your responsibility. Disable the button and say what is happening.",
         ],
       },
       { type: "h2", text: "The hybrid that most teams should use" },
@@ -278,7 +278,7 @@ form.addEventListener("submit", async (event) => {
         items: [
           'Announce errors with `role="alert"` or an `aria-live` region, and move focus to the first invalid field.',
           "Never rely on colour alone for an error state; pair it with text.",
-          "Keep the submit button enabled until the request starts — a disabled button with no explanation is a dead end.",
+          "Keep the submit button enabled until the request starts. A disabled button with no explanation is a dead end.",
           "If you replace the form with a success message, move focus to it so screen readers notice.",
         ],
       },
@@ -430,7 +430,7 @@ export async function submitContact(_prev: unknown, formData: FormData) {
     title: "Connecting a React form to a backend",
     seoTitle: "React Form to Backend: Controlled Inputs, Validation and Submission",
     description:
-      "A complete React form with controlled inputs, client validation, a real POST request and accessible error handling — no form library required.",
+      "A complete React form with controlled inputs, client validation, a real POST request and accessible error handling. No form library required.",
     category: "Integration",
     tags: ["react", "forms", "validation"],
     publishedAt: "2026-10-26",
@@ -489,7 +489,7 @@ export function ContactForm() {
         {status.kind === "sending" ? "Sending…" : "Send"}
       </button>
       {status.kind === "error" && <p role="alert">{status.message}</p>}
-      {status.kind === "sent" && <p role="status">Thanks — we will reply shortly.</p>}
+      {status.kind === "sent" && <p role="status">Thanks. We will reply shortly.</p>}
     </form>
   );
 }`,
@@ -504,8 +504,8 @@ export function ContactForm() {
         type: "table",
         headers: ["Layer", "Job", "Can be bypassed?"],
         rows: [
-          ["HTML attributes", "Free, accessible hints", "Yes — trivially"],
-          ["React check on submit", "Fast feedback, better copy", "Yes — devtools or curl"],
+          ["HTML attributes", "Free, accessible hints", "Yes. Trivially"],
+          ["React check on submit", "Fast feedback, better copy", "Yes. Devtools or curl"],
           ["Backend validation", "The actual guarantee", "No"],
         ],
       },
@@ -517,7 +517,7 @@ export function ContactForm() {
       {
         type: "ul",
         items: [
-          "Reading `event.target` after an await — the synthetic event is no longer current. Capture `currentTarget` first.",
+          "Reading `event.target` after an await. The synthetic event is no longer current. Capture `currentTarget` first.",
           "Forgetting `preventDefault`, so the browser navigates away mid-submit.",
           "Not disabling the button during the request, which invites duplicate submissions. Idempotency keys are the server-side safety net.",
           'Rendering an error inside a div that screen readers never announce. Use `role="alert"`.',
@@ -534,7 +534,7 @@ export function ContactForm() {
     title: "How to prevent contact form spam (without CAPTCHA everywhere)",
     seoTitle: "Contact Form Spam Prevention: Honeypots, Rate Limits and Origin Checks",
     description:
-      "Layered spam defence for public forms: honeypots, rate limits, origin allow-lists, idempotency and content checks — and when a CAPTCHA is actually worth the friction.",
+      "Layered spam defence for public forms: honeypots, rate limits, origin allow-lists, idempotency and content checks, and when a CAPTCHA is actually worth the friction.",
     category: "Security",
     tags: ["spam", "security", "rate limiting"],
     publishedAt: "2026-10-29",
@@ -584,7 +584,7 @@ export function ContactForm() {
         items: [
           "Reject submissions whose only URL appears in a link-heavy message.",
           "Treat identical bodies from the same IP within minutes as one submission.",
-          "Flag free-mail addresses only if your funnel genuinely needs it — usually it does not.",
+          "Flag free-mail addresses only if your funnel genuinely needs it. Usually it does not.",
         ],
       },
       { type: "h2", text: "When a CAPTCHA is worth it" },
@@ -619,7 +619,7 @@ export function ContactForm() {
     title: "Form submission security: what actually protects a public endpoint",
     seoTitle: "Public Form Endpoint Security: Validation, Limits and Authorization",
     description:
-      "A public form endpoint is unauthenticated by design. Here is what genuinely protects it — and which popular measures are theatre.",
+      "A public form endpoint is unauthenticated by design. Here is what genuinely protects it, and which popular measures are theatre.",
     category: "Security",
     tags: ["security", "validation", "owasp"],
     publishedAt: "2026-11-02",
@@ -753,7 +753,7 @@ Cache-Control: no-store
         items: [
           "You open the form's Clients tab and invite the client's email address.",
           "They receive a single-use link that expires in seven days.",
-          "On acceptance, their account is created as a client — never as a developer with a workspace.",
+          "On acceptance, their account is created as a client, never as a developer with a workspace.",
           "They land in a portal listing only their shared forms.",
           "You can revoke the permission at any time; the next request fails immediately.",
         ],
@@ -782,7 +782,7 @@ Cache-Control: no-store
         items: [
           "Invite a role address (`leads@client.com`) rather than an individual, so staff changes do not lock you out.",
           "Revoke when a project ends; keep the data, drop the access.",
-          "Use one form per purpose, not one form for everything — permissions are per form.",
+          "Use one form per purpose, not one form for everything. Permissions are per form.",
           "Tell the client what they can export before they ask.",
         ],
       },
@@ -802,13 +802,13 @@ Cache-Control: no-store
     title: "Form backend vs building your own endpoint",
     seoTitle: "Hosted Form Backend vs Custom Endpoint: An Honest Comparison",
     description:
-      "Cost, control and maintenance compared between a hosted form backend and your own API route — including the cases where building it yourself is the right call.",
+      "Cost, control and maintenance compared between a hosted form backend and your own API route, including the cases where building it yourself is the right call.",
     category: "Fundamentals",
     tags: ["architecture", "build vs buy", "comparison"],
     publishedAt: "2026-11-05",
     readingMinutes: 6,
     answer:
-      "Build your own when submissions must join internal data or drive business logic. Use a hosted backend when the job is to receive, keep and share form data reliably — the endpoint is ten lines, the surrounding operations are not.",
+      "Build your own when submissions must join internal data or drive business logic. Use a hosted backend when the job is to receive, keep and share form data reliably. The endpoint is ten lines, the surrounding operations are not.",
     blocks: [
       {
         type: "p",

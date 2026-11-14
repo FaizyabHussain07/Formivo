@@ -85,4 +85,4 @@ application is free of vulnerabilities.
 4. **Operational** — rate limits and audit logs are database-backed and shared, but there is no
    alerting on abuse patterns; `console.warn` is the only signal today.
 5. **Manual configuration** — production must set `NEXT_PUBLIC_APP_URL`, Supabase redirect URLs,
-   the Resend sender domain, and the Lemon Squeezy webhook secret; these are outside the repo.
+   the Resend sender domain, and the Paddle webhook secret; these are outside the repo.

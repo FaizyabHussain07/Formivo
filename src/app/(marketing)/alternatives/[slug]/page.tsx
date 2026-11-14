@@ -218,7 +218,7 @@ export default async function AlternativePage({ params }: { params: Params }) {
 
         <aside className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-surface p-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-foreground-secondary">
-            Try the endpoint against your own form — 300 submissions a month on the free plan.
+            Try the endpoint against your own form. The free plan includes 100 submissions a month.
           </p>
           <Link
             href="/signup"

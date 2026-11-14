@@ -2,7 +2,7 @@ import "server-only";
 
 import { getPublicEnv } from "@/lib/env/public";
 
-import { getBillingConfig } from "./lemonsqueezy";
+import { getBillingConfig } from "./paddle";
 
 export type PaymentAvailability = {
   /** Whether a real checkout may be created at all. */
@@ -13,29 +13,31 @@ export type PaymentAvailability = {
   note: string;
   /** Missing configuration names, for the operator only. */
   missing: string[];
+  /** Which Paddle account the checkout would use. */
+  environment: "sandbox" | "production";
 };
 
 /**
  * Payments stay off in production until they are explicitly authorised.
  *
- * The store may still be under review, so the default rule is: checkout is available when
- * the provider is configured AND the deployment is not production. Setting
- * `BILLING_CHECKOUT_ENABLED=true` in production is the deliberate switch that turns it on
- * after approval. Every paid surface reads this one function, so the pricing page, the
- * billing page and the server action can never disagree.
+ * Checkout is available when Paddle is configured AND either the deployment is not
+ * production or `BILLING_CHECKOUT_ENABLED=true` was set deliberately after approval.
+ * Every paid surface reads this one function, so the pricing page, the billing page
+ * and the server action can never disagree.
  */
 export function getPaymentAvailability(): PaymentAvailability {
-  const { configured, missing } = getBillingConfig();
-  const environment = getPublicEnv().NEXT_PUBLIC_ENVIRONMENT;
+  const { configured, missing, environment } = getBillingConfig();
+  const deployment = getPublicEnv().NEXT_PUBLIC_ENVIRONMENT;
   const explicitlyEnabled = process.env.BILLING_CHECKOUT_ENABLED === "true";
-  const production = environment === "production";
+  const production = deployment === "production";
 
   if (!configured) {
     return {
       checkoutEnabled: false,
       label: "Coming soon",
-      note: "Checkout is not open yet. Create a free account and we will email you when paid plans open.",
+      note: "Checkout is not open yet. Create a free account and keep every form you build.",
       missing,
+      environment,
     };
   }
 
@@ -45,19 +47,18 @@ export function getPaymentAvailability(): PaymentAvailability {
       label: "Coming soon",
       note: "Paid plans are being finalised. Free accounts work today and keep all your data.",
       missing: [],
+      environment,
     };
   }
 
   return {
     checkoutEnabled: true,
-    label: PRO_BUTTON_LABEL,
-    note: "Secure checkout via Lemon Squeezy. Cancel anytime.",
+    label: "Choose plan",
+    note:
+      environment === "sandbox"
+        ? "Sandbox checkout: test cards only, no real charge. Handled by Paddle."
+        : "Secure checkout handled by Paddle. Cancel anytime.",
     missing: [],
+    environment,
   };
 }
-
-/**
- * Short label for the Pro plan's CTA when checkout is open.
- * Plain prose, no em dashes.
- */
-export const PRO_BUTTON_LABEL = "Get Pro";

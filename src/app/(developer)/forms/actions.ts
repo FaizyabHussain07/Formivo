@@ -135,8 +135,12 @@ export async function setFormStatusAction(formData: FormData): Promise<void> {
     revalidatePath("/forms");
     revalidatePath("/dashboard");
     refresh();
-  } catch {
-    // The status control is idempotent; a failed toggle leaves the stored value.
+  } catch (error) {
+    // A plan limit is the only expected failure here, and it needs to be visible.
+    if (error instanceof AppError && error.code === "PLAN_LIMIT_REACHED") {
+      redirect("/forms?limit=reached");
+    }
+    // Otherwise the control is idempotent; a failed toggle leaves the stored value.
   }
 }
 

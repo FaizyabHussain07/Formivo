@@ -94,6 +94,7 @@ export function SignupForm({
         {invitation ? "Create client account" : "Create free account"}
       </Button>
 
+
       <p className="text-xs leading-relaxed text-foreground-muted">
         By creating an account you agree to the{" "}
         <Link href="/terms" className="underline">

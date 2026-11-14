@@ -151,7 +151,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
           <aside className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6">
             <p className="text-sm font-semibold text-foreground">Try it with your own form</p>
             <p className="text-sm leading-6 text-foreground-secondary">
-              Create a form, copy the endpoint and point any HTML form at it. 300 submissions a
+              Create a form, copy the endpoint and point any HTML form at it. 100 submissions a
               month on the free plan, no card required.
             </p>
             <div className="flex flex-wrap gap-2">

@@ -18,12 +18,12 @@ export function HeaderActions({ signedIn }: { signedIn: boolean }) {
     <>
       <Link
         href="/login"
-        className="hidden rounded-lg px-3 py-2 text-[13.5px] font-medium text-foreground-secondary transition-colors hover:text-foreground sm:inline-block"
+        className="rounded-lg px-3 py-2 text-[13.5px] font-medium text-foreground-secondary transition-colors hover:text-foreground"
       >
-        Log in
+        Sign in
       </Link>
       <ButtonLink href="/signup" size="sm">
-        Get started
+        Get started free
       </ButtonLink>
     </>
   );

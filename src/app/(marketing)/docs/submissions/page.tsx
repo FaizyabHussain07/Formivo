@@ -105,7 +105,7 @@ export default function Page() {
         <DocProse>
           <p>
             Export is a paid capability and is enforced on the server: a request from a Free plan
-            workspace is refused even if the button is reachable. Pro and Agency exports include the
+            workspace is refused even if the button is reachable. Light, Pro and Agency exports include the
             submission values, status and timestamp.
           </p>
           <p>

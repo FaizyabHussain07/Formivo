@@ -13,13 +13,20 @@ const INTENT_COOKIE = "formivo_evt";
 const KNOWN_EVENTS = new Set<string>([
   "sign_up",
   "login",
+  "email_verified",
   "form_created",
   "form_published",
   "client_invited",
   "client_joined",
   "feedback_submitted",
+  "select_plan",
+  "begin_checkout",
   "checkout_started",
+  "purchase",
   "subscription_activated",
+  "upgrade",
+  "cancel_subscription",
+  "export_submissions",
   "prompt_copied",
 ]);
 

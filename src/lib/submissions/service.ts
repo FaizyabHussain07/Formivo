@@ -54,7 +54,7 @@ async function enforceRateLimit(bucket: string, limit: number, label: string): P
   });
   if (error) {
     if (error.message.includes("RATE_LIMITED")) {
-      // Operational signal only — no IPs, payloads or personal data.
+      // Operational signal only. No IPs, payloads or personal data.
       console.warn(`[formivo] rate limit reached (${label})`);
       throw new AppError("RATE_LIMITED");
     }

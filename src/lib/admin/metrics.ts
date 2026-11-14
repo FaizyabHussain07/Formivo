@@ -246,6 +246,116 @@ export async function listAuditLog(limit = 40): Promise<AdminAuditRow[]> {
   }));
 }
 
+export type AdminFormRow = {
+  id: string;
+  name: string;
+  status: string;
+  createdAt: string;
+  workspaceName: string;
+  ownerUserId: string;
+  submissionCount: number;
+  clientCount: number;
+};
+
+/**
+ * Forms with their owner and counts. Names and statuses only; no submission content
+ * is read for this view.
+ */
+export async function listForms(limit = 100): Promise<AdminFormRow[]> {
+  if (!isSupabaseAdminConfigured()) return [];
+  const admin = requireAdminClient();
+
+  const { data: forms, error } = await admin
+    .from("forms")
+    .select("id, name, status, created_at, workspace_id")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) return [];
+
+  const workspaceIds = Array.from(new Set((forms ?? []).map((form) => form.workspace_id)));
+  const [{ data: workspaces }, { data: submissions }, { data: permissions }] = await Promise.all([
+    workspaceIds.length
+      ? admin.from("workspaces").select("id, name, owner_user_id").in("id", workspaceIds)
+      : Promise.resolve({ data: [] as { id: string; name: string; owner_user_id: string }[] }),
+    admin.from("submissions").select("form_id"),
+    admin.from("form_client_permissions").select("form_id, revoked_at"),
+  ]);
+
+  const workspaceById = new Map((workspaces ?? []).map((row) => [row.id, row]));
+  const submissionCounts = new Map<string, number>();
+  for (const row of submissions ?? []) {
+    submissionCounts.set(row.form_id, (submissionCounts.get(row.form_id) ?? 0) + 1);
+  }
+  const clientCounts = new Map<string, number>();
+  for (const row of permissions ?? []) {
+    if (row.revoked_at) continue;
+    clientCounts.set(row.form_id, (clientCounts.get(row.form_id) ?? 0) + 1);
+  }
+
+  return (forms ?? []).map((form) => {
+    const workspace = workspaceById.get(form.workspace_id);
+    return {
+      id: form.id,
+      name: form.name,
+      status: form.status,
+      createdAt: form.created_at,
+      workspaceName: workspace?.name ?? "Unknown workspace",
+      ownerUserId: workspace?.owner_user_id ?? "unknown",
+      submissionCount: submissionCounts.get(form.id) ?? 0,
+      clientCount: clientCounts.get(form.id) ?? 0,
+    };
+  });
+}
+
+export type AdminClientAccessRow = {
+  permissionId: string;
+  formId: string;
+  formName: string;
+  workspaceName: string;
+  grantedAt: string;
+  revoked: boolean;
+  clientId: string;
+};
+
+/** Active and revoked client permissions. Interaction history is not invented. */
+export async function listClientAccess(limit = 100): Promise<AdminClientAccessRow[]> {
+  if (!isSupabaseAdminConfigured()) return [];
+  const admin = requireAdminClient();
+
+  const { data: permissions, error } = await admin
+    .from("form_client_permissions")
+    .select("id, form_id, client_user_id, granted_at, revoked_at")
+    .order("granted_at", { ascending: false })
+    .limit(limit);
+  if (error) return [];
+
+  const formIds = Array.from(new Set((permissions ?? []).map((row) => row.form_id)));
+  const { data: forms } = formIds.length
+    ? await admin.from("forms").select("id, name, workspace_id").in("id", formIds)
+    : { data: [] as { id: string; name: string; workspace_id: string }[] };
+
+  const workspaceIds = Array.from(new Set((forms ?? []).map((form) => form.workspace_id)));
+  const { data: workspaces } = workspaceIds.length
+    ? await admin.from("workspaces").select("id, name").in("id", workspaceIds)
+    : { data: [] as { id: string; name: string }[] };
+
+  const formById = new Map((forms ?? []).map((form) => [form.id, form]));
+  const workspaceName = new Map((workspaces ?? []).map((row) => [row.id, row.name]));
+
+  return (permissions ?? []).map((row) => {
+    const form = formById.get(row.form_id);
+    return {
+      permissionId: row.id,
+      formId: row.form_id,
+      formName: form?.name ?? "Deleted form",
+      workspaceName: form ? (workspaceName.get(form.workspace_id) ?? "Unknown") : "Unknown",
+      grantedAt: row.granted_at,
+      revoked: Boolean(row.revoked_at),
+      clientId: row.client_user_id,
+    };
+  });
+}
+
 /** Records an administrative action. Never stores a password, token or payload. */
 export async function recordAdminAction(input: {
   action: string;

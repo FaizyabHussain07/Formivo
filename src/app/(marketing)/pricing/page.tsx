@@ -1,51 +1,42 @@
 import { Check } from "lucide-react";
 import type { Metadata } from "next";
-
-import { socialImage } from "@/lib/seo";
+import Link from "next/link";
 
 import { TrackView } from "@/components/analytics/track-view";
+import { JsonLd } from "@/components/marketing/structured-data";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { getPaymentAvailability, PRO_BUTTON_LABEL } from "@/lib/billing/availability";
+import { getPaymentAvailability } from "@/lib/billing/availability";
 import { PLANS, PLAN_ORDER, type PlanKey } from "@/lib/billing/plans";
+import { canonicalUrl, socialImage } from "@/lib/seo";
 import { cn } from "@/lib/utils/cn";
 
+const seoTitle = "Formivo Pricing: Free, Light, Pro and Agency Plans";
+const seoDescription =
+  "Formivo pricing in USD, billed monthly: Free, $9 Light, $19 Pro and $49 Agency. Compare forms, monthly submissions, client views and CSV export for each plan.";
+
 export const metadata: Metadata = {
-  title: { absolute: "Formivo Pricing | Plans for Developers and Agencies" },
-  description:
-    "Compare Formivo plans for form endpoints, submissions, client access, and form management. Choose a plan that fits your workflow.",
+  title: { absolute: seoTitle },
+  description: seoDescription,
   alternates: { canonical: "/pricing" },
   keywords: [
     "form backend pricing",
-    "formspree pricing comparison",
     "form backend plans",
+    "formspree pricing comparison",
     "client portal pricing",
+    "form submission management pricing",
   ],
   openGraph: {
-    title: "Formivo pricing | Form backend plans for developers and agencies",
-    description:
-      "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
-    images: [
-      socialImage({
-        title: "Formivo pricing | Form backend plans for developers and agencies",
-        subtitle:
-          "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
-        kind: "product",
-      }),
-    ],
+    title: seoTitle,
+    description: seoDescription,
+    url: canonicalUrl("/pricing"),
+    images: [socialImage({ title: "Formivo pricing", subtitle: seoDescription, kind: "product" })],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Formivo pricing | Form backend plans for developers and agencies",
-    description:
-      "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
-    images: [
-      socialImage({
-        title: "Formivo pricing | Form backend plans for developers and agencies",
-        subtitle:
-          "Three plans, one product: public form endpoints, submission management, CSV export and read-only client access. Free plan, no card.",
-      }),
-    ],
+    title: seoTitle,
+    description: seoDescription,
+    images: [socialImage({ title: "Formivo pricing", subtitle: seoDescription, kind: "product" })],
   },
 };
 
@@ -53,38 +44,63 @@ const faqs = [
   {
     question: "What counts as a submission?",
     answer:
-      "Every accepted request to a form endpoint counts once against the monthly limit. Duplicate retries with the same Idempotency-Key do not count twice.",
+      "Every accepted request to a form endpoint counts once against the monthly limit. A duplicate retry with the same Idempotency-Key does not count twice. Rejected requests, such as a honeypot hit, do not count.",
   },
   {
     question: "What happens if I hit my monthly limit?",
     answer:
-      "New submissions are rejected with a quota error until the allowance resets at the start of your next billing cycle (the same date each month) or until you upgrade. Existing leads and history are always retained.",
+      "New submissions are rejected with a 409 quota error until the allowance resets or you upgrade. Existing leads and history are retained. Nothing is silently discarded, and the form keeps working again when the window resets.",
   },
   {
     question: "When does my monthly allowance reset?",
     answer:
-      "On the anniversary of your subscription date, not on the 1st of the calendar month: subscribe on the 14th and the allowance renews on the 14th. Free workspaces reset on the 1st, in UTC.",
+      "On the anniversary of your subscription date for paid plans: subscribe on the 14th and the allowance renews on the 14th. Free workspaces reset on the 1st of each month in UTC.",
   },
   {
-    question: "Can I export submissions?",
+    question: "What is a client view?",
     answer:
-      "CSV export is included on Pro and Agency. The Free plan cannot export, and the restriction is enforced by the server, not just hidden in the interface. Exports are also limited to forms you own or were invited to view.",
+      "A client account you invite to read one form's submissions. It is read-only, cannot see your other forms, and can be revoked per form. Client views are counted per workspace, not per form.",
   },
   {
-    question: "What is a client viewer?",
+    question: "Do you offer annual billing?",
     answer:
-      "A client account you invite to read one form's leads and analytics. Viewers cannot edit leads, change form settings, manage billing or see your other forms.",
+      "Not yet. Only monthly prices are configured, so there is no annual discount to show. When annual prices exist they will be listed on this page rather than promised in advance.",
   },
   {
-    question: "Can I cancel or downgrade?",
+    question: "Is there a team seat?",
     answer:
-      "Yes. Cancel from the billing page's customer portal. Your data stays, but creating new forms or viewers beyond the lower plan limit is blocked.",
+      "No. A workspace has one owner account, and client views are read-only accounts rather than seats. Multi-user team access is not implemented, so no plan sells it.",
   },
   {
-    question: "Do you offer refunds?",
+    question: "How does billing work?",
     answer:
-      "If something is not working for you, contact us and we will help. Subscription billing is handled by Lemon Squeezy.",
+      "Paid plans are billed monthly in USD by Paddle, the merchant of record. Paddle handles payment methods, invoices and tax. Your card details never reach Formivo servers.",
   },
+  {
+    question: "How do I cancel or downgrade?",
+    answer:
+      "Open the Paddle customer portal from your billing page. Access continues to the end of the paid period, then the workspace returns to Free limits. Forms, submissions and client records are kept; existing data is never deleted on cancellation.",
+  },
+];
+
+const rows: { label: string; render: (key: PlanKey) => string }[] = [
+  { label: "Price per month", render: (key) => (PLANS[key].priceMonthly === 0 ? "$0" : `$${PLANS[key].priceMonthly}`) },
+  { label: "Active forms", render: (key) => String(PLANS[key].forms) },
+  { label: "Submissions per month", render: (key) => PLANS[key].monthlyLeads.toLocaleString("en-US") },
+  { label: "Client views", render: (key) => String(PLANS[key].viewers) },
+  {
+    label: "Search and filtering",
+    render: (key) => (key === "free" ? "Basic" : "Included"),
+  },
+  {
+    label: "CSV export",
+    render: (key) => (PLANS[key].canExportSubmissions ? "Included" : "Not included"),
+  },
+  { label: "Submission statuses", render: () => "Included" },
+  { label: "Validation and rate limits", render: () => "Included" },
+  { label: "Per-form client permissions", render: () => "Included" },
+  { label: "Team seats", render: () => "1 owner" },
+  { label: "Support", render: (key) => (key === "free" ? "Email, best effort" : key === "light" ? "Email" : "Priority email") },
 ];
 
 export default function Page() {
@@ -93,22 +109,42 @@ export default function Page() {
   return (
     <Container className="flex flex-col gap-14 py-14 sm:py-20">
       <TrackView event="pricing_viewed" />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "Formivo",
+          description: seoDescription,
+          url: canonicalUrl("/pricing"),
+          offers: PLAN_ORDER.map((key) => ({
+            "@type": "Offer",
+            name: `${PLANS[key].name} plan`,
+            price: PLANS[key].priceMonthly,
+            priceCurrency: "USD",
+            description: PLANS[key].description,
+            url: canonicalUrl("/pricing"),
+            availability: "https://schema.org/InStock",
+          })),
+        }}
+      />
+
       <header className="flex flex-col items-center gap-4 text-center">
         <span className="rounded-full border border-accent/25 bg-accent-subtle px-3 py-1 text-xs font-medium text-accent-hover">
           Simple pricing
         </span>
-        <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-[42px] sm:leading-tight">
-          Fair limits, no per-seat games.
+        <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-[42px] sm:leading-tight">
+          Pay for forms and submissions. Everything else is included.
         </h1>
         <p className="max-w-xl text-base text-foreground-secondary">
-          Start free and upgrade only when you need more forms, submissions or client viewers. Every
-          plan includes the same endpoint, validation and abuse protection.
+          Every plan includes the same public endpoint, validation, spam controls and client access
+          model. Monthly prices in USD, billed through Paddle. No annual plans yet.
         </p>
-      </header>{" "}
-      <div id="plans" className="grid scroll-mt-24 gap-4 md:grid-cols-3">
+      </header>
+
+      <div id="plans" className="grid scroll-mt-24 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {PLAN_ORDER.map((key) => {
           const plan = PLANS[key];
-          const featured = key === "pro";
+          const featured = plan.featured;
           return (
             <section
               key={plan.key}
@@ -145,34 +181,34 @@ export default function Page() {
                   </li>
                 ))}
               </ul>
-              <ButtonLink href="/signup" variant={featured ? "primary" : "secondary"}>
-                {key === "free"
-                  ? "Start free"
-                  : payments.checkoutEnabled
-                    ? `Choose ${plan.name}`
-                    : key === "pro" ? PRO_BUTTON_LABEL : `Get ${plan.name}`}
+              <ButtonLink
+                href={key === "free" ? "/signup" : `/checkout/${key}`}
+                variant={featured ? "primary" : "secondary"}
+              >
+                {key === "free" ? "Start free" : `Choose ${plan.name}`}
               </ButtonLink>
               <p className="text-center text-xs text-foreground-muted">
                 {key === "free"
                   ? "No card required."
                   : payments.checkoutEnabled
                     ? payments.note
-                    : "Coming soon. Join free and we will email you when paid plans open."}
+                    : "Paid checkout is not open on this deployment yet. Create a free account and keep your data."}
               </p>
             </section>
           );
         })}
       </div>
+
       <section
         id="compare"
         aria-labelledby="compare-heading"
         className="flex scroll-mt-24 flex-col gap-4"
       >
         <h2 id="compare-heading" className="text-xl font-semibold tracking-tight">
-          Compare the plans
+          Compare every limit
         </h2>
         <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-[620px] text-left text-sm">
+          <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-surface-muted/60">
               <tr>
                 <th scope="col" className="px-4 py-3 text-xs font-semibold tracking-wide uppercase">
@@ -190,27 +226,7 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {[
-                { label: "Price", render: (key: PlanKey) => `$${PLANS[key].priceMonthly}/mo` },
-                { label: "Active forms", render: (key: PlanKey) => String(PLANS[key].forms) },
-                {
-                  label: "Submissions per month",
-                  render: (key: PlanKey) => PLANS[key].monthlyLeads.toLocaleString("en-US"),
-                },
-                { label: "Client viewers", render: (key: PlanKey) => String(PLANS[key].viewers) },
-                {
-                  label: "CSV export",
-                  render: (key: PlanKey) =>
-                    PLANS[key].canExportSubmissions ? "Included" : "Not available",
-                },
-                { label: "Public endpoints", render: () => "Unlimited calls" },
-                { label: "Rate limits and spam controls", render: () => "Included" },
-                { label: "Per-form client permissions", render: () => "Included" },
-                {
-                  label: "Support",
-                  render: (key: PlanKey) => (key === "free" ? "Community" : "Email"),
-                },
-              ].map((row) => (
+              {rows.map((row) => (
                 <tr key={row.label} className="border-t border-border">
                   <th scope="row" className="px-4 py-3 text-left font-medium text-foreground">
                     {row.label}
@@ -225,25 +241,35 @@ export default function Page() {
             </tbody>
           </table>
         </div>
+        <p className="text-xs leading-5 text-foreground-muted">
+          Limits are enforced on the server, including at ingest. When a submission limit is
+          reached, requests are refused with a clear error and existing data is kept. See{" "}
+          <Link href="/docs/submissions" className="underline">
+            submission limits
+          </Link>{" "}
+          for the exact behavior.
+        </p>
       </section>
+
       <section id="faq" aria-labelledby="faq-heading" className="flex scroll-mt-24 flex-col gap-4">
         <h2 id="faq-heading" className="text-xl font-semibold tracking-tight">
-          Frequently asked questions
+          Pricing questions
         </h2>
         <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
           {faqs.map((faq) => (
-            <div key={faq.question} className="flex flex-col gap-1 p-5">
-              <p className="font-medium text-foreground">{faq.question}</p>
-              <p className="text-sm text-foreground-secondary">{faq.answer}</p>
-            </div>
+            <details key={faq.question} className="group p-5">
+              <summary className="cursor-pointer font-medium text-foreground">{faq.question}</summary>
+              <p className="mt-2 text-sm leading-6 text-foreground-secondary">{faq.answer}</p>
+            </details>
           ))}
         </div>
       </section>
+
       <div className="flex flex-col items-start gap-3 rounded-xl border border-border bg-surface p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-medium text-foreground">Need something larger?</p>
           <p className="text-sm text-foreground-secondary">
-            Tell us about your volume, custom domains or compliance requirements.
+            Tell us about your volume and we will say plainly whether Formivo fits.
           </p>
         </div>
         <ButtonLink href="/contact" variant="secondary">

@@ -5,7 +5,9 @@ import { adminLogoutAction } from "@/app/admin/actions";
 const links = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/forms", label: "Forms" },
   { href: "/admin/submissions", label: "Submissions" },
+  { href: "/admin/clients", label: "Client access" },
   { href: "/admin/audit", label: "Audit log" },
 ];
 

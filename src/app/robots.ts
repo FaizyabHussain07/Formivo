@@ -4,7 +4,7 @@ import { DISALLOWED_PATHS, SITE_URL } from "@/lib/seo";
 
 /**
  * Public marketing and documentation stay crawlable; every authenticated or
- * application route is disallowed. Robots is a crawling hint, not access control —
+ * application route is disallowed. Robots is a crawling hint, not access control,
  * those same routes enforce authentication and ship `noindex` themselves.
  */
 /**

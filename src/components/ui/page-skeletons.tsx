@@ -5,8 +5,8 @@ import { Skeleton, SkeletonText } from "./skeleton";
 /**
  * Route-level loading views.
  *
- * Each skeleton mirrors the shape of the page it replaces — header, stats,
- * table, article body — so a slow segment streams into a layout that does not
+ * Each skeleton mirrors the shape of the page it replaces. Header, stats,
+ * table, article body. So a slow segment streams into a layout that does not
  * jump. They are server components: no client JavaScript is shipped for a
  * placeholder that only exists for a few hundred milliseconds.
  */

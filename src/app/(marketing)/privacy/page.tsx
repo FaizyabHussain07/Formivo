@@ -20,7 +20,7 @@ const sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] 
     ],
     bullets: [
       "Account details: your email address and the display name you choose when creating a workspace.",
-      "Submissions: the field contents visitors send to your form endpoints — names, emails, messages and whatever else your form collects.",
+      "Submissions: the field contents visitors send to your form endpoints. Names, emails, messages and whatever else your form collects.",
       "Operational data: request timestamps, approximate request origin, rate-limit counters and error logs used to keep the service working.",
     ],
   },
@@ -34,7 +34,7 @@ const sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] 
   {
     heading: "Cookies and local storage",
     paragraphs: [
-      "Formivo uses a session cookie to keep you signed in; without it, authenticated pages would not work. We store your light/dark theme preference in your browser's local storage. We do not use advertising or cross-site tracking cookies.",
+      "Formivo uses a session cookie to keep you signed in; without it, authenticated pages would not work. We store your light/dark theme preference, a first-touch attribution record and your analytics consent choice in local storage. We do not use advertising or cross-site tracking cookies.",
     ],
   },
   {
@@ -43,10 +43,18 @@ const sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] 
       "We rely on a small number of providers to run the service. They only process data on our instructions.",
     ],
     bullets: [
-      "Supabase — database and authentication (accounts, workspaces, submissions).",
-      "Resend — transactional email such as client invitations and password resets.",
-      "Cloudflare — hosting and delivery of this website.",
-      "Lemon Squeezy — subscription billing, when a paid plan is active; card details are handled by them and never reach our servers.",
+      "Supabase for database and authentication (accounts, workspaces, submissions).",
+      "Resend for transactional email such as client invitations and password resets.",
+      "Cloudflare for hosting and delivery of this website.",
+      "Paddle for subscription billing and tax handling when a paid plan is active. Paddle is the merchant of record; card details are handled by Paddle and never reach our servers.",
+      "Google Analytics 4 and PostHog for aggregate product analytics, only when configured and only after consent. Account identifiers are sent, never passwords, form submission contents or payment details.",
+    ],
+  },
+  {
+    heading: "Accounts, verification and sign-in",
+    paragraphs: [
+      "Creating an account requires an email address and a password. A new account must confirm a six-digit code sent to that address before the dashboard is reachable, so an account cannot be created for an address the person cannot access.",
+      "Passwords are handled by Supabase Auth, which stores a hash rather than the password itself. Formivo does not offer social sign-in, so no third party authenticates you on our behalf.",
     ],
   },
   {
@@ -89,7 +97,7 @@ export default function Page() {
       <PageHeader
         eyebrow="Legal"
         title="Privacy policy"
-        description="What Formivo collects, where it is stored, and what you control. Last updated 29 October 2026."
+        description="What Formivo collects, where it is stored, and what you control. Last updated 14 November 2026."
       />
 
       <div className="flex flex-col gap-7">

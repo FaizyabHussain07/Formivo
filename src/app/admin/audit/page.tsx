@@ -66,7 +66,7 @@ export default async function Page() {
                       </td>
                       <td className="max-w-[320px] px-5 py-2.5 text-xs break-words text-foreground-muted">
                         {Object.keys(entry.metadata).length === 0
-                          ? "—"
+                          ? "Not set"
                           : Object.entries(entry.metadata)
                               .map(([key, value]) => `${key}: ${String(value)}`)
                               .join(", ")}

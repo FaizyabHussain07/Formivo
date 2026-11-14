@@ -11,13 +11,13 @@ import type { Database } from "./database.types";
 /**
  * Session-bound Supabase client for server components, server actions and route
  * handlers. Queries run AS the signed-in user, so Row Level Security decides
- * which rows come back — this is the default client for dashboard reads.
+ * which rows come back. This is the default client for dashboard reads.
  *
  * Returns `null` when Supabase is not configured, so public pages can render an
  * explicit "not configured" state instead of failing.
  *
  * Callers must still verify the session server-side: `const { data: { user } }
- * = await supabase.auth.getUser()` — never trust a client-supplied identity.
+ * = await supabase.auth.getUser()`, never trust a client-supplied identity.
  */
 export async function createSupabaseServerClient() {
   const env = getServerEnv();

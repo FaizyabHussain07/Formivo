@@ -41,7 +41,7 @@ const entries: Entry[] = [
     items: [
       "One public endpoint per form: POST-only, no key on the client.",
       "Optional Idempotency-Key header, so a retried request never creates a duplicate lead.",
-      "Free, Pro and Agency plans with server-enforced form, submission, viewer and export limits.",
+      "Free, Light, Pro and Agency plans with server-enforced form, submission, client-view and export limits.",
       "CSV export restricted to paid plans and checked on the server, not in the UI.",
     ],
   },

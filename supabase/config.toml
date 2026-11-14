@@ -19,6 +19,25 @@ major_version = 15
 enabled = true
 port = 54323
 
-[inbucket]
+# Local email capture is provided by the CLI default; no override needed.
+# Authentication. Email confirmation is required: a new account verifies a six-digit
+# code before it can reach the dashboard. Point the hosted project's templates at the
+# same content so local and production behave identically.
+[auth]
 enabled = true
-port = 54324
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.email]
+enabled = true
+enable_confirmations = true
+
+[auth.email.template.confirmation]
+subject = "Your Formivo verification code"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Formivo password"
+content_path = "./supabase/templates/recovery.html"

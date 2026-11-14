@@ -1,13 +1,15 @@
 import { alternatives } from "@/content/alternatives";
 import { sortedPosts } from "@/content/blog";
+import { comparisons } from "@/content/comparisons";
 import { guides } from "@/content/guides";
+import { solutions } from "@/content/solutions";
 import type { ContentBlock } from "@/content/types";
 import { canonicalUrl } from "@/lib/seo";
 
 /**
  * Long-form companion to /llms.txt: the full text of every public article and guide,
  * generated from the same content modules the pages render. Nothing private is
- * included — this is exactly what a crawler can already read on the pages.
+ * included. This is exactly what a crawler can already read on the pages.
  */
 function renderBlock(block: ContentBlock): string {
   switch (block.type) {
@@ -101,7 +103,45 @@ ${item.chooseFormivo.map((fact) => `- ${fact}`).join("\n")}`,
     )
     .join("\n\n---\n\n");
 
-  return `# Formivo — full public content
+  const comparisonText = comparisons
+    .map(
+      (item) => `## Formivo vs ${item.competitor}
+
+URL: ${canonicalUrl(`/compare/${item.slug}`)}
+Category: ${item.category}
+Competitor source: ${item.competitorUrl}
+
+${item.answer}
+
+| Dimension | Formivo | ${item.competitor} |
+| --- | --- | --- |
+${item.rows.map((row) => `| ${row.dimension} | ${row.formivo} | ${row.competitor} |`).join("\n")}
+
+Choose ${item.competitor} if:
+${item.bestFor.map((fact) => `- ${fact}`).join("\n")}
+
+Choose Formivo if:
+${item.formivoFit.map((fact) => `- ${fact}`).join("\n")}
+
+Verify on the provider's site:
+${item.verify.map((fact) => `- ${fact}`).join("\n")}`,
+    )
+    .join("\n\n---\n\n");
+
+  const solutionText = solutions
+    .map(
+      (item) => `## ${item.title}
+
+URL: ${canonicalUrl(`/solutions/${item.slug}`)}
+
+${item.answer}
+
+Workflow:
+${item.workflow.map((step, index) => `${index + 1}. ${step.title}: ${step.body}`).join("\n")}`,
+    )
+    .join("\n\n---\n\n");
+
+  return `# Formivo: full public content
 
 This file contains the complete text of Formivo's public articles, integration guides and
 competitor comparisons. Canonical pages are linked for each section.
@@ -126,6 +166,18 @@ ${guideText}
 # Alternatives
 
 ${alternativeText}
+
+---
+
+# Comparisons
+
+${comparisonText}
+
+---
+
+# Solutions
+
+${solutionText}
 `;
 }
 

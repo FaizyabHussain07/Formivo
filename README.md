@@ -28,8 +28,9 @@ No API keys. No secret rotation. No form builder to learn.
   an invited client viewer) can read. Row Level Security enforces the same boundary in Postgres.
 - **Client-ready.** Invite a client to exactly one form. Their account gets a client role — a
   read-only portal, never a workspace of their own.
-- **Simple plans.** Free (3 forms · 300 submissions/month · 3 viewers), Pro ($19 · 10 · 2,000 · 10)
-  and Agency ($49 · 50 · 10,000 · 50). Quotas are enforced server-side, atomically.
+- **Simple plans.** Free (1 form · 100 submissions/month · 1 client view), Light ($9 · 5 ·
+  1,000 · 3), Pro ($19 · 25 · 5,000 · 10) and Agency ($49 · 100 · 20,000 · 50). Quotas are
+  enforced server-side, atomically. One owner per workspace; team seats are not available.
 - **Light by default, dark on request.** One semantic token set across marketing, auth, dashboard
   and the client portal.
 
@@ -94,7 +95,7 @@ Supabase Postgres (RLS)  ◄── dashboard & client portal (session-scoped rea
 ## Getting started
 
 Requirements: Node.js 20.9+ (24 recommended), a Supabase project, and — optionally — Resend for
-invitation email and Lemon Squeezy for paid plans.
+invitation email and Paddle for paid plans.
 
 ```bash
 npm ci
@@ -108,19 +109,25 @@ Set `NEXT_PUBLIC_APP_URL` to your public origin (for example `https://formivo.fa
 endpoint, invitation link, email and canonical URL is built from it; a localhost value is
 automatically replaced with the production origin so emails never leak `localhost`.
 
+New email accounts verify a six-digit code before the dashboard is reachable. Configure the
+Supabase email template to include `{{ .Token }}` (see `supabase/config.toml` notes) and add
+`<app>/auth/callback` to the redirect allow-list for the confirmation link and Google OAuth.
+
 ### Supabase
 
 1. Apply the migrations in `supabase/migrations/` (`supabase db push` or the SQL editor, in order).
 2. Add `<app>/auth/callback` to the Auth redirect allow-list.
 3. Keep the service-role key server-side only — it is used by `src/lib/supabase/admin.ts`.
 
-### Resend and Lemon Squeezy (optional)
+### Resend and Paddle (optional)
 
 - Verify your sender domain in Resend and set `RESEND_API_KEY` / `RESEND_FROM_EMAIL`. If delivery
   fails (including the provider's daily cap), the dashboard shows the invitation link so you can
   share it manually.
-- Point the Lemon Squeezy webhook at `<app>/api/webhooks/lemonsqueezy` and set the signing secret.
-  Until billing is configured, upgrade buttons stay disabled and the rest of the product works.
+- Point the Paddle notification destination at `<app>/api/webhooks/paddle`, set the signing secret
+  and the three monthly price ids, and set `PADDLE_ENVIRONMENT=sandbox` while testing. Until
+  billing is configured, paid buttons stay disabled and the rest of the product works. The full
+  sandbox and live checklist is in [`docs/payments.md`](docs/payments.md).
 
 ## Scripts
 
@@ -170,7 +177,7 @@ src/
     client/          read-only portal for invited clients
     invite/[token]/  invitation acceptance
     api/f/[formId]/  public submission endpoint
-    api/webhooks/    Lemon Squeezy webhook
+    api/webhooks/    Paddle webhook
     auth/callback/   Supabase code exchange + account bootstrap
   components/        UI primitives, layout, marketing, forms, clients, billing, settings
   lib/
@@ -213,7 +220,7 @@ features degrade to an explicit "not configured" state instead of failing silent
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Database, auth, server-side admin       |
 | `INVITATION_TOKEN_PEPPER`                                                                | HMAC pepper for invitation tokens       |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL`                                                    | Invitation email                        |
-| `LEMONSQUEEZY_*`                                                                         | Checkout, portal, webhook verification  |
+| `PADDLE_*`, `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`                                            | Checkout, portal, webhook verification  |
 | `CRON_SECRET`                                                                            | Scheduled maintenance tasks             |
 
 ## Documentation

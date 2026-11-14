@@ -2,6 +2,7 @@ import { FileText, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { PlanLimitNotice } from "@/components/billing/plan-limit-notice";
 import { FormStatusBadge } from "@/components/submissions/status-badge";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -15,16 +16,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { requireDeveloper } from "@/lib/auth/viewer";
+import { enforceActiveFormLimit } from "@/lib/billing/form-limit";
 import { getPublicEnv } from "@/lib/env/public";
 import { formatDate } from "@/lib/format";
 import { formSubmissionEndpoint, listFormsWithCounts } from "@/lib/forms/service";
 
 export const metadata: Metadata = { title: "Forms" };
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ limit?: string }>;
+}) {
   const developer = await requireDeveloper();
+  const limit = await enforceActiveFormLimit(developer.workspace.id);
   const forms = await listFormsWithCounts(developer.workspace.id);
   const appUrl = getPublicEnv().NEXT_PUBLIC_APP_URL;
+  const blocked = (await searchParams).limit === "reached";
 
   return (
     <div className="flex flex-col gap-6">
@@ -39,6 +47,8 @@ export default async function Page() {
           </ButtonLink>
         }
       />
+
+      <PlanLimitNotice enforcement={limit} blocked={blocked} />
 
       {forms.length === 0 ? (
         <EmptyState

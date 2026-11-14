@@ -102,7 +102,7 @@ form.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error(body?.error?.message ?? "Submission failed");
 
     form.reset();
-    status.textContent = "Thanks — your message was sent.";
+    status.textContent = "Thanks. Your message was sent.";
   } catch (error) {
     status.textContent = error.message;
   } finally {
@@ -175,7 +175,7 @@ export function ContactForm() {
       <button disabled={state === "sending"}>
         {state === "sending" ? "Sending…" : "Send"}
       </button>
-      {state === "sent" && <p role="status">Thanks — we will reply shortly.</p>}
+      {state === "sent" && <p role="status">Thanks. We will reply shortly.</p>}
       {state === "error" && <p role="alert">Could not send. Please try again.</p>}
     </form>
   );
@@ -415,7 +415,7 @@ public function store(ContactRequest $request)
         return back()->withErrors(['contact' => 'Could not send your message.']);
     }
 
-    return back()->with('status', 'Thanks — your message was sent.');
+    return back()->with('status', 'Thanks. Your message was sent.');
 }`,
     response: "201 on success. Log the response body on failure, but never the full payload.",
     troubleshooting: [
@@ -620,7 +620,7 @@ def contact():
         timeout=10,
     )
 
-    flash("Thanks — your message was sent." if response.status_code == 201 else "Could not send.")
+    flash("Thanks. Your message was sent." if response.status_code == 201 else "Could not send.")
     return redirect("/contact")`,
     response: "201 on success. Redirect back with a flash message, never render the raw response.",
     troubleshooting: [
@@ -664,7 +664,7 @@ def contact():
       },
       {
         problem: "Build fails on your host",
-        fix: "Nothing to build — the endpoint is plain HTML.",
+        fix: "Nothing to build. The endpoint is plain HTML.",
       },
     ],
     related: ["html", "javascript", "nextjs"],

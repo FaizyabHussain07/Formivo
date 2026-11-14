@@ -101,7 +101,7 @@ export default function Page() {
         <div className="flex flex-col gap-1">
           <p className="text-[15px] font-semibold text-foreground">Prefer to read first?</p>
           <p className="text-sm text-foreground-secondary">
-            The docs cover the endpoint contract, error codes, rate limits and the security model —
+            The docs cover the endpoint contract, error codes, rate limits and the security model,
             often faster than waiting for a reply.
           </p>
         </div>

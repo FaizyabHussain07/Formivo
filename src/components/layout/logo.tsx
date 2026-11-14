@@ -8,10 +8,19 @@ import { cn } from "@/lib/utils/cn";
  * Primary horizontal logo: real symbol + wordmark (brand identity §14.1).
  * The image is decorative; the link's accessible name comes from the wordmark.
  */
-export function Logo({ href = "/", className }: { href?: string; className?: string }) {
+export function Logo({
+  href = "/",
+  className,
+  onClick,
+}: {
+  href?: string;
+  className?: string;
+  onClick?: () => void;
+}) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn("inline-flex items-center gap-2.5 font-semibold tracking-tight", className)}
     >
       <Image

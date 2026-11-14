@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import type { User } from "@supabase/supabase-js";
 
+import { isAccountVerified } from "@/lib/auth/verification";
 import { getWorkspaceEntitlements, type WorkspaceEntitlements } from "@/lib/billing/entitlements";
 import type { PlanDefinition, PlanKey } from "@/lib/billing/plans";
 import { requireAdminClient } from "@/lib/supabase/admin";
@@ -38,7 +39,7 @@ export type ClientContext = {
 
 /**
  * The authenticated Supabase user, or null. `getUser()` validates the JWT with
- * Supabase Auth — it is the only identity source the server trusts.
+ * Supabase Auth. It is the only identity source the server trusts.
  */
 export const getSessionUser = cache(async (): Promise<User | null> => {
   // Session lookup reads cookies and JWT timestamps, so the render must be dynamic.
@@ -83,7 +84,7 @@ export async function ensureDeveloperAccount(user: User): Promise<void> {
 
 /**
  * Client accounts are deliberately different from developer accounts: a profile and a
- * `client` role only — no workspace, no subscription and no billing state. Access is
+ * `client` role only. No workspace, no subscription and no billing state. Access is
  * granted per form through an invitation, never through account creation.
  */
 export async function ensureClientAccount(user: User): Promise<void> {
@@ -294,10 +295,22 @@ export const getClientContext = cache(async (): Promise<ClientContext | null> =>
   };
 });
 
+/**
+ * An address counts as verified when Supabase confirmed it (every legacy account) or
+ * when Formivo's own six-digit code was entered. An unverified session is treated as
+ * signed out: it cannot create forms, read leads or reach any workspace surface.
+ */
+export function isEmailVerified(user: User): boolean {
+  return isAccountVerified(user);
+}
+
 /** Redirects instead of throwing so protected pages never render without a session. */
 export async function requireDeveloper(): Promise<DeveloperContext> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!isEmailVerified(user)) {
+    redirect(`/verify?email=${encodeURIComponent(user.email ?? "")}&next=/dashboard`);
+  }
   const developer = await getDeveloperContext();
   if (!developer) {
     // Clients must never bounce between the dashboard and the portal.
@@ -310,6 +323,9 @@ export async function requireDeveloper(): Promise<DeveloperContext> {
 export async function requireClient(): Promise<ClientContext> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!isEmailVerified(user)) {
+    redirect(`/verify?email=${encodeURIComponent(user.email ?? "")}&next=/client`);
+  }
   const client = await getClientContext();
   if (!client) {
     const developer = await getDeveloperContext();
@@ -321,6 +337,9 @@ export async function requireClient(): Promise<ClientContext> {
 export async function requireSessionUser(): Promise<SessionUser> {
   const user = await getSessionUser();
   if (!user) redirect("/login");
+  if (!isEmailVerified(user)) {
+    redirect(`/verify?email=${encodeURIComponent(user.email ?? "")}`);
+  }
   return toSessionUser(user);
 }
 

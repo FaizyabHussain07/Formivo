@@ -140,7 +140,7 @@ export default async function Page() {
                         </Button>
                       </form>
                     ) : (
-                      <span className="text-xs text-foreground-muted">—</span>
+                      <span className="text-xs text-foreground-muted">Not set</span>
                     )}
                   </TableCell>
                 </TableRow>

@@ -77,7 +77,7 @@ describe("integration status", () => {
       configured: false,
       missing: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
     });
-    expect(statuses.lemonsqueezy.configured).toBe(false);
+    expect(statuses.paddle.configured).toBe(false);
   });
 
   it("reports configured providers when all variables are present", () => {

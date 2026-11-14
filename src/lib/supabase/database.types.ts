@@ -213,6 +213,8 @@ export type Database = {
           provider_customer_id: string | null;
           provider_subscription_id: string | null;
           variant_id: string | null;
+          price_id: string | null;
+          scheduled_change_action: string | null;
           current_period_start: string | null;
           current_period_end: string | null;
           cancel_at_period_end: boolean;
@@ -228,6 +230,8 @@ export type Database = {
           provider_customer_id?: string | null;
           provider_subscription_id?: string | null;
           variant_id?: string | null;
+          price_id?: string | null;
+          scheduled_change_action?: string | null;
           current_period_start?: string | null;
           current_period_end?: string | null;
           cancel_at_period_end?: boolean;
@@ -241,6 +245,8 @@ export type Database = {
           provider_customer_id?: string | null;
           provider_subscription_id?: string | null;
           variant_id?: string | null;
+          price_id?: string | null;
+          scheduled_change_action?: string | null;
           current_period_start?: string | null;
           current_period_end?: string | null;
           cancel_at_period_end?: boolean;

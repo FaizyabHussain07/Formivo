@@ -1,17 +1,18 @@
 import type { ServerEnv } from "./schema";
 
-export type IntegrationName = "supabase" | "supabaseAdmin" | "resend" | "lemonsqueezy";
+export type IntegrationName = "supabase" | "supabaseAdmin" | "resend" | "paddle";
 
 const requiredVariables: Record<IntegrationName, (keyof ServerEnv)[]> = {
   supabase: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
   supabaseAdmin: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
   resend: ["RESEND_API_KEY", "RESEND_FROM_EMAIL"],
-  lemonsqueezy: [
-    "LEMONSQUEEZY_API_KEY",
-    "LEMONSQUEEZY_STORE_ID",
-    "LEMONSQUEEZY_WEBHOOK_SECRET",
-    "LEMONSQUEEZY_PRO_VARIANT_ID",
-    "LEMONSQUEEZY_AGENCY_VARIANT_ID",
+  paddle: [
+    "PADDLE_API_KEY",
+    "PADDLE_WEBHOOK_SECRET",
+    "PADDLE_PRICE_LIGHT",
+    "PADDLE_PRICE_PRO",
+    "PADDLE_PRICE_AGENCY",
+    "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN",
   ],
 };
 
@@ -33,7 +34,7 @@ export function getAllIntegrationStatuses(
     supabase: getIntegrationStatus(env, "supabase"),
     supabaseAdmin: getIntegrationStatus(env, "supabaseAdmin"),
     resend: getIntegrationStatus(env, "resend"),
-    lemonsqueezy: getIntegrationStatus(env, "lemonsqueezy"),
+    paddle: getIntegrationStatus(env, "paddle"),
   };
 }
 

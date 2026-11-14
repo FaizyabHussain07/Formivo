@@ -15,12 +15,12 @@ const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
 });
 
 export function formatDate(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not set";
   return dateFormatter.format(new Date(value));
 }
 
 export function formatDateTime(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not set";
   return `${dateTimeFormatter.format(new Date(value))} UTC`;
 }
 
@@ -78,7 +78,7 @@ export function safeHttpUrl(value: unknown): string | null {
 }
 
 export function toDisplayValue(value: unknown): string {
-  if (value === null || value === undefined) return "—";
+  if (value === null || value === undefined) return "Not set";
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
   return JSON.stringify(value, null, 2);

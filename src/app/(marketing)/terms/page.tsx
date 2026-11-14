@@ -23,12 +23,13 @@ const sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] 
     heading: "Your account",
     paragraphs: [
       "You are responsible for keeping your login credentials private and for the activity that happens under your account. Tell us promptly if you believe your account has been compromised.",
+      "New accounts must verify their email address with a six-digit code before the dashboard is available. Do not create accounts for addresses you do not control.",
     ],
   },
   {
     heading: "Acceptable use",
     paragraphs: [
-      "The submission endpoint is public and is protected by validation, rate limits and plan quotas — not by a secret. Use it fairly:",
+      "The submission endpoint is public and is protected by validation, rate limits and plan quotas, not by a secret. Use it fairly:",
     ],
     bullets: [
       "No unsolicited bulk messages, spam campaigns or form flooding, including against other people's endpoints.",
@@ -47,7 +48,14 @@ const sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] 
     heading: "Plans, limits and billing",
     paragraphs: [
       "Each plan sets a number of active forms, a monthly submission allowance and a number of client viewers. Limits are enforced server-side. If you exceed your allowance, new submissions are rejected until the next period or until you upgrade; existing data always stays.",
-      "Paid subscriptions are processed by Lemon Squeezy as the merchant of record. Paid plans renew automatically until cancelled, and cancellation takes effect at the end of the current period. Free plans do not require a card.",
+      "Paid subscriptions are processed by Paddle as the merchant of record, which also handles payment methods, invoices and applicable tax. Paid plans renew automatically until cancelled. Cancellation takes effect at the end of the period already paid for; after that the workspace returns to the Free limits, and your data is retained. Free plans do not require a card.",
+      "Plan changes on an existing subscription are prorated through Paddle. Limits apply from the moment the provider confirms the change, and are never granted on the basis of a browser redirect alone.",
+    ],
+  },
+  {
+    heading: "Refunds",
+    paragraphs: [
+      "If a charge is wrong or the service did not work as described, contact us within a reasonable period and we will work it out, including a refund where appropriate. Statutory rights that apply in your jurisdiction are not limited by this section.",
     ],
   },
   {
@@ -82,7 +90,7 @@ export default function Page() {
       <PageHeader
         eyebrow="Legal"
         title="Terms of service"
-        description="The agreement between you and Formivo when you create an account. Last updated 29 October 2026."
+        description="The agreement between you and Formivo when you create an account. Last updated 14 November 2026."
       />
 
       <div className="flex flex-col gap-7">
@@ -119,7 +127,7 @@ export default function Page() {
           >
             {siteConfig.contactEmail}
           </Link>{" "}
-          for anything you want to ask — including a copy of your data or account closure. See also
+          for anything you want to ask, including a copy of your data or account closure. See also
           our{" "}
           <Link href="/privacy" className="font-medium text-accent hover:underline">
             privacy policy

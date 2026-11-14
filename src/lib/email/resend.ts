@@ -82,7 +82,7 @@ export function invitationEmail(input: {
     "",
     `This invitation expires on ${expires}. If you were not expecting it, you can ignore this email.`,
     "",
-    `Formivo — ${input.appUrl}`,
+    `Formivo: ${input.appUrl}`,
   ].join("\n");
 
   const html = `<!doctype html>

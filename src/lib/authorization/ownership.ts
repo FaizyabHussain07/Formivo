@@ -11,7 +11,7 @@ type FormRow = Database["public"]["Tables"]["forms"]["Row"];
 /**
  * Server-side ownership and access checks (PRD §8, §19).
  *
- * These run against the service-role client, which bypasses RLS — so they must
+ * These run against the service-role client, which bypasses RLS. So they must
  * ALWAYS authorize explicitly: derive ownership from the trusted relation chain
  * (workspace -> form -> submission) and never from client-supplied values.
  */

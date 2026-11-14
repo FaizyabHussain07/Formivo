@@ -58,7 +58,7 @@ export default function GuidesPage() {
             One endpoint. Every stack you actually use.
           </h1>
           <p className="max-w-2xl text-[15px] leading-7 text-foreground-secondary">
-            Each guide is a complete, working example against the same public endpoint — no
+            Each guide is a complete, working example against the same public endpoint. No
             framework-specific SDK, no key, no build step.
           </p>
         </Container>

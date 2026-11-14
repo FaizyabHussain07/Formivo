@@ -89,7 +89,7 @@ export async function buildSubmissionsCsv(scope: ExportScope): Promise<{
   if (!planAllowsExport) {
     throw new AppError(
       "PLAN_LIMIT_REACHED",
-      "CSV export is available on the Pro and Agency plans. Upgrade to export submissions.",
+      "CSV export is available on the Light, Pro and Agency plans. Upgrade to export submissions.",
     );
   }
 

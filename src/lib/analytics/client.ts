@@ -116,8 +116,13 @@ function initGa4(measurementId: string): void {
     };
   window.gtag("js", new Date());
   // Page views are sent explicitly on navigation so a client-side route change is
-  // never counted twice.
-  window.gtag("config", measurementId, { send_page_view: false });
+  // never counted twice. send_page_view:false is what prevents the duplicate that a
+  // default gtag config would add on every SPA route change.
+  window.gtag("config", measurementId, {
+    send_page_view: false,
+    // DebugView is opt-in per environment instead of always on.
+    ...(process.env.NEXT_PUBLIC_ENVIRONMENT === "production" ? {} : { debug_mode: true }),
+  });
   loadScript(GA_SCRIPT_ID, `https://www.googletagmanager.com/gtag/js?id=${measurementId}`);
 }
 
@@ -148,6 +153,11 @@ function initPosthog(key: string, host: string, replayEnabled: boolean): void {
   });
 }
 
+/** GA4 measurement IDs always look like G-XXXXXXX. Anything else would never report. */
+function isGaMeasurementId(value: string): boolean {
+  return /^G-[A-Z0-9]{6,}$/i.test(value.trim());
+}
+
 /** Loads both platforms once, after hydration, and never blocks the page. */
 export function initAnalytics(): void {
   if (typeof window === "undefined" || started || !analyticsEnabled()) return;
@@ -157,7 +167,11 @@ export function initAnalytics(): void {
   setConsent(granted);
   if (!granted) return;
 
-  if (CONFIG.gaMeasurementId) initGa4(CONFIG.gaMeasurementId);
+  if (CONFIG.gaMeasurementId) {
+    if (isGaMeasurementId(CONFIG.gaMeasurementId)) initGa4(CONFIG.gaMeasurementId.trim());
+    else if (process.env.NODE_ENV !== "production")
+      console.warn("NEXT_PUBLIC_GA_MEASUREMENT_ID is not a GA4 measurement id (G-XXXXXXX).");
+  }
   if (CONFIG.posthogKey)
     initPosthog(CONFIG.posthogKey, CONFIG.posthogHost ?? "", CONFIG.replayEnabled ?? false);
 }
@@ -212,11 +226,16 @@ export function trackPageView(path: string, search = ""): void {
   if (typeof window === "undefined" || !consentGranted) return;
   const payload = {
     page_path: `${path}${search}`,
+    page_title: document.title,
     ...attributionProperties(readAttribution()),
   };
 
   try {
-    window.gtag?.("event", "page_view", { ...payload, page_location: window.location.href });
+    window.gtag?.("event", "page_view", {
+      ...payload,
+      page_location: window.location.href,
+      page_referrer: document.referrer || undefined,
+    });
   } catch {
     // ignore
   }

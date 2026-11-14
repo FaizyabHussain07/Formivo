@@ -8,8 +8,8 @@ const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", "[::1]", ":
 
 /**
  * Absolute URLs in the product (form endpoints, invitation links, emails, password
- * resets) must always point at the public site. A localhost value — common when a
- * developer forgets to set NEXT_PUBLIC_APP_URL — is replaced with the production origin
+ * resets) must always point at the public site. A localhost value. Common when a
+ * developer forgets to set NEXT_PUBLIC_APP_URL. Is replaced with the production origin
  * instead of leaking "http://localhost:3000" into emails and dashboards.
  */
 function resolveAppUrl(raw: string | undefined): string {

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { queueAnalyticsEvent } from "@/lib/analytics/intent";
 import { resolvePostAuthPath } from "@/lib/auth/landing";
+import { findUserByEmail, isAccountVerified, issueVerificationCode } from "@/lib/auth/verification";
 import { ensureAccountForSession } from "@/lib/auth/viewer";
 import { getPublicEnv } from "@/lib/env/public";
 import { errorMessage } from "@/lib/errors";
@@ -126,23 +127,20 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
     };
   }
 
-  if (data.session && data.user) {
-    try {
-      // Accounts created from an invitation link become clients, not developers.
-      await ensureAccountForSession(data.user, next);
-    } catch (setupError) {
-      return { error: errorMessage(setupError), values: { email, displayName } };
-    }
-    await queueAnalyticsEvent("sign_up");
-    redirect(await resolvePostAuthPath(data.user.id, next));
+  if (!data.user) {
+    return { error: "The account could not be created. Try again.", values: { email, displayName } };
   }
 
-  return {
-    notice: next.startsWith("/invite/")
-      ? "Account created. Check your inbox to confirm your email address — the confirmation link takes you straight back to the invitation."
-      : "Account created. Check your inbox to confirm your email address, then sign in — the confirmation link brings you straight back to your dashboard.",
-    values: { email, displayName },
-  };
+  // Every new account verifies its address before the workspace opens. The code is
+  // issued and delivered by Formivo (Resend), so verification works even when the
+  // Supabase project has its own mailer disabled.
+  const issued = await issueVerificationCode(data.user);
+  await queueAnalyticsEvent("sign_up");
+  redirect(
+    `/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&sent=${
+      issued.sent ? "signup" : issued.reason
+    }`,
+  );
 }
 
 export async function signInAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -158,6 +156,31 @@ export async function signInAction(_prev: AuthState, formData: FormData): Promis
   if (!supabase) return { error: "Authentication is not configured on this deployment." };
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  /**
+   * An account created before verification was enforced has a correct password but no
+   * confirmed address. The password just proved who owns the account, so a fresh code is
+   * sent and the user finishes verification instead of being told to "confirm your email"
+   * with no way to do it.
+   */
+  const unverified =
+    (error && /email not confirmed|not verified/i.test(error.message)) ||
+    (data.user && !isAccountVerified(data.user));
+  if (unverified) {
+    // Supabase returns no user object for an unconfirmed account, so the address is
+    // resolved through the admin API before a code can be issued.
+    const account = data.user ?? (await findUserByEmail(email));
+    const issued = account ? await issueVerificationCode(account) : null;
+    if (!issued?.sent && !account) {
+      return { error: "That email and password combination is not correct.", values: { email } };
+    }
+    redirect(
+      `/verify?email=${encodeURIComponent(email)}&next=${encodeURIComponent(next)}&sent=${
+        issued && !issued.sent ? issued.reason : "login"
+      }`,
+    );
+  }
+
   if (error || !data.user) {
     return { error: "That email and password combination is not correct.", values: { email } };
   }

@@ -33,6 +33,11 @@ export const publicEnvSchema = z.object({
   ),
   NEXT_PUBLIC_SUPABASE_URL: optionalUrl,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
+  // Paddle.js is initialized with a client token. It is public by design and is not
+  // the API key, which never leaves the server.
+  NEXT_PUBLIC_PADDLE_CLIENT_TOKEN: optionalString,
+  // Optional product demo video. Absent means the designed placeholder is shown.
+  NEXT_PUBLIC_FORMIVO_DEMO_VIDEO_URL: optionalUrl,
   // Analytics are optional: a deployment without either id stays fully functional.
   NEXT_PUBLIC_GA_MEASUREMENT_ID: optionalString,
   NEXT_PUBLIC_POSTHOG_KEY: optionalString,
@@ -51,11 +56,18 @@ export const serverEnvSchema = publicEnvSchema.extend({
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.email().default("team@formivo.faizyab.me"),
   ),
-  LEMONSQUEEZY_API_KEY: optionalString,
-  LEMONSQUEEZY_STORE_ID: optionalString,
-  LEMONSQUEEZY_WEBHOOK_SECRET: optionalString,
-  LEMONSQUEEZY_PRO_VARIANT_ID: optionalString,
-  LEMONSQUEEZY_AGENCY_VARIANT_ID: optionalString,
+  // Paddle billing. Sandbox and live credentials are never mixed: the API base URL
+  // is derived from PADDLE_ENVIRONMENT, and the API key and webhook secret are
+  // server-only.
+  PADDLE_ENVIRONMENT: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.enum(["sandbox", "production"]).optional(),
+  ),
+  PADDLE_API_KEY: optionalString,
+  PADDLE_WEBHOOK_SECRET: optionalString,
+  PADDLE_PRICE_LIGHT: optionalString,
+  PADDLE_PRICE_PRO: optionalString,
+  PADDLE_PRICE_AGENCY: optionalString,
   // Deliberate switch: production checkout stays off until this is "true".
   BILLING_CHECKOUT_ENABLED: z.preprocess(
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),

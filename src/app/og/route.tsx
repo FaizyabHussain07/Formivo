@@ -5,7 +5,7 @@ import { ImageResponse } from "next/og";
  *
  * Every page can request its own card through query parameters, so a shared
  * article link is recognisable instead of showing the same generic banner
- * everywhere. Input is length-capped and rendered as text only — nothing here
+ * everywhere. Input is length-capped and rendered as text only. Nothing here
  * is interpreted as markup.
  */
 const MAX_TITLE = 120;

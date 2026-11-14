@@ -49,7 +49,7 @@ const sections = [
   {
     title: "The public endpoint is write-only",
     body: [
-      "Anyone can POST to a form endpoint — that is the product. What they cannot do is read. The endpoint never exposes a listing, a submission body or an id belonging to someone else; retries return only the submission the caller just created.",
+      "Anyone can POST to a form endpoint. That is the product. What they cannot do is read. The endpoint never exposes a listing, a submission body or an id belonging to someone else; retries return only the submission the caller just created.",
       "Because a form id in public HTML is not a credential, protection comes from what can be enforced server-side: structural validation, rate limits stored in the database, per-form quota checks inside the insert transaction, and optional browser-origin allow-lists.",
     ],
   },
@@ -57,7 +57,7 @@ const sections = [
     title: "Reads are authorized per request",
     body: [
       "A submission can only be read by a signed-in workspace member, or by a client holding an active permission for that specific form. The check derives ownership from the signed-in session and the ownership chain, never from a form id, submission id or workspace id supplied in a query string.",
-      "Client permissions are checked on every request, so revoking access takes effect immediately — there is no cached session to expire.",
+      "Client permissions are checked on every request, so revoking access takes effect immediately. There is no cached session to expire.",
     ],
   },
   {

@@ -7,10 +7,10 @@ import { siteConfig } from "@/config/site";
  */
 export const SITE_URL = siteConfig.productionUrl;
 
-/** Absolute canonical URL for a public page. No trailing slashes, so the homepage
- * canonical, sitemap entry and social URL are all byte-identical strings. */
+/** Absolute canonical URL for a public page. Nested paths carry no trailing slash, so
+ * the homepage canonical, sitemap entry and social URL are all the same string. */
 export function canonicalUrl(path = "/"): string {
-  if (path === "/" || path === "") return SITE_URL;
+  if (path === "/" || path === "") return `${SITE_URL}/`;
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${SITE_URL}${normalized}`;
 }
@@ -80,6 +80,8 @@ const PRIVATE_PREFIXES = [
   "/auth",
   "/login",
   "/signup",
+  "/verify",
+  "/checkout",
   "/forgot-password",
   "/reset-password",
 ] as const;
@@ -89,11 +91,21 @@ export const DISALLOWED_PATHS: string[] = [...PRIVATE_PREFIXES];
 export const SITEMAP_PATHS = [
   "/",
   "/features",
-  "/guides",
+  "/how-it-works",
+  "/client-portal",
+  "/pricing",
+  "/solutions",
+  "/integrations",
+  "/compare",
   "/alternatives",
+  "/guides",
   "/blog",
   "/docs",
-  "/pricing",
+  "/resources",
+  "/faq",
+  "/changelog",
+  "/press",
+  "/featured-on",
   "/security",
   "/about",
   "/contact",

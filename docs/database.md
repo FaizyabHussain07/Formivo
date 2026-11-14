@@ -42,7 +42,7 @@ explicit "Supabase not configured" state instead of failing (see
 | `submissions`             | Submitted data (`jsonb`)                         | owner + active client read; owner update (status); no delete |
 | `client_invitations`      | Token-hashed invitations, status/expiry          | owner read only; writes via trusted RPC                      |
 | `form_client_permissions` | Active client grants (one per form)              | self/owner read; owner update (revoke); writes via RPC       |
-| `subscriptions`           | Normalized Lemon Squeezy state, default `free`   | owner read only; webhook writes (service role)               |
+| `subscriptions`           | Normalized Paddle state, default `free`          | owner read only; webhook writes (service role)               |
 | `usage_periods`           | Concurrency-safe submission counters per window  | owner read only; increments via RPC                          |
 | `webhook_events`          | Webhook replay protection                        | no policies — service-role only                              |
 | `audit_logs`              | Security-relevant actions                        | no policies — service-role only                              |

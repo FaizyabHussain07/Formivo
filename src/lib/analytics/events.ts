@@ -16,8 +16,15 @@ export type AnalyticsEvent =
   | "client_joined"
   | "feedback_submitted"
   | "pricing_viewed"
+  | "email_verified"
+  | "select_plan"
+  | "begin_checkout"
   | "checkout_started"
+  | "purchase"
   | "subscription_activated"
+  | "upgrade"
+  | "cancel_subscription"
+  | "export_submissions"
   | "docs_viewed"
   | "prompt_copied";
 
@@ -32,8 +39,11 @@ const ONCE_PER_SESSION: ReadonlySet<AnalyticsEvent> = new Set<AnalyticsEvent>([
   "login",
   "form_created",
   "pricing_viewed",
+  "begin_checkout",
   "checkout_started",
+  "purchase",
   "subscription_activated",
+  "email_verified",
   "form_submission_received",
 ]);
 

@@ -155,7 +155,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
     if (honeypot) {
       return withCors(
         isHtml
-          ? htmlResponse(200, "Thanks — your message was received.", "We will be in touch soon.")
+          ? htmlResponse(200, "Thanks. Your message was received.", "We will be in touch soon.")
           : apiSuccess({ message: "Submission received." }, 201),
         cors,
       );
@@ -190,7 +190,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ for
     if (isHtml) {
       const response = htmlResponse(
         200,
-        "Thanks — your response is in.",
+        "Thanks. Your response is in.",
         "The form owner has received your details and can reply soon. You can safely close this page.",
       );
       return withCors(response, cors);

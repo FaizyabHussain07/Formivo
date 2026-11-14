@@ -29,6 +29,11 @@ export const DOCS_NAV: DocGroup[] = [
         href: "/docs/quickstart",
         description: "Create a form, copy its endpoint and receive your first submission.",
       },
+      {
+        title: "Account verification",
+        href: "/docs/account-verification",
+        description: "The six-digit email code, resend behavior and verified-only access.",
+      },
     ],
   },
   {
