@@ -214,7 +214,7 @@ rate limiting, and one stored lead with the correct monthly usage.
 See [`.env.example`](.env.example). All values are validated with Zod at startup; provider-backed
 features degrade to an explicit "not configured" state instead of failing silently.
 
-| Variable                                                                                 | Purpose                                 |
+| Variable                                                                                | Purpose                                 |
 | ---------------------------------------------------------------------------------------- | --------------------------------------- |
 | `NEXT_PUBLIC_APP_URL`                                                                    | Public origin for links, emails, canons |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Database, auth, server-side admin       |
